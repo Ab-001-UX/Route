@@ -197,17 +197,6 @@ export default function OnboardingPage() {
   return (
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
-        {/* Back button — visible on steps 2+ */}
-        {step > 1 && (
-          <button
-            type="button"
-            onClick={goBack}
-            className="backBtn"
-            aria-label="Go back"
-          >
-            <ChevronLeft size={20} />
-          </button>
-        )}
         <div className={styles.progressBarWrapper}>
           <div className={styles.progressBar}>
             <div
@@ -215,7 +204,21 @@ export default function OnboardingPage() {
               style={{ width: `${(step / 5) * 100}%` }}
             />
           </div>
-          <p className={styles.stepIndicator}>Step {step} of 5</p>
+          <div className={styles.headerBottomRow}>
+            <div className={styles.backBtnContainer}>
+              {step > 1 && (
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className={styles.backBtn}
+                  aria-label="Go back"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              )}
+            </div>
+            <p className={styles.stepIndicator}>Step {step} of 5</p>
+          </div>
         </div>
       </header>
 
