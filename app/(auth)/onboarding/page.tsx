@@ -12,6 +12,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [phone, setPhone] = useState("");
+  const [hasAutoAdvanced, setHasAutoAdvanced] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [locationState, setLocationState] = useState<"idle" | "granted" | "denied">("idle");
   const [notificationState, setNotificationState] = useState<"idle" | "granted" | "denied">("idle");
@@ -36,12 +37,21 @@ export default function OnboardingPage() {
   const removeContact = useMutation(api.contacts.removeContact);
   const contacts = useQuery(api.contacts.getContacts) || [];
 
-  // Returning user guard — if they already have a record, skip onboarding
+  // Returning user guard — if they have fully completed onboarding, skip onboarding.
+  // Otherwise, automatically advance to Step 2 if they already have a phone number.
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
-      router.replace("/home");
+      if (currentUser.displayName) {
+        router.replace("/home");
+      } else if (!hasAutoAdvanced) {
+        if (currentUser.phone) {
+          setPhone(currentUser.phone);
+        }
+        setHasAutoAdvanced(true);
+        setStep(2);
+      }
     }
-  }, [currentUser, router]);
+  }, [currentUser, router, hasAutoAdvanced]);
 
   const formatPhoneNumber = (num: string): string => {
     return normalizeNigerianPhoneNumber(num);
