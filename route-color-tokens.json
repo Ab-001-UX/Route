@@ -1,0 +1,94 @@
+{
+  "color": {
+    "brand": {
+      "primary": {
+        "value": "hsl(221, 83%, 53%)",
+        "type": "color",
+        "context": "Royal Blue",
+        "semantic": "Primary brand color. Use for primary buttons, active states, links, icons, navigation indicators. Reserve for purposeful actions only, roughly 10% of the visual surface."
+      },
+      "primaryHover": {
+        "value": "hsl(224, 76%, 48%)",
+        "type": "color",
+        "context": "Royal Blue, hover/pressed",
+        "semantic": "Primary hover and pressed state for buttons and interactive elements."
+      }
+    },
+    "background": {
+      "app": {
+        "value": "hsl(216, 100%, 98%)",
+        "type": "color",
+        "context": "Very Light Blue",
+        "semantic": "Default page background, replaces pure white. Carries roughly 20% of the visual surface, gives the app a calm ambient feel without competing with content."
+      },
+      "surface": {
+        "value": "hsl(0, 0%, 100%)",
+        "type": "color",
+        "context": "White",
+        "semantic": "Cards, search cards, vehicle cards, feed cards, bottom sheets, modals. Carries roughly 70% of the visual surface."
+      }
+    },
+    "text": {
+      "primary": {
+        "value": "hsl(222, 47%, 11%)",
+        "type": "color",
+        "context": "Dark Navy",
+        "semantic": "Headings, vehicle plates, important information."
+      },
+      "secondary": {
+        "value": "hsl(215, 16%, 47%)",
+        "type": "color",
+        "context": "Slate Gray",
+        "semantic": "Supporting text, timestamps, descriptions, empty states."
+      }
+    },
+    "border": {
+      "default": {
+        "value": "hsl(214, 32%, 91%)",
+        "type": "color",
+        "context": "Light Gray Blue",
+        "semantic": "Inputs, dividers, cards."
+      }
+    },
+    "safetyStatus": {
+      "safe": {
+        "value": "hsl(142, 71%, 45%)",
+        "type": "color",
+        "context": "Green",
+        "semantic": "Indicates a safe status. Should be paired with an icon and label, not relied on for meaning alone."
+      },
+      "caution": {
+        "value": "hsl(45, 93%, 47%)",
+        "type": "color",
+        "context": "Yellow",
+        "semantic": "Indicates a caution status. Should be paired with an icon and label, not relied on for meaning alone."
+      },
+      "warning": {
+        "value": "hsl(25, 95%, 53%)",
+        "type": "color",
+        "context": "Orange",
+        "semantic": "Indicates a warning status, more severe than caution. Should be paired with an icon and label, distinct enough from dangerous to avoid confusion at a glance."
+      },
+      "dangerous": {
+        "value": "hsl(0, 72%, 51%)",
+        "type": "color",
+        "context": "Red",
+        "semantic": "Indicates a dangerous status, the highest severity. Should be paired with an icon and label, and is intended to grab attention immediately."
+      }
+    }
+  },
+  "visualRatio": {
+    "surface": {
+      "value": "70%",
+      "semantic": "White surfaces dominate the interface, keeping it clean and calm."
+    },
+    "background": {
+      "value": "20%",
+      "semantic": "Very light blue background carries secondary visual weight."
+    },
+    "brand": {
+      "value": "10%",
+      "semantic": "Royal blue reserved for guiding key actions so safety status colors stand out clearly when they appear."
+    }
+  }
+}

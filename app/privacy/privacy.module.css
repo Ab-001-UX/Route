@@ -1,0 +1,100 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg) var(--spacing-md);
+  background-color: var(--color-background-app);
+  color: var(--color-text-primary);
+  font-family: var(--typography-body-medium-font-family);
+}
+
+.card {
+  width: 100%;
+  max-width: 650px;
+  background-color: var(--color-background-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  padding: var(--spacing-xl);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  backdrop-filter: blur(10px);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.header h1 {
+  font-family: var(--typography-title-large-font-family);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-brand-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.section h2 {
+  font-family: var(--typography-title-medium-font-family);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: var(--spacing-sm) 0 var(--spacing-xs) 0;
+}
+
+.section p, .section li {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.section ul {
+  padding-left: var(--spacing-lg);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.backBtn {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  color: var(--color-brand-primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+  transition: opacity 0.2s ease;
+}
+
+.backBtn:hover {
+  opacity: 0.8;
+}

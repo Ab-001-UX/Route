@@ -1,0 +1,321 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-surface);
+}
+
+/* ---- Header row: back icon + progress bar ---- */
+.onboardingHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  min-height: auto;
+  padding: var(--spacing-xs);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.backBtn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.progressBarWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-background-app);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-brand-primary);
+  border-radius: 99px;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stepIndicator {
+  font-family: var(--typography-label-small-font-family);
+  font-size: var(--typography-label-small-font-size);
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+/* ---- Step content ---- */
+.stepContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-md);
+}
+
+.iconContainer {
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.accentIcon {
+  color: var(--color-brand-primary);
+}
+
+.accentIconSmall {
+  color: var(--color-brand-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stepContent h1 {
+  font-family: var(--typography-title-large-font-family);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.stepContent p {
+  font-family: var(--typography-body-medium-font-family);
+  font-size: var(--typography-body-medium-font-size);
+  color: var(--color-text-secondary);
+  line-height: 22px;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* ---- Forms ---- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+/* Smaller placeholder input used inside contact form */
+.smallInput {
+  font-size: 0.8125rem !important;
+}
+
+.smallInput::placeholder {
+  font-size: 0.8125rem;
+}
+
+/* Center-aligned text input (name step) */
+.input {
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+  margin-top: auto;
+}
+
+/* ---- Contact step ---- */
+.contactsHeader {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.contactsHeader h2 {
+  font-family: var(--typography-title-medium-font-family);
+  font-size: var(--typography-title-medium-font-size);
+  font-weight: var(--typography-title-medium-font-weight);
+}
+
+.contactsHeader p {
+  margin-bottom: 0;
+  font-size: 0.8125rem;
+  line-height: 18px;
+  color: var(--color-text-secondary);
+}
+
+.errorBanner {
+  background-color: rgba(239, 68, 68, 0.08);
+  border: 1px solid var(--color-safety-status-dangerous);
+  color: var(--color-safety-status-dangerous);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.dismissErrorBtn {
+  background: none !important;
+  border: none !important;
+  color: inherit !important;
+  font-size: 1.25rem !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 1 !important;
+  min-height: auto !important;
+  width: 20px !important;
+  height: 20px !important;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.dismissErrorBtn:hover {
+  opacity: 1;
+}
+
+/* Stacked vertical contact form */
+.contactForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* ---- Added contacts list ---- */
+.contactsList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.contactsList h3 {
+  font-family: var(--typography-label-medium-font-family);
+  font-size: var(--typography-label-medium-font-size);
+  font-weight: var(--typography-label-medium-font-weight);
+  color: var(--color-text-primary);
+}
+
+.contactsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.contactCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-background-app);
+  border-radius: 8px;
+}
+
+.contactDetails h4 {
+  font-family: var(--typography-label-large-font-family);
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+}
+
+.contactDetails p {
+  margin-bottom: 0;
+  font-size: 0.6875rem;
+  line-height: 14px;
+  color: var(--color-text-secondary);
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  min-height: auto;
+  padding: var(--spacing-xs);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  color: var(--color-safety-status-dangerous);
+}
+
+/* ---- Phone input compound field ---- */
+.phoneInputContainer {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--color-border-default);
+  border-radius: 14px;
+  background-color: var(--color-background-surface);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+.phoneInputContainer:focus-within {
+  border-color: var(--color-brand-primary);
+}
+
+.phonePrefix {
+  padding: 0 var(--spacing-sm);
+  background-color: var(--color-background-app);
+  color: var(--color-text-secondary);
+  font-family: var(--typography-body-medium-font-family);
+  font-size: var(--typography-body-medium-font-size);
+  border-right: 1px solid var(--color-border-default);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  user-select: none;
+}
+
+.phoneInputContainer input {
+  flex: 1;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  height: 52px;
+  min-height: 52px;
+  padding: 0 var(--spacing-sm);
+  text-align: left;
+  font-size: 1rem;
+}
+
+/* ---- Spinner ---- */
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

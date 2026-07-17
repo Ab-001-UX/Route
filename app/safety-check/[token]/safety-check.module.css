@@ -1,0 +1,974 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  background-color: #0b0d10;
+  background-image: radial-gradient(circle at top, #14181f 0%, #050608 100%);
+}
+
+.card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08), 
+              0 1px 3px rgba(0, 0, 0, 0.02),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-xl);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.shieldBadge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(221, 83%, 63%) 0%, hsl(221, 83%, 45%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-xs);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+}
+
+.shieldIcon {
+  color: white;
+}
+
+.cautionBadge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(45, 93%, 57%) 0%, hsl(45, 93%, 42%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-xs);
+  box-shadow: 0 8px 16px rgba(217, 119, 6, 0.2);
+}
+
+.clockIcon {
+  color: white;
+}
+
+.question {
+  font-family: var(--typography-title-large-font-family);
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
+}
+
+.subtext {
+  font-family: var(--typography-body-medium-font-family);
+  font-size: var(--typography-body-medium-font-size);
+  color: var(--color-text-secondary);
+  line-height: 24px;
+}
+
+.highlight {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.errorBanner {
+  color: var(--color-safety-status-dangerous);
+  background-color: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: var(--spacing-md);
+  font-size: 0.875rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+}
+
+.yesButton, .noButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: 18px;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.yesButton {
+  background: linear-gradient(135deg, hsl(142, 60%, 48%) 0%, hsl(142, 70%, 38%) 100%);
+  box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.3);
+}
+
+.yesButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.4);
+  filter: brightness(1.05);
+}
+
+.yesButton:active {
+  transform: translateY(0);
+}
+
+.noButton {
+  background: linear-gradient(135deg, hsl(0, 70%, 55%) 0%, hsl(0, 75%, 45%) 100%);
+  box-shadow: 0 8px 20px -4px rgba(239, 68, 68, 0.3);
+}
+
+.noButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(239, 68, 68, 0.4);
+  filter: brightness(1.05);
+}
+
+.noButton:active {
+  transform: translateY(0);
+}
+
+.metadataCard {
+  background: rgba(243, 244, 246, 0.5);
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.metadataCard h3 {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.8px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 2px 0;
+}
+
+.metaRow svg {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.metaLabel {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 2px;
+}
+
+.metaValue {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Traffic Triage Flow */
+.trafficActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.trafficButton, .maybeButton, .emergencyNoButton {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.trafficButton {
+  background: white;
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.trafficButton:hover {
+  background: var(--color-background-app);
+  border-color: hsl(214, 32%, 80%);
+}
+
+.maybeButton {
+  background: white;
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.maybeButton:hover {
+  background: var(--color-background-app);
+  border-color: hsl(214, 32%, 80%);
+}
+
+.actionDivider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--spacing-sm) 0;
+}
+
+.actionDivider::before, .actionDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border-default);
+}
+
+.actionDivider span {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  padding: 0 var(--spacing-md);
+}
+
+.emergencyNoButton {
+  background: linear-gradient(135deg, hsl(0, 72%, 51%) 0%, hsl(0, 80%, 42%) 100%);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.emergencyNoButton:hover {
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.3);
+  filter: brightness(1.05);
+}
+
+/* Success States */
+.successWrapper, .trafficWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+  gap: var(--spacing-md);
+}
+
+.successLogo {
+  color: var(--color-safety-status-safe);
+  filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.2));
+  animation: scaleBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.trafficLogo {
+  color: var(--color-brand-primary);
+  filter: drop-shadow(0 4px 10px rgba(37, 99, 235, 0.2));
+  animation: scaleBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes scaleBounce {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.successWrapper h1, .trafficWrapper h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* Loading Card */
+.loadingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xxl) var(--spacing-lg);
+}
+
+.spinner {
+  color: var(--color-brand-primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.pulseText {
+  font-size: 1.125rem;
+  font-weight: 600;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Error Card */
+.errorCard {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  border-radius: 20px;
+  padding: var(--spacing-xl);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-md);
+}
+
+.errorIcon {
+  color: var(--color-safety-status-dangerous);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border-default);
+}
+
+.supportNote {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Emergency Dashboard */
+.emergencyCard {
+  max-width: 480px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 40px -10px rgba(239, 68, 68, 0.1),
+              0 1px 3px rgba(0,0,0,0.01);
+}
+
+.emergencySiren {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+  background: rgba(239, 68, 68, 0.04);
+  border-radius: 16px;
+  padding: var(--spacing-md);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+}
+
+.sirenBeacons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.beaconRed, .beaconAlert {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.beaconRed {
+  background-color: #ef4444;
+  animation: flashRed 0.8s ease-in-out infinite alternate;
+}
+
+.beaconAlert {
+  background-color: #f59e0b;
+  animation: flashAlert 0.8s ease-in-out infinite alternate;
+  animation-delay: 0.4s;
+}
+
+@keyframes flashRed {
+  from { background-color: #b91c1c; box-shadow: 0 0 2px #ef4444; }
+  to { background-color: #ef4444; box-shadow: 0 0 16px #ef4444; }
+}
+
+@keyframes flashAlert {
+  from { background-color: #b45309; box-shadow: 0 0 2px #f59e0b; }
+  to { background-color: #f59e0b; box-shadow: 0 0 16px #f59e0b; }
+}
+
+.emergencySiren h1 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #b91c1c;
+  letter-spacing: 0.5px;
+}
+
+.emergencySiren p {
+  font-size: 0.8125rem;
+  color: #7f1d1d;
+  line-height: 18px;
+}
+
+.emergencyDialers {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.dialerLasema, .dialerPolice {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: 16px 10px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.dialerLasema {
+  background: #dc2626;
+}
+
+.dialerLasema:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.dialerPolice {
+  background: #1e3a8a;
+}
+
+.dialerPolice:hover {
+  background: #172554;
+  transform: translateY(-1px);
+}
+
+.emergencyDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Nigeria License Plate Design */
+.emergencyPlateCard {
+  background: #ffffff;
+  border: 4px solid #1e3a8a; /* Blue Nigeria boundary border */
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 0 0 1px #d1d5db;
+}
+
+.plateLabel {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  letter-spacing: 1.5px;
+  margin-bottom: 2px;
+}
+
+.plateNumber {
+  font-family: 'Courier New', Courier, monospace, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #15803d; /* Nigeria Green color plate code */
+  letter-spacing: 3px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+  text-transform: uppercase;
+}
+
+.emergencyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  background: #fafafa;
+  border: 1px solid var(--color-border-default);
+  border-radius: 14px;
+  padding: var(--spacing-md);
+}
+
+.gridItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gridLabel {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+}
+
+.gridValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.dangerValue {
+  color: var(--color-safety-status-dangerous);
+}
+
+/* GPS Snaps */
+.emergencyGPS {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.emergencyGPS h3 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: 0.5px;
+}
+
+.gpsIntro {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  line-height: 16px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.gpsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.gpsRow {
+  background: white;
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  padding: 10px var(--spacing-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.gpsRow:hover {
+  background: var(--color-background-app);
+  border-color: hsl(214, 32%, 85%);
+}
+
+.gpsInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gpsLabel {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.gpsCoords {
+  font-family: monospace;
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.mapLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  background: rgba(37, 99, 235, 0.06);
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.mapLink:hover {
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.noSnapshots {
+  text-align: center;
+  padding: var(--spacing-md);
+  background: #fafafa;
+  border: 1px dashed var(--color-border-default);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* TICKET CARD DESIGNS */
+.cardWrapper {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.safetyCard {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.cardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1.5px solid hsl(210, 16%, 93%);
+  padding-bottom: 14px;
+}
+
+.cardBrand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 850;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.8px;
+}
+
+.cardBrandIcon {
+  color: var(--color-brand-primary);
+}
+
+.cardCategoryLabel {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-app);
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.routeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--color-background-app);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border-default);
+}
+
+.routeRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.routeIconIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-background-card-hover);
+  color: var(--color-text-primary);
+}
+
+.routeTextCol {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.routeLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.routeVal {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.routeLineSeparator {
+  height: 1px;
+  border-top: 1.5px dashed var(--color-border-default);
+  margin: 2px 0;
+}
+
+.remarksContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: var(--color-background-app);
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-top: -4px;
+}
+
+.remarksLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.remarksValue {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  margin: 0;
+  text-align: left;
+}
+
+.cardDividerLine {
+  height: 1px;
+  border-top: 1.5px dashed hsl(210, 16%, 88%);
+  margin: 4px 0;
+}
+
+.cardFooterGrid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footerItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footerLabel {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.footerValue {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.footerValueStatus {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.ticketActionsRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.yesRectangleBtn, .noRectangleBtn {
+  flex: 1;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.5px;
+}
+
+.yesRectangleBtn {
+  background-color: #10b981;
+  box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.3);
+}
+
+.yesRectangleBtn:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.4);
+}
+
+.noRectangleBtn {
+  background-color: #ef4444;
+  box-shadow: 0 8px 20px -4px rgba(239, 68, 68, 0.3);
+}
+
+.noRectangleBtn:hover {
+  background-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(239, 68, 68, 0.4);
+}
+
+.pageHeader {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.pageTitle {
+  font-family: var(--typography-title-large-font-family);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.pageSubtitle {
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ticketRemarks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: var(--color-background-app);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-top: -4px;
+}
+
+.remarksLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.remarksValue {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  margin: 0;
+  text-align: left;
+}
+
+.pendingTimerBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--color-background-card-hover);
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  padding: 14px 18px;
+  width: 100%;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.pendingTimerIcon {
+  color: var(--color-brand-primary);
+  flex-shrink: 0;
+}
+
+.disclaimerBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: rgba(245, 158, 11, 0.08); /* Amber warning tint */
+  border: 1px dashed rgba(245, 158, 11, 0.3);
+  border-radius: 16px;
+  padding: 14px 18px;
+  width: 100%;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.disclaimerIcon {
+  color: #f59e0b; /* Amber */
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.disclaimerText {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}

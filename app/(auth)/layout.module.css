@@ -1,0 +1,23 @@
+.shell {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  width: 100vw;
+  min-height: 100vh;
+  background: radial-gradient(120% 120% at 50% 10%, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+:global(html[data-theme="dark"]) .shell {
+  background: radial-gradient(120% 120% at 50% 10%, hsl(222, 47%, 10%) 0%, hsl(222, 47%, 6%) 100%);
+}
+
+.viewport {
+  width: 100%;
+  max-width: 390px;
+  background-color: var(--color-background-surface);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(31, 38, 135, 0.06), 0 4px 12px rgba(0, 0, 0, 0.01);
+  min-height: 100vh;
+}

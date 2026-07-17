@@ -1,0 +1,167 @@
+.shell {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-background-app);
+  transition: background-color 0.3s ease;
+}
+
+.viewport {
+  width: 100%;
+  max-width: 390px;
+  background-color: var(--color-background-app);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.01);
+  height: 100dvh;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.content {
+  flex: 1;
+  padding-bottom: 116px; /* Prevent floating bottom nav overlap */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  view-transition-name: route-page;
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 350px;
+  height: 64px;
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 99px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10000;
+  padding: 0 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: 99px;
+  /* Only transition simple color and opacity properties to prevent layout shifts canceling clicks */
+  transition: background-color 0.2s ease, color 0.2s ease;
+  height: 48px;
+  flex: 1; /* Keep slot size static to avoid shifting touch targets */
+  position: relative;
+  z-index: 2;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: currentColor;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.label {
+  font-family: var(--typography-label-small-font-family);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: currentColor;
+  display: none;
+  white-space: nowrap;
+}
+
+.navItem:active .icon {
+  transform: scale(0.92);
+}
+
+.active {
+  color: #ffffff !important;
+  padding: 0 14px;
+  /* Keep sizing static inside its 25% slot to prevent click cancellation on Safari */
+  gap: 6px;
+}
+
+.navIndicator {
+  position: absolute;
+  top: 8px;
+  height: 48px;
+  left: 0;
+  background-color: hsl(0, 0%, 10%);
+  border-radius: 99px;
+  z-index: 1;
+  opacity: 0;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+.active .label {
+  display: inline-block;
+  color: #ffffff;
+}
+
+.loadingScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  min-height: 100vh;
+  background: radial-gradient(120% 120% at 50% 10%, hsl(40, 8%, 97%) 0%, hsl(40, 6%, 90%) 100%);
+  gap: 16px;
+  color: var(--color-text-primary);
+  font-family: var(--typography-body-medium-font-family), manrope, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+:global(html[data-theme="dark"]) .loadingScreen {
+  background: radial-gradient(120% 120% at 50% 10%, hsl(0, 0%, 11%) 0%, hsl(0, 0%, 7%) 100%);
+}
+
+:global(html[data-theme="dark"]) .bottomNav {
+  background-color: rgba(28, 28, 28, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+:global(html[data-theme="dark"]) .active {
+  color: hsl(0, 0%, 10%) !important;
+}
+
+:global(html[data-theme="dark"]) .active .label {
+  color: hsl(0, 0%, 10%);
+}
+
+:global(html[data-theme="dark"]) .navIndicator {
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: var(--color-brand-primary);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

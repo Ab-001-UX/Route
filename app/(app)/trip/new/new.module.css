@@ -1,0 +1,377 @@
+.container {
+  padding: 8px var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  min-height: 100vh;
+  background-color: var(--color-background-app);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.header h2 {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  min-height: auto;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.formLabel {
+  font-family: var(--typography-label-medium-font-family);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.helpText {
+  font-family: var(--typography-body-small-font-family);
+  font-size: 0.75rem;
+  line-height: 1.4; /* Explicitly tight line height for wrapped text */
+  color: var(--color-text-secondary);
+  display: block; /* Force inline span to act as block for correct margin/padding rendering */
+}
+
+.gpsIndicator {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.gpsBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: rgba(0, 0, 0, 0.06);
+  color: var(--color-text-secondary);
+}
+
+.gpsBadgeSuccess {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: var(--color-safety-status-safe);
+}
+
+.gpsBadgeError {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-safety-status-dangerous);
+}
+
+.sectionTitle {
+  font-family: var(--typography-label-medium-font-family);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-top: var(--spacing-sm);
+  margin-bottom: -4px;
+}
+
+.contactsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.noContactsWarning {
+  border: 1px dashed var(--color-safety-status-warning);
+  background-color: rgba(249, 115, 22, 0.05);
+  border-radius: 12px;
+  padding: var(--spacing-md);
+  text-align: center;
+}
+
+.noContactsWarning p {
+  color: var(--color-safety-status-warning);
+  font-size: 0.8125rem;
+}
+
+.optionCard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-background-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optionCardSelected {
+  border-color: var(--color-brand-primary);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.optionCardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.optionCardName {
+  font-family: var(--typography-label-medium-font-family);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.optionCardMeta {
+  font-family: var(--typography-body-small-font-family);
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+}
+
+.errorBanner {
+  background-color: rgba(239, 68, 68, 0.05);
+  border: 1px solid var(--color-safety-status-dangerous);
+  color: var(--color-safety-status-dangerous);
+  padding: var(--spacing-md);
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.submitBtn {
+  margin-top: var(--spacing-md);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Trip Warning Gate Banner styling */
+.warningBanner {
+  background: rgba(239, 68, 68, 0.08);
+  border: 2.5px solid var(--color-safety-status-dangerous);
+  border-radius: 16px;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  box-shadow: 0 4px 24px rgba(239, 68, 68, 0.1);
+  animation: dangerPulse 2s infinite ease-in-out;
+}
+
+@keyframes dangerPulse {
+  0% { 
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.7);
+  }
+  50% { 
+    box-shadow: 0 4px 24px rgba(239, 68, 68, 0.2);
+    border-color: var(--color-safety-status-dangerous);
+  }
+  100% { 
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.7);
+  }
+}
+
+.warningIcon {
+  color: var(--color-safety-status-dangerous);
+  flex-shrink: 0;
+  margin-top: 2px;
+  animation: iconPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes iconPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.warningInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.warningTitle {
+  font-family: var(--typography-title-medium-font-family);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #b91c1c;
+}
+
+.warningText {
+  font-family: var(--typography-body-medium-font-family);
+  font-size: 0.78125rem;
+  line-height: 1.5;
+  color: #7f1d1d;
+}
+
+.warningBadge {
+  align-self: flex-start;
+  background-color: #b91c1c;
+  color: #ffffff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* ── Missing Contacts Popup Modal ── */
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 10001;
+  animation: fadeInBackdrop 0.2s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modalSheet {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 10002;
+  background: var(--color-background-surface);
+  border-radius: 24px 24px 0 0;
+  padding: 36px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: sheetSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  align-items: center;
+}
+
+@keyframes sheetSlideUp {
+  from { transform: translate(-50%, 100%); }
+  to   { transform: translate(-50%, 0); }
+}
+
+.modalHandle {
+  width: 36px;
+  height: 4px;
+  background: var(--color-border-default);
+  border-radius: 2px;
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.modalClose {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  min-height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalIconContainer {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.modalWarningIcon {
+  color: var(--color-safety-status-dangerous);
+}
+
+.modalTitle {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.modalText {
+  font-family: var(--typography-body-medium-font-family);
+  font-size: 0.84375rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0 0 8px;
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column; /* Stacked CTAs */
+  gap: 10px;
+  width: 100%;
+}
+
+.modalActions button {
+  width: 100%;
+}
