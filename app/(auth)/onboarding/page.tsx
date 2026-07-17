@@ -198,27 +198,28 @@ export default function OnboardingPage() {
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
         <div className={styles.progressBarWrapper}>
+          {/* Row 1: Back button row */}
           <div className={styles.headerTopRow}>
-            <div className={styles.backBtnContainer}>
-              {step > 1 && (
-                <button
-                  type="button"
-                  onClick={goBack}
-                  className={styles.backBtn}
-                  aria-label="Go back"
-                >
-                  <ChevronLeft size={28} />
-                </button>
-              )}
-            </div>
-            <p className={styles.stepIndicator}>Step {step} of 5</p>
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={goBack}
+                className={styles.backBtn}
+                aria-label="Go back"
+              >
+                <ChevronLeft size={24} />
+              </button>
+            )}
           </div>
+          {/* Row 2: Progress Bar */}
           <div className={styles.progressBar}>
             <div
               className={styles.progressFill}
               style={{ width: `${(step / 5) * 100}%` }}
             />
           </div>
+          {/* Row 3: Step Indicator */}
+          <p className={styles.stepIndicator}>Step {step} of 5</p>
         </div>
       </header>
 

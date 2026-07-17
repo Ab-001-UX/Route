@@ -4,13 +4,13 @@
   align-items: stretch;
   height: 100vh;
   overflow-y: auto;
-  padding: var(--spacing-lg);
+  padding: 12px var(--spacing-lg) var(--spacing-lg);
   background-color: var(--color-background-surface);
   -webkit-overflow-scrolling: touch;
 }
 
 .onboardingHeader {
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
 }
 
 .backBtn {
@@ -24,11 +24,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-.backBtn:hover {
-  transform: translateX(-2px);
+  margin-left: -8px;
 }
 
 .progressBarWrapper {
@@ -58,22 +54,15 @@
   font-size: var(--typography-label-small-font-size);
   color: var(--color-text-secondary);
   text-align: right;
+  margin-top: 6px;
   margin-bottom: 0;
 }
 
 .headerTopRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 40px;
-  margin-bottom: 8px;
-}
-
-.backBtnContainer {
-  display: flex;
-  align-items: center;
-  width: 40px;
-  height: 40px;
+  min-height: 32px;
+  margin-bottom: 6px;
 }
 
 /* ---- Step content ---- */
