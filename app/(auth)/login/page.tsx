@@ -1,6 +1,7 @@
 "use client";
 
 import { SignIn } from "@clerk/nextjs";
+import RouteLogo from "@/components/ui/RouteLogo";
 
 export default function LoginPage() {
   return (
@@ -11,59 +12,95 @@ export default function LoginPage() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "var(--color-background-surface)",
+        backgroundColor: "var(--color-background-app)",
         padding: "20px",
-        gap: "12px",
       }}
     >
-      <SignIn
-        routing="hash"
-        fallbackRedirectUrl="/home"
-        signUpFallbackRedirectUrl="/onboarding"
-        appearance={{
-          layout: {
-            logoImageUrl: "/route-logo.png",
-            logoPlacement: "inside",
-          },
-          elements: {
-            headerTitle: {
-              paddingLeft: "4px",
-              overflow: "visible",
-              letterSpacing: "normal"
-            },
-            formButtonPrimary: {
-              fontSize: "0.95rem",
-              fontWeight: "700",
-              height: "48px",
-              textTransform: "none",
-            },
-            formFieldAction: {
-              minHeight: "0",
-              height: "28px",
-              width: "28px",
-              padding: "0",
-              borderRadius: "50%",
-              backgroundColor: "transparent",
-              border: "none",
-              boxShadow: "none",
-            },
-            formFieldAction__passwordToggle: {
-              minHeight: "0",
-              height: "28px",
-              width: "28px",
-              padding: "0",
-              borderRadius: "50%",
-              backgroundColor: "transparent",
-              border: "none",
-              boxShadow: "none",
-            },
-            formFieldActionIcon: {
-              width: "18px",
-              height: "18px",
-            }
-          }
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          backgroundColor: "var(--color-background-surface)",
+          borderRadius: "24px",
+          padding: "40px 24px 24px 24px",
+          boxShadow: "0 24px 64px rgba(31, 38, 135, 0.04), 0 4px 12px rgba(0, 0, 0, 0.01)",
+          border: "1px solid rgba(0, 0, 0, 0.04)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "16px",
         }}
-      />
+      >
+        <RouteLogo size={64} color="var(--color-text-primary)" lineColor="var(--color-background-app)" />
+
+        <SignIn
+          routing="hash"
+          fallbackRedirectUrl="/home"
+          signUpFallbackRedirectUrl="/onboarding"
+          appearance={{
+            elements: {
+              rootBox: {
+                width: "100%",
+                boxShadow: "none",
+              },
+              cardBox: {
+                width: "100%",
+                boxShadow: "none",
+                border: "none",
+                backgroundColor: "transparent",
+              },
+              card: {
+                width: "100%",
+                boxShadow: "none",
+                border: "none",
+                backgroundColor: "transparent",
+                padding: "0",
+              },
+              logoBox: {
+                display: "none",
+              },
+              logoLink: {
+                display: "none",
+              },
+              headerTitle: {
+                paddingLeft: "4px",
+                overflow: "visible",
+                letterSpacing: "normal"
+              },
+              formButtonPrimary: {
+                fontSize: "0.95rem",
+                fontWeight: "700",
+                height: "48px",
+                textTransform: "none",
+              },
+              formFieldAction: {
+                minHeight: "0",
+                height: "28px",
+                width: "28px",
+                padding: "0",
+                borderRadius: "50%",
+                backgroundColor: "transparent",
+                border: "none",
+                boxShadow: "none",
+              },
+              formFieldAction__passwordToggle: {
+                minHeight: "0",
+                height: "28px",
+                width: "28px",
+                padding: "0",
+                borderRadius: "50%",
+                backgroundColor: "transparent",
+                border: "none",
+                boxShadow: "none",
+              },
+              formFieldActionIcon: {
+                width: "18px",
+                height: "18px",
+              }
+            }
+          }}
+        />
+      </div>
     </main>
   );
 }
