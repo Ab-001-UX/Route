@@ -31,10 +31,14 @@ export default function LandingClient() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const handleCTA = useCallback(() => {
-    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-      setShowDesktopPanel(prev => !prev);
-    } else {
-      router.push("/welcome");
+    if (typeof window !== "undefined") {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isSmallViewport = window.innerWidth < 1024;
+      if (isMobileDevice || isSmallViewport) {
+        router.push("/welcome");
+      } else {
+        setShowDesktopPanel(prev => !prev);
+      }
     }
   }, [router]);
 
@@ -66,6 +70,9 @@ export default function LandingClient() {
             <Link href="#features" className={styles.navLink}>Features</Link>
             <Link href="#about" className={styles.navLink}>About Us</Link>
             <Link href="/privacy" className={styles.navLink}>Privacy</Link>
+            <button onClick={handleCTA} className={styles.navCta}>
+              Get Started
+            </button>
           </nav>
 
           {/* Mobile hamburger toggle */}

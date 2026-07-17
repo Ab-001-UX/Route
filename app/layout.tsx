@@ -45,6 +45,8 @@ export default function RootLayout({
     <html lang="en" className={`${montserrat.variable} ${manrope.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/route-logo.png" />
+        <link rel="apple-touch-icon" href="/route-logo.svg" type="image/svg+xml" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>

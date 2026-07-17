@@ -232,6 +232,8 @@
   padding: 10px 20px;
   border-radius: 99px;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
@@ -1610,9 +1612,4 @@
   margin: 0;
 }
 
-/* Never show the modal on mobile — handleCTA already routes to /welcome */
-@media (max-width: 1023px) {
-  .desktopModalBackdrop {
-    display: none;
-  }
-}
+/* Desktop modal backdrop visibility is controlled dynamically via React state */
