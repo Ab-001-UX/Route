@@ -198,13 +198,7 @@ export default function OnboardingPage() {
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
         <div className={styles.progressBarWrapper}>
-          <div className={styles.progressBar}>
-            <div
-              className={styles.progressFill}
-              style={{ width: `${(step / 5) * 100}%` }}
-            />
-          </div>
-          <div className={styles.headerBottomRow}>
+          <div className={styles.headerTopRow}>
             <div className={styles.backBtnContainer}>
               {step > 1 && (
                 <button
@@ -213,11 +207,17 @@ export default function OnboardingPage() {
                   className={styles.backBtn}
                   aria-label="Go back"
                 >
-                  <ChevronLeft size={20} />
+                  <ChevronLeft size={28} />
                 </button>
               )}
             </div>
             <p className={styles.stepIndicator}>Step {step} of 5</p>
+          </div>
+          <div className={styles.progressBar}>
+            <div
+              className={styles.progressFill}
+              style={{ width: `${(step / 5) * 100}%` }}
+            />
           </div>
         </div>
       </header>
