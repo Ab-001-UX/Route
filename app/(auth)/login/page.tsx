@@ -1,7 +1,6 @@
 "use client";
 
 import { SignIn } from "@clerk/nextjs";
-import RouteLogo from "@/components/ui/RouteLogo";
 
 export default function LoginPage() {
   return (
@@ -17,27 +16,16 @@ export default function LoginPage() {
         gap: "12px",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "8px" }}>
-        <RouteLogo size={64} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
-      </div>
-
       <SignIn
         routing="hash"
         fallbackRedirectUrl="/home"
         signUpFallbackRedirectUrl="/onboarding"
         appearance={{
+          layout: {
+            logoImageUrl: "/route-logo.png",
+            logoPlacement: "inside",
+          },
           elements: {
-            card: {
-              boxShadow: "none",
-              border: "none",
-              backgroundColor: "transparent",
-            },
-            logoBox: {
-              display: "none",
-            },
-            logoLink: {
-              display: "none",
-            },
             headerTitle: {
               paddingLeft: "4px",
               overflow: "visible",
