@@ -70,9 +70,6 @@ export default function LandingClient() {
             <Link href="#features" className={styles.navLink}>Features</Link>
             <Link href="#about" className={styles.navLink}>About Us</Link>
             <Link href="/privacy" className={styles.navLink}>Privacy</Link>
-            <button onClick={handleCTA} className={styles.navCta}>
-              Get Started
-            </button>
           </nav>
 
           {/* Mobile hamburger toggle */}
@@ -404,11 +401,11 @@ export default function LandingClient() {
 
             {/* Header */}
             <div className={styles.desktopModalIcon}>
-              <Smartphone size={32} color="#0f75fc" />
+              <RouteLogo size={38} color="#ffffff" lineColor="#000000" />
             </div>
-            <h3 className={styles.desktopModalTitle}>Route is built for mobile</h3>
+            <h3 className={styles.desktopModalTitle}>Route is a mobile app</h3>
             <p className={styles.desktopModalSub}>
-              Scan the QR code with your phone camera to open Route.
+              To secure your commutes with active GPS tracking, background safety timers, and instant plate lookups, Route is designed to run exclusively on mobile devices. Scan the QR code with your phone camera to open it.
             </p>
 
             {/* QR Code */}
