@@ -400,8 +400,8 @@ export default function LandingClient() {
             </button>
 
             {/* Header */}
-            <div className={styles.desktopModalIcon}>
-              <RouteLogo size={38} color="#ffffff" lineColor="#000000" />
+            <div style={{ marginBottom: "16px" }}>
+              <RouteLogo size={80} color="#ffffff" lineColor="#000000" />
             </div>
             <h3 className={styles.desktopModalTitle}>Route is a mobile app</h3>
             <p className={styles.desktopModalSub}>
