@@ -108,29 +108,32 @@ export default function LandingClient() {
               </a>
             </div>
 
-            {/* Desktop-only inline panel */}
+            {/* Desktop modal overlay */}
             {showDesktopPanel && (
-              <div className={styles.desktopPanel}>
-                <div className={styles.desktopPanelIcon}>
-                  <Smartphone size={20} color="#0f75fc" />
-                </div>
-                <div className={styles.desktopPanelContent}>
-                  <p className={styles.desktopPanelTitle}>Route is built for mobile</p>
-                  <p className={styles.desktopPanelSub}>Open this link on your phone to get started:</p>
-                  <div className={styles.desktopPanelUrl}>
+              <div className={styles.desktopModalBackdrop} onClick={() => setShowDesktopPanel(false)}>
+                <div className={styles.desktopModal} onClick={e => e.stopPropagation()}>
+                  <button
+                    onClick={() => setShowDesktopPanel(false)}
+                    className={styles.desktopModalClose}
+                    aria-label="Dismiss"
+                  >
+                    <X size={18} />
+                  </button>
+                  <div className={styles.desktopModalIcon}>
+                    <Smartphone size={40} color="#0f75fc" />
+                  </div>
+                  <h3 className={styles.desktopModalTitle}>Route is built for mobile</h3>
+                  <p className={styles.desktopModalSub}>
+                    Route is a mobile-first safety app. Open the link below on your phone to get started.
+                  </p>
+                  <div className={styles.desktopModalUrl}>
                     <span>{typeof window !== "undefined" ? window.location.origin : "route.app"}</span>
-                    <button onClick={handleCopyLink} className={styles.copyBtn}>
-                      {copied ? "✓ Copied" : "Copy"}
+                    <button onClick={handleCopyLink} className={styles.desktopModalCopyBtn}>
+                      {copied ? "✓ Copied!" : "Copy Link"}
                     </button>
                   </div>
+                  <p className={styles.desktopModalHint}>Tap the link on your phone's browser to open Route</p>
                 </div>
-                <button
-                  onClick={() => setShowDesktopPanel(false)}
-                  className={styles.desktopPanelClose}
-                  aria-label="Dismiss"
-                >
-                  <X size={14} />
-                </button>
               </div>
             )}
           </div>
@@ -392,9 +395,9 @@ export default function LandingClient() {
               <Link href="/privacy" className={styles.footerLink}>Privacy Policy</Link>
               <a href="https://termly.io" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Cookie Preferences</a>
               
-              <Link href="/welcome" className={styles.footerPillBtn}>
+              <button onClick={handleCTA} className={styles.footerPillBtn}>
                 Get Started
-              </Link>
+              </button>
             </div>
           </div>
         </div>
