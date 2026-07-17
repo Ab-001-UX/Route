@@ -224,6 +224,49 @@ export default function SettingsPage() {
     setActiveSection(activeSection === section ? null : section);
   };
 
+  // Permissions States for Location & Push Notifications
+  const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
+  const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
+
+  useEffect(() => {
+    // Check GPS permission state
+    if (typeof navigator !== "undefined" && navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" }).then((status) => {
+        setGpsPermission(status.state);
+        status.onchange = () => setGpsPermission(status.state);
+      }).catch(() => setGpsPermission("prompt"));
+    } else {
+      setGpsPermission("prompt");
+    }
+
+    // Check Notification permission state
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setPushPermission(Notification.permission);
+    } else {
+      setPushPermission("denied");
+    }
+  }, []);
+
+  const handleEnableGps = () => {
+    if (typeof navigator !== "undefined") {
+      navigator.geolocation.getCurrentPosition(
+        () => setGpsPermission("granted"),
+        () => setGpsPermission("denied")
+      );
+    }
+  };
+
+  const handleEnablePush = async () => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      try {
+        const result = await Notification.requestPermission();
+        setPushPermission(result);
+      } catch {
+        setPushPermission("denied");
+      }
+    }
+  };
+
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -545,6 +588,58 @@ export default function SettingsPage() {
                 />
                 <span className={styles.slider}></span>
               </label>
+            </div>
+          </div>
+
+          {/* Location Services Row */}
+          <div className={styles.rowItem} style={{ alignItems: "center" }}>
+            <div className={styles.rowLeft} style={{ alignItems: "center" }}>
+              <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)" }}>
+                <Globe size={20} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className={styles.rowLabel}>Location Services (GPS)</span>
+                <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>
+                  {gpsPermission === "granted" ? "Access granted" : gpsPermission === "denied" ? "Access blocked (check browser settings)" : "Not configured / skipped"}
+                </span>
+              </div>
+            </div>
+            <div className={styles.rowRight}>
+              {gpsPermission !== "granted" && (
+                <button 
+                  onClick={handleEnableGps} 
+                  className="secondary"
+                  style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
+                >
+                  Enable
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Push Notifications Row */}
+          <div className={styles.rowItem} style={{ alignItems: "center" }}>
+            <div className={styles.rowLeft} style={{ alignItems: "center" }}>
+              <div className={styles.iconWrapper} style={{ color: "hsl(25, 95%, 53%)" }}>
+                <Bell size={20} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className={styles.rowLabel}>Push Notifications</span>
+                <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>
+                  {pushPermission === "granted" ? "Access granted" : pushPermission === "denied" ? "Access blocked (check browser settings)" : "Not configured / skipped"}
+                </span>
+              </div>
+            </div>
+            <div className={styles.rowRight}>
+              {pushPermission !== "granted" && (
+                <button 
+                  onClick={handleEnablePush} 
+                  className="secondary"
+                  style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
+                >
+                  Enable
+                </button>
+              )}
             </div>
           </div>
 

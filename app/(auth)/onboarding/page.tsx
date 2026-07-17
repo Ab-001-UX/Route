@@ -53,6 +53,13 @@ export default function OnboardingPage() {
     }
   }, [currentUser, router, hasAutoAdvanced]);
 
+  // Reset/Initialize inactivity timer on mount to prevent premature logouts
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("route-last-active", Date.now().toString());
+    }
+  }, []);
+
   const formatPhoneNumber = (num: string): string => {
     return normalizeNigerianPhoneNumber(num);
   };
@@ -186,6 +193,9 @@ export default function OnboardingPage() {
     setFinishLoading(true);
     try {
       await updateUser({ displayName });
+      if (typeof window !== "undefined") {
+        localStorage.setItem("route-last-active", Date.now().toString());
+      }
       router.push("/home");
     } catch (err: any) {
       setContactError(err.message || "Failed to save profile.");
