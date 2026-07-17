@@ -400,12 +400,10 @@ export default function LandingClient() {
             </button>
 
             {/* Header */}
-            <div style={{ marginBottom: "16px" }}>
-              <RouteLogo size={80} color="#ffffff" lineColor="#000000" />
-            </div>
+            <RouteLogo size={80} color="#ffffff" lineColor="#000000" />
             <h3 className={styles.desktopModalTitle}>Route is a mobile app</h3>
             <p className={styles.desktopModalSub}>
-              To secure your commutes with active GPS tracking, background safety timers, and instant plate lookups, Route is designed to run exclusively on mobile devices. Scan the QR code with your phone camera to open it.
+              To secure commutes with active GPS, safety timers, and plate lookups, Route runs only as a mobile web app. Scan the QR code to open it on your phone.
             </p>
 
             {/* QR Code */}
