@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import styles from "./landing-page.module.css";
 import RouteLogo from "@/components/ui/RouteLogo";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function LandingClient() {
   const router = useRouter();
@@ -100,42 +101,13 @@ export default function LandingClient() {
           <div className={styles.heroButtonsWrap}>
             <div className={styles.heroButtons}>
               <button onClick={handleCTA} className={styles.primaryHeroBtn}>
-                {showDesktopPanel ? "Open on Phone" : "Get Started"}
+                Get Started
                 <ArrowUpRight size={18} />
               </button>
               <a href="#features" className={styles.secondaryHeroBtn}>
                 Learn More
               </a>
             </div>
-
-            {/* Desktop modal overlay */}
-            {showDesktopPanel && (
-              <div className={styles.desktopModalBackdrop} onClick={() => setShowDesktopPanel(false)}>
-                <div className={styles.desktopModal} onClick={e => e.stopPropagation()}>
-                  <button
-                    onClick={() => setShowDesktopPanel(false)}
-                    className={styles.desktopModalClose}
-                    aria-label="Dismiss"
-                  >
-                    <X size={18} />
-                  </button>
-                  <div className={styles.desktopModalIcon}>
-                    <Smartphone size={40} color="#0f75fc" />
-                  </div>
-                  <h3 className={styles.desktopModalTitle}>Route is built for mobile</h3>
-                  <p className={styles.desktopModalSub}>
-                    Route is a mobile-first safety app. Open the link below on your phone to get started.
-                  </p>
-                  <div className={styles.desktopModalUrl}>
-                    <span>{typeof window !== "undefined" ? window.location.origin : "route.app"}</span>
-                    <button onClick={handleCopyLink} className={styles.desktopModalCopyBtn}>
-                      {copied ? "✓ Copied!" : "Copy Link"}
-                    </button>
-                  </div>
-                  <p className={styles.desktopModalHint}>Tap the link on your phone's browser to open Route</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
@@ -410,6 +382,52 @@ export default function LandingClient() {
           <span className={styles.copyright}>© 2026 Route App. Built by Abimbola. All rights reserved.</span>
         </div>
       </footer>
+
+      {/* Desktop modal — rendered at root level to avoid overflow clipping */}
+      {showDesktopPanel && (
+        <div className={styles.desktopModalBackdrop} onClick={() => setShowDesktopPanel(false)}>
+          <div className={styles.desktopModal} onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setShowDesktopPanel(false)}
+              className={styles.desktopModalClose}
+              aria-label="Dismiss"
+            >
+              &#x2715;
+            </button>
+
+            {/* Header */}
+            <div className={styles.desktopModalIcon}>
+              <Smartphone size={32} color="#0f75fc" />
+            </div>
+            <h3 className={styles.desktopModalTitle}>Route is built for mobile</h3>
+            <p className={styles.desktopModalSub}>
+              Scan the QR code with your phone camera to open Route.
+            </p>
+
+            {/* QR Code */}
+            <div className={styles.desktopModalQR}>
+              <QRCodeSVG
+                value={typeof window !== "undefined" ? window.location.origin : "https://route.app"}
+                size={180}
+                bgColor="#ffffff"
+                fgColor="#0a0a0a"
+                level="M"
+              />
+            </div>
+
+            {/* URL + copy */}
+            <div className={styles.desktopModalUrl}>
+              <span>{typeof window !== "undefined" ? window.location.origin : "route.app"}</span>
+              <button onClick={handleCopyLink} className={styles.desktopModalCopyBtn}>
+                {copied ? "✓ Copied!" : "Copy Link"}
+              </button>
+            </div>
+            <p className={styles.desktopModalHint}>
+              After opening on your phone — tap <strong>Share → Add to Home Screen</strong> for the best experience.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
