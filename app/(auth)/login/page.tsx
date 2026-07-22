@@ -67,11 +67,34 @@ export default function LoginPage() {
                 overflow: "visible",
                 letterSpacing: "normal"
               },
+              formFieldInput: {
+                height: "46px",
+                minHeight: "46px",
+                borderRadius: "12px",
+                border: "1.5px solid var(--color-border-default)",
+                fontSize: "0.95rem",
+                boxShadow: "none",
+              },
+              formFieldLabel: {
+                fontSize: "0.875rem",
+                fontWeight: "600",
+                color: "var(--color-text-primary)",
+              },
               formButtonPrimary: {
                 fontSize: "0.95rem",
                 fontWeight: "700",
                 height: "48px",
                 textTransform: "none",
+                borderRadius: "14px",
+              },
+              footer: {
+                background: "transparent",
+                border: "none",
+                boxShadow: "none",
+              },
+              footerAction: {
+                background: "transparent",
+                border: "none",
               },
               formFieldAction: {
                 minHeight: "0",
