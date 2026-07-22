@@ -146,6 +146,14 @@ export default function OnboardingPage() {
     }
   };
 
+  // State to track active invitation link for specific contact during onboarding
+  const [activeInvite, setActiveInvite] = useState<{ contactId: string; name: string; url: string; copied: boolean } | null>(null);
+
+  const constructInviteMessage = (contactName: string, myName: string, url: string) => {
+    const sender = myName.trim() || "Your friend";
+    return `Hi ${contactName}, I've added you as my trusted emergency safety contact on Route so you can receive live tracking updates whenever I take a trip. Please tap the link below to confirm your phone number and activate safety notifications for my rides:\n\n${url}`;
+  };
+
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setContactError("");
@@ -159,11 +167,19 @@ export default function OnboardingPage() {
     }
 
     try {
-      await addContact({
+      const result = await addContact({
         name: contactName,
         relationship: contactRelation,
         phone: formattedContactPhone,
         email: contactEmail || undefined,
+      });
+
+      const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
+      setActiveInvite({
+        contactId: result.contactId || result.token,
+        name: contactName,
+        url: inviteUrl,
+        copied: false,
       });
 
       setContactName("");
@@ -177,9 +193,27 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleCopyInviteMessage = async (contactName: string, url: string) => {
+    const message = constructInviteMessage(contactName, displayName, url);
+    try {
+      await navigator.clipboard.writeText(message);
+      if (activeInvite) {
+        setActiveInvite({ ...activeInvite, copied: true });
+        setTimeout(() => {
+          setActiveInvite((prev) => (prev ? { ...prev, copied: false } : null));
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Failed to copy invite message:", err);
+    }
+  };
+
   const handleRemoveContact = async (id: any) => {
     try {
       await removeContact({ contactId: id });
+      if (activeInvite?.contactId === id) {
+        setActiveInvite(null);
+      }
     } catch (err) {
       console.error("Failed to remove contact:", err);
     }
@@ -423,21 +457,61 @@ export default function OnboardingPage() {
             <div className={styles.contactsList}>
               <h3>Your Contacts ({contacts.length}/5)</h3>
               <div className={styles.contactsGrid}>
-                {contacts.map((c) => (
-                  <div key={c._id} className={styles.contactCard}>
-                    <div className={styles.contactDetails}>
-                      <h4>{c.name}</h4>
-                      <p>{c.relationship} • {c.phone}</p>
+                {contacts.map((c) => {
+                  const isLinkActive = activeInvite && activeInvite.contactId === c._id;
+                  return (
+                    <div key={c._id} style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+                      <div className={styles.contactCard}>
+                        <div className={styles.contactDetails}>
+                          <h4>{c.name}</h4>
+                          <p>{c.relationship} • {c.phone}</p>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveContact(c._id)}
+                          className={styles.deleteBtn}
+                          aria-label="Remove contact"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+
+                      {/* Dedicated Contact Activation Link Card */}
+                      {isLinkActive && (
+                        <div className={styles.inviteCard}>
+                          <p style={{ margin: "0", fontSize: "0.75rem", fontWeight: "600", color: "var(--color-text-primary)" }}>
+                            Send Invitation Link to {c.name}:
+                          </p>
+                          <textarea
+                            readOnly
+                            rows={3}
+                            value={constructInviteMessage(c.name, displayName, activeInvite.url)}
+                            className={styles.inviteMessageText}
+                          />
+                          <div className={styles.stackedActions}>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyInviteMessage(c.name, activeInvite.url)}
+                              className="primary"
+                            >
+                              {activeInvite.copied ? (
+                                <><Check size={16} /> Copied Message!</>
+                              ) : (
+                                "Copy Invite Message"
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setActiveInvite(null)}
+                              className="secondary"
+                            >
+                              Dismiss
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <button
-                      onClick={() => handleRemoveContact(c._id)}
-                      className={styles.deleteBtn}
-                      aria-label="Remove contact"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

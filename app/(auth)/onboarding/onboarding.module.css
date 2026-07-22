@@ -268,6 +268,47 @@
   color: var(--color-safety-status-dangerous);
 }
 
+/* Dedicated invite link box attached to contact card */
+.inviteCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background-color: var(--color-background-surface);
+  border: 1.5px solid var(--color-border-default);
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.inviteMessageText {
+  font-family: var(--typography-body-small-font-family);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-app);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 10px;
+  resize: none;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.stackedActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.stackedActions button {
+  width: 100%;
+  min-height: 44px;
+}
+
 /* ---- Phone input compound field ---- */
 .phoneInputContainer {
   display: flex;

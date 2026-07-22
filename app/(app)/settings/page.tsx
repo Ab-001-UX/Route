@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import styles from "./settings.module.css";
 import { useSettings } from "@/components/providers/ThemeProvider";
 import { normalizeNigerianPhoneNumber } from "@/lib/validators";
+import PwaInstallBanner from "@/components/features/PwaInstallBanner";
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -321,38 +322,18 @@ export default function SettingsPage() {
     }
   };
 
-  const handleResend = async (id: any) => {
-    try {
-      const result = await resendInvite({ contactId: id });
-      const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
-      
-      // Copy directly to clipboard
-      await navigator.clipboard.writeText(inviteUrl);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2500);
-      
-      alert("New invite link generated and copied to clipboard! Share it with your contact via WhatsApp.");
-    } catch (err) {
-      console.error("Failed to regenerate invite link:", err);
-    }
-  };
-
-  const copyUrl = async (url: string, id: string) => {
-    await navigator.clipboard.writeText(url);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2500);
-  };
-
-
   return (
     <main className={styles.container}>
-      {/* Settings Header (Styled exactly like screenshot) */}
+      {/* Settings Header */}
       <header className={styles.settingsHeader}>
         <button className={`${styles.backBtn} backBtn`} onClick={() => router.push("/home")} aria-label="Go back to home">
           <ChevronLeft size={20} />
         </button>
         <h1>Settings</h1>
       </header>
+
+      {/* Smart PWA Install Banner */}
+      <PwaInstallBanner />
 
       {/* User info banner */}
       <div className={styles.userCard}>
@@ -364,27 +345,6 @@ export default function SettingsPage() {
           <p>{dbUser?.phone || user?.primaryPhoneNumber?.phoneNumber || "Phone verified"}</p>
         </div>
       </div>
-
-      {/* Shareable Activation URL notifier */}
-      {lastGeneratedUrl && (
-        <section className={styles.successNotification}>
-          <h4>Contact Added!</h4>
-          <p>Copy and send this invite link manually to your contact via WhatsApp:</p>
-          <div className={styles.linkShare}>
-            <input type="text" readOnly value={lastGeneratedUrl} />
-            <button
-              onClick={() => copyUrl(lastGeneratedUrl, "new")}
-              className="primary"
-              style={{ minWidth: "40px", minHeight: "40px", padding: 0 }}
-            >
-              {copiedId === "new" ? <Check size={18} /> : <Copy size={18} />}
-            </button>
-          </div>
-          <button onClick={() => setLastGeneratedUrl(null)} className={styles.closeNotification}>
-            Dismiss
-          </button>
-        </section>
-      )}
 
       {/* CATEGORY 1: GENERAL */}
       <div className={styles.groupSection}>
@@ -456,27 +416,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Notifications Accordion Row */}
-          <div className={styles.rowItem} onClick={() => toggleSection("notifications")}>
-            <div className={styles.rowLeft}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(25, 95%, 53%)" }}>
-                <Bell size={20} />
-              </div>
-              <span className={styles.rowLabel}>Notifications</span>
-            </div>
-            <div className={styles.rowRight}>
-              {activeSection === "notifications" ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </div>
-          </div>
-          {activeSection === "notifications" && (
-            <div className={styles.expandableContent}>
-              <h4>Emergency Ride Notifications</h4>
-              <p style={{ margin: "0", fontSize: "13px", color: "var(--color-text-secondary)", lineHeight: "1.4" }}>
-                Route pushes safety check-ins and emergency alerts directly to your Active contacts. You can manage who receives notifications in the **Trusted Contacts** section under Security.
-              </p>
-            </div>
-          )}
-
           {/* Appearance Accordion Row */}
           <div className={styles.rowItem} onClick={() => toggleSection("appearance")}>
             <div className={styles.rowLeft}>
@@ -538,27 +477,6 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-
-          {/* Language Selector Row */}
-          <div className={styles.rowItem} onClick={() => toggleSection("language")}>
-            <div className={styles.rowLeft}>
-              <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)" }}>
-                <Globe size={20} />
-              </div>
-              <span className={styles.rowLabel}>Language</span>
-            </div>
-            <div className={styles.rowRight}>
-              <span style={{ fontSize: "13px", color: "var(--color-text-secondary)", marginRight: "8px" }}>English (NG)</span>
-              {activeSection === "language" ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </div>
-          </div>
-          {activeSection === "language" && (
-            <div className={styles.expandableContent}>
-              <p style={{ margin: "0", fontSize: "13px", color: "var(--color-text-secondary)" }}>
-                Route currently supports English (Nigeria) optimized for Lagos State locations. More regional diallects coming soon.
-              </p>
-            </div>
-          )}
         </div>
       </div>
 
@@ -566,7 +484,7 @@ export default function SettingsPage() {
       <div className={styles.groupSection}>
         <h3 className={styles.groupTitle}>Security & Safety</h3>
         <div className={styles.cardGroup}>
-          {/* Local Privacy Mode (Toggle switch directly in row like screenshot) */}
+          {/* Local Privacy Mode */}
           <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
             <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
               <div className={styles.iconWrapper} style={{ color: "hsl(45, 93%, 47%)", marginTop: "2px" }}>
@@ -591,53 +509,51 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Location Services Row */}
+          {/* Location Services Row — Button-Only Status */}
           <div className={styles.rowItem} style={{ alignItems: "center" }}>
             <div className={styles.rowLeft} style={{ alignItems: "center" }}>
               <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)" }}>
                 <Globe size={20} />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span className={styles.rowLabel}>Location Services (GPS)</span>
-                <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>
-                  {gpsPermission === "granted" ? "Access granted" : gpsPermission === "denied" ? "Access blocked (check browser settings)" : "Not configured / skipped"}
-                </span>
-              </div>
+              <span className={styles.rowLabel}>Location Services (GPS)</span>
             </div>
             <div className={styles.rowRight}>
-              {gpsPermission !== "granted" && (
+              {gpsPermission === "granted" ? (
+                <span style={{ padding: "4px 12px", borderRadius: "12px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", fontSize: "13px", fontWeight: 600 }}>
+                  Active
+                </span>
+              ) : (
                 <button 
                   onClick={handleEnableGps} 
                   className="secondary"
                   style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
                 >
-                  Enable
+                  Set Up GPS
                 </button>
               )}
             </div>
           </div>
 
-          {/* Push Notifications Row */}
+          {/* Push Notifications Row — Button-Only Status */}
           <div className={styles.rowItem} style={{ alignItems: "center" }}>
             <div className={styles.rowLeft} style={{ alignItems: "center" }}>
               <div className={styles.iconWrapper} style={{ color: "hsl(25, 95%, 53%)" }}>
                 <Bell size={20} />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span className={styles.rowLabel}>Push Notifications</span>
-                <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>
-                  {pushPermission === "granted" ? "Access granted" : pushPermission === "denied" ? "Access blocked (check browser settings)" : "Not configured / skipped"}
-                </span>
-              </div>
+              <span className={styles.rowLabel}>Push Notifications</span>
             </div>
             <div className={styles.rowRight}>
-              {pushPermission !== "granted" && (
+              {pushPermission === "granted" ? (
+                <span style={{ padding: "4px 12px", borderRadius: "12px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", fontSize: "13px", fontWeight: 600 }}>
+                  Active
+                </span>
+              ) : (
                 <button 
                   onClick={handleEnablePush} 
                   className="secondary"
                   style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
                 >
-                  Enable
+                  Set Up Push
                 </button>
               )}
             </div>
@@ -743,30 +659,73 @@ export default function SettingsPage() {
                     You have no active emergency contacts configured. You need at least 2 to log trips.
                   </p>
                 ) : (
-                  contacts.map((c) => (
-                    <div key={c._id} className={styles.contactCard}>
-                      <div className={styles.contactInfo}>
-                        <h5>{c.name}</h5>
-                        <p>{c.relationship} • {c.phone}</p>
-                        <div className={styles.contactMeta}>
-                          <span className={`${styles.statusBadge} ${styles[c.status]}`}>
-                            {c.status}
-                          </span>
-                          <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
-                            RR: {c.responseRate}%
-                          </span>
+                  contacts.map((c) => {
+                    const isResendActive = activeResend && activeResend.contactId === c._id;
+                    return (
+                      <div key={c._id} style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+                        <div className={styles.contactCard}>
+                          <div className={styles.contactInfo}>
+                            <h5>{c.name}</h5>
+                            <p>{c.relationship} • {c.phone}</p>
+                            <div className={styles.contactMeta}>
+                              <span className={`${styles.statusBadge} ${styles[c.status]}`}>
+                                {c.status}
+                              </span>
+                              <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                                RR: {c.responseRate}%
+                              </span>
+                            </div>
+
+                            {/* Full rectangle Resend Link button under contact info */}
+                            <button
+                              onClick={() => handleResend(c)}
+                              className="secondary"
+                              style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px", marginTop: "8px" }}
+                            >
+                              Resend Link
+                            </button>
+                          </div>
+
+                          <div className={styles.contactActions}>
+                            <button onClick={() => handleRemove(c._id)} className={styles.deleteBtn} title="Remove contact">
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </div>
+
+                        {/* Dedicated Resend Link Box for this specific contact */}
+                        {isResendActive && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "12px", backgroundColor: "var(--color-background-surface)", border: "1.5px solid var(--color-border-default)", borderRadius: "12px", width: "100%", boxSizing: "border-box" }}>
+                            <p style={{ margin: 0, fontSize: "12px", fontWeight: 600, color: "var(--color-text-primary)" }}>
+                              Send Activation Link to {c.name}:
+                            </p>
+                            <textarea
+                              readOnly
+                              rows={3}
+                              value={constructInviteMessage(c.name, dbUser?.displayName || user?.fullName || "Your friend", activeResend.url)}
+                              style={{ width: "100%", fontSize: "12px", padding: "8px", borderRadius: "8px", backgroundColor: "var(--color-background-app)", border: "1px solid var(--color-border-default)", color: "var(--color-text-primary)", resize: "none", boxSizing: "border-box" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
+                              <button
+                                onClick={() => handleCopyResendMessage(c.name, activeResend.url)}
+                                className="primary"
+                                style={{ width: "100%", minHeight: "38px", fontSize: "12px" }}
+                              >
+                                {activeResend.copied ? "Copied Message!" : "Copy Invite Message"}
+                              </button>
+                              <button
+                                onClick={() => setActiveResend(null)}
+                                className="secondary"
+                                style={{ width: "100%", minHeight: "38px", fontSize: "12px" }}
+                              >
+                                Dismiss
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className={styles.contactActions}>
-                        <button onClick={() => handleResend(c._id)} title="Copy WhatsApp invite link">
-                          {copiedId === c._id ? <Check size={14} /> : <RefreshCw size={14} />}
-                        </button>
-                        <button onClick={() => handleRemove(c._id)} className={styles.deleteBtn} title="Remove contact">
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -954,6 +913,61 @@ export default function SettingsPage() {
                 }}
               >
                 Cancel
+              </button>
+      {/* GPS Permission Guide Modal */}
+      {showGpsGuide && (
+        <div className={styles.overlay}>
+          <div className={styles.backdrop} onClick={() => setShowGpsGuide(false)} />
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <Globe size={32} className={styles.warningIcon} style={{ color: "var(--color-brand-primary)" }} />
+              <h3>How to Enable Location (GPS)</h3>
+            </div>
+            <p className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.5" }}>
+              Route needs Location Services to periodically log coordinates during active rides so your emergency contacts can view your live progress.
+              <br /><br />
+              <strong>If access is blocked by your browser:</strong>
+              <br />
+              1. Tap the <strong>AA</strong> or <strong>Padlock icon</strong> in your browser address bar.
+              <br />
+              2. Tap <strong>Website Settings</strong>.
+              <br />
+              3. Change <strong>Location</strong> permission to <strong>Allow</strong>.
+            </p>
+            <div className={styles.modalActions}>
+              <button className="primary" onClick={() => { setShowGpsGuide(false); handleEnableGps(); }}>
+                Try Requesting Again
+              </button>
+              <button className="secondary" onClick={() => setShowGpsGuide(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Push Notification Guide Modal */}
+      {showPushGuide && (
+        <div className={styles.overlay}>
+          <div className={styles.backdrop} onClick={() => setShowPushGuide(false)} />
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <Bell size={32} className={styles.warningIcon} style={{ color: "hsl(25, 95%, 53%)" }} />
+              <h3>How to Enable Push Notifications</h3>
+            </div>
+            <p className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.5" }}>
+              During a ride, every second counts. Adding Route to your Home Screen gives you instant 1-tap emergency access and enables your phone to receive instant trip safety notifications.
+              <br /><br />
+              <strong>On iPhone (Safari):</strong> Tap <strong>Share</strong> button $\rightarrow$ Select <strong>Add to Home Screen</strong>.
+              <br /><br />
+              <strong>On Android (Chrome):</strong> Tap <strong>Menu (3 dots)</strong> $\rightarrow$ Select <strong>Install / Add to Home Screen</strong>.
+            </p>
+            <div className={styles.modalActions}>
+              <button className="primary" onClick={() => { setShowPushGuide(false); handleEnablePush(); }}>
+                Try Requesting Again
+              </button>
+              <button className="secondary" onClick={() => setShowPushGuide(false)}>
+                Close
               </button>
             </div>
           </div>

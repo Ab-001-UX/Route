@@ -1,0 +1,81 @@
+.bannerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background-color: var(--color-background-surface);
+  border: 1.5px solid var(--color-border-default);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.bannerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bannerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-primary);
+}
+
+.bannerTitleGroup h4 {
+  font-family: var(--typography-title-medium-font-family);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.icon {
+  color: var(--color-brand-primary);
+}
+
+.closeBtn {
+  background: none !important;
+  border: none !important;
+  color: var(--color-text-secondary) !important;
+  padding: 4px !important;
+  min-height: auto !important;
+  cursor: pointer !important;
+  opacity: 0.7;
+}
+
+.closeBtn:hover {
+  opacity: 1;
+}
+
+.rationaleText {
+  font-family: var(--typography-body-small-font-family);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.stepsBox {
+  background-color: var(--color-background-app);
+  border: 1px solid var(--color-border-default);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.stepRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+}
+
+.gotItBtn {
+  width: 100%;
+  min-height: 40px !important;
+  font-size: 0.8125rem !important;
+}
