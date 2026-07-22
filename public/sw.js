@@ -1,4 +1,4 @@
-const CACHE_NAME = "route-cache-v2";
+const CACHE_NAME = "route-cache-v3";
 const STATIC_ASSETS = [
   "/home",
   "/saved",

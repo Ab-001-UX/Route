@@ -26,6 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import styles from "./home.module.css";
 import PostRideSurvey from "@/components/features/PostRideSurvey";
+import PwaInstallBanner from "@/components/features/PwaInstallBanner";
 import Skeleton from "@/components/ui/Skeleton";
 import { trackEvent } from "@/lib/analytics";
 
@@ -696,6 +697,7 @@ export default function HomePage() {
       {/* STATE 1: SEARCH & ACTIONS FORM */}
       {uiState === "search" && (
         <>
+          <PwaInstallBanner />
           {pinnedVehicles.length > 0 && (
             <section className={styles.pinnedRow}>
               <div className={styles.pinnedRowHeader}>
