@@ -425,6 +425,32 @@ button.cl-formFieldActionButton svg {
   margin-bottom: 4px !important;
 }
 
+/* Contain Clerk social login buttons & "Last used" badges */
+.cl-rootBox .cl-socialButtons,
+.cl-rootBox [class*="socialButtons"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.cl-rootBox .cl-socialButtonsBlockButton,
+.cl-rootBox .cl-socialButtonsIconButton,
+.cl-rootBox [class*="socialButtonsBlockButton"],
+.cl-rootBox [class*="socialButtonsIconButton"] {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.cl-rootBox .cl-badge,
+.cl-rootBox [class*="badge"],
+.cl-rootBox .cl-socialButtonsBlockButton__badge {
+  right: 12px !important;
+  top: -10px !important;
+  box-sizing: border-box !important;
+}
+
 /* Make Clerk footer transparent so it doesn't render as a grey block */
 .cl-rootBox .cl-footer,
 .cl-rootBox .cl-footerAction,
