@@ -65,6 +65,7 @@ self.addEventListener("fetch", (event) => {
       event.request.method !== "GET" ||
       url.protocol.startsWith("chrome-extension") ||
       url.hostname.includes("convex.cloud") ||
+      url.hostname.includes("clerk") ||
       url.pathname.startsWith("/_next/webpack-hmr") ||
       url.pathname === "/sw.js"
     ) {
