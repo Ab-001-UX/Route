@@ -359,6 +359,28 @@ button.cl-formFieldActionButton svg {
 }
 
 /* Tighten layout and pull fields up in Clerk forms */
+.cl-rootBox,
+.cl-cardBox,
+.cl-card,
+.cl-main,
+.cl-signIn-start,
+.cl-signUp-start,
+.cl-form,
+.cl-formFieldRow,
+.cl-formField {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.cl-rootBox .cl-card,
+.cl-rootBox .cl-main {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 .cl-rootBox .cl-header,
 .cl-rootBox [class*="header"] {
   margin-bottom: 12px !important;
