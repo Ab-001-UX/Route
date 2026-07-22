@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "npx convex codegen && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint --dir app --dir components --dir lib --dir convex"
   },
   "dependencies": {
     "@clerk/nextjs": "6.9.6",
