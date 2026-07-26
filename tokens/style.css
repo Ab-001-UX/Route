@@ -555,6 +555,17 @@ button.cl-formFieldActionButton svg {
   box-sizing: border-box !important;
 }
 
+/* Cloudflare Turnstile captcha widget spacing */
+.cl-rootBox .cl-captchaRow,
+.cl-rootBox .cl-captcha,
+.cl-rootBox [class*="captchaRow"],
+.cl-rootBox [class*="captcha"],
+.cl-rootBox [class*="cl-captcha"] {
+  margin: 18px 0 12px 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
 /* Make Clerk footer transparent so it doesn't render as a grey block */
 .cl-rootBox .cl-footer,
 .cl-rootBox .cl-footerAction,

@@ -90,9 +90,9 @@
 }
 
 .active {
+  background-color: hsl(0, 0%, 10%);
   color: #ffffff !important;
-  padding: 0 14px;
-  /* Keep sizing static inside its 25% slot to prevent click cancellation on Safari */
+  padding: 0 16px;
   gap: 6px;
 }
 
