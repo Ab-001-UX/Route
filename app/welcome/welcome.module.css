@@ -252,6 +252,7 @@
   color: var(--color-text-primary);
   letter-spacing: -0.02em;
   margin: 0 0 8px;
+  text-align: center !important;
 }
 
 .introText p {
@@ -260,6 +261,7 @@
   color: var(--color-text-secondary);
   font-weight: 500;
   margin: 0;
+  text-align: center !important;
 }
 
 /* Feature List */
