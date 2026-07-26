@@ -298,8 +298,10 @@
 }
 
 .featureText strong {
-  font-size: 1.0625rem; /* Increased from 15px to establish visual hierarchy */
-  font-weight: 800; /* Extra bold for heading distinction */
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--color-text-primary);
   line-height: 1.25;
 }
