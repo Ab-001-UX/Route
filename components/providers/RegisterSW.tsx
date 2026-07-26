@@ -33,6 +33,23 @@ export default function RegisterSW() {
           .register("/sw.js")
           .then((reg) => {
             console.log("Service Worker registered with scope:", reg.scope);
+            // Force SW update check on every page visit
+            reg.update();
+
+            // Listen for new service worker installation and auto-reload when activated
+            reg.addEventListener("updatefound", () => {
+              const newWorker = reg.installing;
+              if (newWorker) {
+                newWorker.addEventListener("statechange", () => {
+                  if (newWorker.state === "activated" && !navigator.serviceWorker.controller) {
+                    // First SW activation
+                  } else if (newWorker.state === "activated") {
+                    // Cache updated -> reload page to show fresh content
+                    window.location.reload();
+                  }
+                });
+              }
+            });
           })
           .catch((err) => {
             console.error("Service Worker registration failed:", err);

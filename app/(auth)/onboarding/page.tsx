@@ -274,7 +274,7 @@ export default function OnboardingPage() {
             <Phone size={48} className={styles.accentIcon} />
           </div>
           <h1>Enter your WhatsApp number</h1>
-          <p>Please provide your active WhatsApp number. This is used to send safety check-in links to your emergency contacts on WhatsApp so they can track your trip and receive notifications.</p>
+          <p>Please provide your active WhatsApp number.</p>
 
           {errorMsg && (
             <div className={styles.errorBanner}>
