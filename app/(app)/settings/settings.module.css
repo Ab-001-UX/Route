@@ -506,8 +506,11 @@ input:checked + .slider:before {
 
 .modalHeader {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
 }
 
 .warningIcon {
@@ -519,6 +522,7 @@ input:checked + .slider:before {
   font-weight: 800;
   color: var(--color-text-primary);
   margin: 0;
+  text-align: center;
 }
 
 .modalText {
