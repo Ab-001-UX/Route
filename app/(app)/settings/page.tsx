@@ -248,9 +248,23 @@ export default function SettingsPage() {
     }
   }, []);
 
-  // Permission guide modals
+  // Permission guide modals & device OS detection
   const [showGpsGuide, setShowGpsGuide] = useState(false);
   const [showPushGuide, setShowPushGuide] = useState(false);
+  const [deviceOS, setDeviceOS] = useState<"ios" | "android" | "other">("other");
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined") {
+      const ua = navigator.userAgent || "";
+      if (/iPhone|iPad|iPod/.test(ua)) {
+        setDeviceOS("ios");
+      } else if (/Android/.test(ua)) {
+        setDeviceOS("android");
+      } else {
+        setDeviceOS("other");
+      }
+    }
+  }, []);
 
   // Active resend link box state for specific contact in Settings
   const [activeResend, setActiveResend] = useState<{ contactId: string; name: string; url: string; copied: boolean } | null>(null);
@@ -979,19 +993,53 @@ export default function SettingsPage() {
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <Globe size={32} className={styles.warningIcon} style={{ color: "var(--color-brand-primary)" }} />
-              <h3>How to Enable Location (GPS)</h3>
+              <h3>Enable Location Services</h3>
             </div>
-            <p className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.5" }}>
-              Route needs Location Services to periodically log coordinates during active rides so your emergency contacts can view your live progress.
-              <br /><br />
-              <strong>If access is blocked by your browser:</strong>
-              <br />
-              1. Tap the <strong>AA</strong> or <strong>Padlock icon</strong> in your browser address bar.
-              <br />
-              2. Tap <strong>Website Settings</strong>.
-              <br />
-              3. Change <strong>Location</strong> permission to <strong>Allow</strong>.
-            </p>
+            <div className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.6" }}>
+              <p style={{ margin: "0 0 12px 0" }}>
+                Route needs Location Services to automatically track your coordinates during active trips so your emergency contacts can view your live progress.
+              </p>
+
+              {deviceOS === "ios" && (
+                <div>
+                  <strong>How to turn on Location on iPhone:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Open your iPhone <strong>Settings</strong> app.</li>
+                    <li>Tap <strong>Privacy & Security</strong>.</li>
+                    <li>Tap <strong>Location Services</strong>.</li>
+                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Select <strong>While Using the App</strong>.</li>
+                  </ol>
+                </div>
+              )}
+
+              {deviceOS === "android" && (
+                <div>
+                  <strong>How to turn on Location on Android:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Open your Android <strong>Settings</strong> app.</li>
+                    <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
+                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Tap <strong>Permissions</strong>, then tap <strong>Location</strong>.</li>
+                    <li>Select <strong>Allow only while using the app</strong>.</li>
+                  </ol>
+                </div>
+              )}
+
+              {deviceOS === "other" && (
+                <div>
+                  <strong>How to turn on Location:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Tap the <strong>Lock icon</strong> next to the URL in your browser.</li>
+                    <li>Select <strong>Site Settings</strong>.</li>
+                    <li>Change <strong>Location</strong> permission to <strong>Allow</strong>.</li>
+                  </ol>
+                </div>
+              )}
+              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
+                Tip: Make sure you have added Route to your Home Screen to enable 1-tap emergency access and live trip tracking.
+              </p>
+            </div>
             <div className={styles.modalActions}>
               <button className="primary" onClick={() => { setShowGpsGuide(false); handleEnableGps(); }}>
                 Try Requesting Again
@@ -1011,15 +1059,53 @@ export default function SettingsPage() {
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <Bell size={32} className={styles.warningIcon} style={{ color: "hsl(25, 95%, 53%)" }} />
-              <h3>How to Enable Push Notifications</h3>
+              <h3>Enable Push Notifications</h3>
             </div>
-            <p className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.5" }}>
-              During a ride, every second counts. Adding Route to your Home Screen gives you instant 1-tap emergency access and enables your phone to receive instant trip safety notifications.
-              <br /><br />
-              <strong>On iPhone (Safari):</strong> Tap <strong>Share</strong> button $\rightarrow$ Select <strong>Add to Home Screen</strong>.
-              <br /><br />
-              <strong>On Android (Chrome):</strong> Tap <strong>Menu (3 dots)</strong> $\rightarrow$ Select <strong>Install / Add to Home Screen</strong>.
-            </p>
+            <div className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.6" }}>
+              <p style={{ margin: "0 0 12px 0" }}>
+                Push notifications alert you instantly when a safety check-in is due or if an emergency contact responds.
+              </p>
+
+              {deviceOS === "ios" && (
+                <div>
+                  <strong>How to unblock Notifications on iPhone:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Open your iPhone <strong>Settings</strong> app.</li>
+                    <li>Tap <strong>Notifications</strong>.</li>
+                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Turn on <strong>Allow Notifications</strong>.</li>
+                    <li>Tap <strong>Try Requesting Again</strong> below.</li>
+                  </ol>
+                </div>
+              )}
+
+              {deviceOS === "android" && (
+                <div>
+                  <strong>How to unblock Notifications on Android:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Open your Android <strong>Settings</strong> app.</li>
+                    <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
+                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Tap <strong>Notifications</strong> and turn on <strong>Allow Notifications</strong>.</li>
+                    <li>Tap <strong>Try Requesting Again</strong> below.</li>
+                  </ol>
+                </div>
+              )}
+
+              {deviceOS === "other" && (
+                <div>
+                  <strong>How to turn on Push Notifications:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Tap the <strong>Try Requesting Again</strong> button below.</li>
+                    <li>Tap <strong>Allow</strong> on your browser notification pop-up.</li>
+                    <li>If blocked: Tap the <strong>Lock icon</strong> in your browser address bar, tap <strong>Notifications</strong>, and select <strong>Allow</strong>.</li>
+                  </ol>
+                </div>
+              )}
+              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
+                Tip: Make sure you have added Route to your Home Screen to enable instant push notifications.
+              </p>
+            </div>
             <div className={styles.modalActions}>
               <button className="primary" onClick={() => { setShowPushGuide(false); handleEnablePush(); }}>
                 Try Requesting Again
