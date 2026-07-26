@@ -185,7 +185,7 @@ export default function WelcomeClient() {
           {/* Landing Copy & Actions */}
           <div className={styles.contentContainer}>
             <div className={styles.introText}>
-              <h1>Your safety in the hands <br /> of those you trust most.</h1>
+              <h1>Your safety in the hands <br /> of those you trust.</h1>
               <p>Automatically notify your loved ones and trusted contacts when you board.</p>
             </div>
 

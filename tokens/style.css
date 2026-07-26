@@ -414,15 +414,42 @@ button.cl-formFieldActionButton svg {
   box-shadow: 0 0 0 1px var(--color-text-primary) !important;
 }
 
-.cl-rootBox .cl-formFieldLabel {
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
+.cl-rootBox .cl-headerTitle,
+.cl-rootBox [class*="headerTitle"] {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 2px !important;
+}
+
+.cl-rootBox .cl-headerSubtitle,
+.cl-rootBox [class*="headerSubtitle"] {
+  font-size: 0.8125rem !important;
   margin-bottom: 6px !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.cl-rootBox .cl-header,
+.cl-rootBox [class*="header"] {
+  margin-bottom: 6px !important;
+  padding: 0 !important;
+}
+
+.cl-rootBox .cl-formFieldLabel,
+.cl-rootBox [class*="formFieldLabel"] {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 3px !important;
   color: var(--color-text-primary) !important;
 }
 
-.cl-rootBox .cl-formField {
-  margin-bottom: 4px !important;
+.cl-rootBox .cl-formField,
+.cl-rootBox [class*="formField"] {
+  margin-bottom: 6px !important;
+}
+
+.cl-rootBox .cl-dividerRow,
+.cl-rootBox [class*="dividerRow"] {
+  margin: 8px 0 !important;
 }
 
 /* Contain Clerk social login buttons & "Last used" badges */
@@ -436,7 +463,7 @@ button.cl-formFieldActionButton svg {
   justify-content: center !important;
   box-sizing: border-box !important;
   padding: 0 !important;
-  margin: 12px 0 !important;
+  margin: 6px 0 10px 0 !important;
 }
 
 .cl-rootBox .cl-socialButtonsBlockButton,
@@ -452,8 +479,8 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox .cl-socialButtonsIconButton,
 .cl-rootBox [class*="socialButtonsIconButton"] {
   flex: 1 !important;
-  height: 48px !important;
-  max-height: 48px !important;
+  height: 44px !important;
+  max-height: 44px !important;
   max-width: 100px !important;
   border-radius: 12px !important;
   border: 1px solid var(--color-border-default) !important;
@@ -461,11 +488,11 @@ button.cl-formFieldActionButton svg {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 10px !important;
+  padding: 8px !important;
   box-sizing: border-box !important;
 }
 
-/* Ensure social provider icons/SVGs/images inside buttons stay strictly 24x24px */
+/* Ensure social provider icons/SVGs/images inside buttons stay strictly 22x22px */
 .cl-rootBox .cl-socialButtonsIconButton svg,
 .cl-rootBox .cl-socialButtonsIconButton img,
 .cl-rootBox .cl-socialButtonsBlockButton svg,
@@ -473,12 +500,12 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox [class*="socialButtonsProviderIcon"],
 .cl-rootBox [class*="socialButtonsIconButton"] img,
 .cl-rootBox [class*="socialButtonsIconButton"] svg {
-  width: 24px !important;
-  height: 24px !important;
-  max-width: 24px !important;
-  max-height: 24px !important;
-  min-width: 24px !important;
-  min-height: 24px !important;
+  width: 22px !important;
+  height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
   object-fit: contain !important;
 }
 
@@ -498,7 +525,7 @@ button.cl-formFieldActionButton svg {
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  margin-top: 8px !important;
+  margin-top: 6px !important;
 }/* Global back button style (circular container with chevron) */
 .backBtn {
   width: 44px;

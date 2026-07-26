@@ -9,12 +9,15 @@ export default function SignupPage() {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
         minHeight: "100vh",
         width: "100%",
         backgroundColor: "var(--color-background-surface)",
-        padding: "32px 16px 24px 16px",
+        paddingTop: "calc(env(safe-area-inset-top, 24px) + 20px)",
+        paddingLeft: "16px",
+        paddingRight: "16px",
+        paddingBottom: "24px",
         boxSizing: "border-box",
       }}
     >
@@ -25,11 +28,11 @@ export default function SignupPage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "16px",
+          gap: "10px",
           boxSizing: "border-box",
         }}
       >
-        <RouteLogo size={60} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
+        <RouteLogo size={56} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
 
         <SignUp
           routing="hash"
