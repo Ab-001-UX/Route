@@ -414,42 +414,70 @@ button.cl-formFieldActionButton svg {
   box-shadow: 0 0 0 1px var(--color-text-primary) !important;
 }
 
+.cl-rootBox .cl-card,
+.cl-rootBox [class*="card"] {
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 0 !important;
+}
+
+.cl-rootBox .cl-main,
+.cl-rootBox [class*="main"] {
+  gap: 2px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.cl-rootBox .cl-header,
+.cl-rootBox [class*="header"] {
+  margin: 0 0 2px 0 !important;
+  padding: 0 !important;
+}
+
 .cl-rootBox .cl-headerTitle,
 .cl-rootBox [class*="headerTitle"] {
   font-size: 1.25rem !important;
   font-weight: 800 !important;
-  margin-bottom: 2px !important;
+  margin: 0 0 2px 0 !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
 }
 
 .cl-rootBox .cl-headerSubtitle,
 .cl-rootBox [class*="headerSubtitle"] {
   font-size: 0.8125rem !important;
-  margin-bottom: 6px !important;
-  color: var(--color-text-secondary) !important;
-}
-
-.cl-rootBox .cl-header,
-.cl-rootBox [class*="header"] {
-  margin-bottom: 6px !important;
+  margin: 0 0 4px 0 !important;
   padding: 0 !important;
+  line-height: 1.3 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .cl-rootBox .cl-formFieldLabel,
 .cl-rootBox [class*="formFieldLabel"] {
   font-size: 0.8125rem !important;
   font-weight: 600 !important;
-  margin-bottom: 3px !important;
+  margin-bottom: 2px !important;
   color: var(--color-text-primary) !important;
+}
+
+.cl-rootBox .cl-form,
+.cl-rootBox [class*="form"] {
+  margin-top: 0 !important;
+  padding: 0 !important;
 }
 
 .cl-rootBox .cl-formField,
 .cl-rootBox [class*="formField"] {
-  margin-bottom: 6px !important;
+  margin-bottom: 4px !important;
+  padding: 0 !important;
 }
 
 .cl-rootBox .cl-dividerRow,
 .cl-rootBox [class*="dividerRow"] {
-  margin: 8px 0 !important;
+  margin: 4px 0 !important;
+  padding: 0 !important;
+  height: 20px !important;
+  min-height: 20px !important;
 }
 
 /* Contain Clerk social login buttons & "Last used" badges */
@@ -457,13 +485,13 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox [class*="socialButtons"] {
   display: flex !important;
   flex-direction: row !important;
-  gap: 12px !important;
+  gap: 10px !important;
   width: 100% !important;
   max-width: 100% !important;
   justify-content: center !important;
   box-sizing: border-box !important;
   padding: 0 !important;
-  margin: 6px 0 10px 0 !important;
+  margin: 4px 0 4px 0 !important;
 }
 
 .cl-rootBox .cl-socialButtonsBlockButton,
@@ -479,8 +507,8 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox .cl-socialButtonsIconButton,
 .cl-rootBox [class*="socialButtonsIconButton"] {
   flex: 1 !important;
-  height: 44px !important;
-  max-height: 44px !important;
+  height: 42px !important;
+  max-height: 42px !important;
   max-width: 100px !important;
   border-radius: 12px !important;
   border: 1px solid var(--color-border-default) !important;
@@ -488,7 +516,7 @@ button.cl-formFieldActionButton svg {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 8px !important;
+  padding: 6px !important;
   box-sizing: border-box !important;
 }
 
@@ -525,7 +553,7 @@ button.cl-formFieldActionButton svg {
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  margin-top: 6px !important;
+  margin-top: 4px !important;
 }/* Global back button style (circular container with chevron) */
 .backBtn {
   width: 44px;
