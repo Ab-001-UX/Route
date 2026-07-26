@@ -248,12 +248,55 @@ export default function SettingsPage() {
     }
   }, []);
 
+  // Permission guide modals
+  const [showGpsGuide, setShowGpsGuide] = useState(false);
+  const [showPushGuide, setShowPushGuide] = useState(false);
+
+  // Active resend link box state for specific contact in Settings
+  const [activeResend, setActiveResend] = useState<{ contactId: string; name: string; url: string; copied: boolean } | null>(null);
+
+  const constructInviteMessage = (contactName: string, myName: string, url: string) => {
+    return `Hi ${contactName}, I've added you as my trusted emergency safety contact on Route so you can receive live tracking updates whenever I take a trip. Please tap the link below to confirm your phone number and activate safety notifications for my rides:\n\n${url}`;
+  };
+
+  const handleResend = async (c: any) => {
+    try {
+      const result = await resendInvite({ contactId: c._id });
+      const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
+      setActiveResend({
+        contactId: c._id,
+        name: c.name,
+        url: inviteUrl,
+        copied: false,
+      });
+    } catch (err) {
+      console.error("Failed to regenerate invite link:", err);
+    }
+  };
+
+  const handleCopyResendMessage = async (contactName: string, url: string) => {
+    const message = constructInviteMessage(contactName, dbUser?.displayName || user?.fullName || "Your friend", url);
+    try {
+      await navigator.clipboard.writeText(message);
+      if (activeResend) {
+        setActiveResend({ ...activeResend, copied: true });
+        setTimeout(() => {
+          setActiveResend((prev) => (prev ? { ...prev, copied: false } : null));
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Failed to copy invite message:", err);
+    }
+  };
+
   const handleEnableGps = () => {
     if (typeof navigator !== "undefined") {
       navigator.geolocation.getCurrentPosition(
         () => setGpsPermission("granted"),
-        () => setGpsPermission("denied")
+        () => setShowGpsGuide(true)
       );
+    } else {
+      setShowGpsGuide(true);
     }
   };
 
@@ -262,9 +305,14 @@ export default function SettingsPage() {
       try {
         const result = await Notification.requestPermission();
         setPushPermission(result);
+        if (result !== "granted") {
+          setShowPushGuide(true);
+        }
       } catch {
-        setPushPermission("denied");
+        setShowPushGuide(true);
       }
+    } else {
+      setShowPushGuide(true);
     }
   };
 
@@ -290,7 +338,12 @@ export default function SettingsPage() {
 
       // Construct invite link
       const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
-      setLastGeneratedUrl(inviteUrl);
+      setActiveResend({
+        contactId: result.contactId || result.token,
+        name,
+        url: inviteUrl,
+        copied: false,
+      });
       
       // Clear inputs
       setName("");
@@ -914,6 +967,11 @@ export default function SettingsPage() {
               >
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* GPS Permission Guide Modal */}
       {showGpsGuide && (
         <div className={styles.overlay}>
