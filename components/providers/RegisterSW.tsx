@@ -33,19 +33,20 @@ export default function RegisterSW() {
           .register("/sw.js")
           .then((reg) => {
             console.log("Service Worker registered with scope:", reg.scope);
-            // Force SW update check on every page visit
             reg.update();
 
-            // Listen for new service worker installation and auto-reload when activated
+            // Auto-reload page when new service worker takes over
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
+              window.location.reload();
+            });
+
             reg.addEventListener("updatefound", () => {
               const newWorker = reg.installing;
               if (newWorker) {
                 newWorker.addEventListener("statechange", () => {
-                  if (newWorker.state === "activated" && !navigator.serviceWorker.controller) {
-                    // First SW activation
-                  } else if (newWorker.state === "activated") {
-                    // Cache updated -> reload page to show fresh content
-                    window.location.reload();
+                  if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                    // Trigger skipWaiting to activate immediately
+                    newWorker.postMessage({ type: "SKIP_WAITING" });
                   }
                 });
               }

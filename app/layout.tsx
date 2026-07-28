@@ -93,6 +93,18 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Auto-reload page automatically if opened during a Vercel server deployment swap
+              window.addEventListener('error', function(e) {
+                var msg = (e && e.message) ? e.message.toLowerCase() : '';
+                if (msg.indexOf('loading chunk') !== -1 || msg.indexOf('failed to fetch') !== -1 || msg.indexOf('dynamically imported module') !== -1) {
+                  var lastReload = sessionStorage.getItem('auto_deployment_reload');
+                  if (!lastReload || (Date.now() - parseInt(lastReload, 10)) > 10000) {
+                    sessionStorage.setItem('auto_deployment_reload', Date.now().toString());
+                    window.location.reload();
+                  }
+                }
+              }, true);
+
               window.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() {
                   var splash = document.getElementById('app-startup-splash');
