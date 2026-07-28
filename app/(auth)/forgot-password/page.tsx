@@ -290,7 +290,7 @@ export default function ForgotPasswordPage() {
               <Lock className={styles.inputIcon} size={20} />
               <input
                 type={showPass ? "text" : "password"}
-                placeholder="New password"
+                placeholder="Enter new password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 disabled={loading}
@@ -312,7 +312,7 @@ export default function ForgotPasswordPage() {
               <Lock className={styles.inputIcon} size={20} />
               <input
                 type={showConfirmPass ? "text" : "password"}
-                placeholder="Confirm password"
+                placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={loading}

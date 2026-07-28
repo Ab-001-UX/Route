@@ -35,7 +35,8 @@ export default function SignupPage() {
         <RouteLogo size={56} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
 
         <SignUp
-          routing="hash"
+          path="/signup"
+          signInUrl="/login"
           fallbackRedirectUrl="/onboarding"
           signInFallbackRedirectUrl="/login"
           appearance={{
