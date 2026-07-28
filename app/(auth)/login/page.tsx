@@ -1,151 +1,264 @@
 "use client";
 
-import { SignIn } from "@clerk/nextjs";
+import { useState } from "react";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import RouteLogo from "@/components/ui/RouteLogo";
+import styles from "../auth.module.css";
 
 export default function LoginPage() {
-  return (
-    <main
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        minHeight: "100vh",
-        width: "100%",
-        backgroundColor: "var(--color-background-surface)",
-        paddingTop: "calc(env(safe-area-inset-top, 24px) + 20px)",
-        paddingLeft: "16px",
-        paddingRight: "16px",
-        paddingBottom: "24px",
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "360px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "10px",
-          boxSizing: "border-box",
-        }}
-      >
-        <RouteLogo size={56} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
+  const { isLoaded, signIn, setActive } = useSignIn();
+  const router = useRouter();
 
-        <SignIn
-          routing="virtual"
-          signUpUrl="/signup"
-          fallbackRedirectUrl="/home"
-          signUpFallbackRedirectUrl="/onboarding"
-          appearance={{
-            layout: {
-              socialButtonsVariant: "iconButton",
-              socialButtonsPlacement: "top",
-              showOptionalFields: false,
-            },
-            elements: {
-              rootBox: {
-                width: "100%",
-                boxShadow: "none",
-              },
-              cardBox: {
-                width: "100%",
-                boxShadow: "none",
-                border: "none",
-                backgroundColor: "transparent",
-              },
-              card: {
-                width: "100%",
-                boxShadow: "none",
-                border: "none",
-                backgroundColor: "transparent",
-                padding: "0",
-                margin: "0",
-              },
-              main: {
-                width: "100%",
-                padding: "0",
-                margin: "0",
-              },
-              form: {
-                width: "100%",
-              },
-              formField: {
-                width: "100%",
-              },
-              logoBox: {
-                display: "none",
-              },
-              logoLink: {
-                display: "none",
-              },
-              headerTitle: {
-                paddingLeft: "0",
-                overflow: "visible",
-                letterSpacing: "normal",
-              },
-              formFieldInput: {
-                width: "100%",
-                height: "46px",
-                minHeight: "46px",
-                borderRadius: "12px",
-                border: "1.5px solid var(--color-border-default)",
-                fontSize: "0.95rem",
-                boxShadow: "none",
-                boxSizing: "border-box",
-              },
-              formFieldLabel: {
-                fontSize: "0.875rem",
-                fontWeight: "600",
-                color: "var(--color-text-primary)",
-              },
-              formButtonPrimary: {
-                width: "100%",
-                fontSize: "0.95rem",
-                fontWeight: "700",
-                height: "48px",
-                textTransform: "none",
-                borderRadius: "14px",
-              },
-              footer: {
-                background: "transparent",
-                border: "none",
-                boxShadow: "none",
-                width: "100%",
-              },
-              footerAction: {
-                background: "transparent",
-                border: "none",
-              },
-              formFieldAction: {
-                minHeight: "0",
-                height: "28px",
-                width: "28px",
-                padding: "0",
-                borderRadius: "50%",
-                backgroundColor: "transparent",
-                border: "none",
-                boxShadow: "none",
-              },
-              formFieldAction__passwordToggle: {
-                minHeight: "0",
-                height: "28px",
-                width: "28px",
-                padding: "0",
-                borderRadius: "50%",
-                backgroundColor: "transparent",
-                border: "none",
-                boxShadow: "none",
-              },
-              formFieldActionIcon: {
-                width: "18px",
-                height: "18px",
-              },
-            },
-          }}
-        />
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // OTP state
+  const [verifying, setVerifying] = useState(false);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
+
+  const handleOAuth = (provider: "oauth_apple" | "oauth_facebook" | "oauth_google") => {
+    if (!isLoaded) return;
+    signIn.authenticateWithRedirect({
+      strategy: provider,
+      redirectUrl: "/sso-callback",
+      redirectUrlComplete: "/home",
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoaded) return;
+    setError("");
+    setLoading(true);
+
+    try {
+      const result = await signIn.create({
+        identifier: email,
+        password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/home");
+      } else if (result.status === "needs_first_factor" || result.status === "needs_second_factor") {
+        setVerifying(true);
+      } else {
+        setError("Sign in incomplete. Please check your credentials.");
+      }
+    } catch (err: any) {
+      setError(err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "Invalid email or password.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Verification submission for OTP
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoaded) return;
+    const otpCode = code.join("");
+    if (otpCode.length < 6) {
+      setError("Please enter the complete 6-digit code.");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const result = await signIn.attemptFirstFactor({
+        strategy: "email_code",
+        code: otpCode,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/home");
+      } else {
+        setError("Verification code incorrect.");
+      }
+    } catch (err: any) {
+      setError(err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "Failed to verify code.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // OTP input change handler
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) value = value[value.length - 1];
+    const newCode = [...code];
+    newCode[index] = value;
+    setCode(newCode);
+
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-input-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !code[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-input-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
+  if (verifying) {
+    return (
+      <main className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <RouteLogo size={56} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
+            <h1 className={styles.title}>Check your email</h1>
+            <p className={styles.subtitle}>to continue to Route</p>
+            <div className={styles.emailBadge}>
+              <span>{email}</span>
+            </div>
+          </div>
+
+          {error && <div className={styles.errorBanner}>{error}</div>}
+
+          <form onSubmit={handleVerifyOtp} className={styles.form}>
+            <div className={styles.otpGrid}>
+              {code.map((digit, idx) => (
+                <input
+                  key={idx}
+                  id={`otp-input-${idx}`}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                  className={styles.otpInput}
+                  autoFocus={idx === 0}
+                />
+              ))}
+            </div>
+
+            <p className={styles.resendText}>
+              Didn't receive a code?{" "}
+              <button type="button" className={styles.resendBtn} onClick={() => handleSubmit(new Event("submit") as any)}>
+                Resend
+              </button>
+            </p>
+
+            <button type="submit" disabled={loading || code.join("").length < 6} className={styles.primaryBtn}>
+              {loading ? "Verifying..." : "Continue ›"}
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <RouteLogo size={56} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
+          <h1 className={styles.title}>Sign in to Route</h1>
+          <p className={styles.subtitle}>Welcome back! Please sign in to continue</p>
+        </div>
+
+        {/* Unbreakable 3-Column Social Icons Row */}
+        <div className={styles.socialRow}>
+          <button type="button" onClick={() => handleOAuth("oauth_apple")} className={styles.socialBtn} aria-label="Sign in with Apple">
+            <svg className={styles.socialIcon} viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.54c.66-.8 1.11-1.92.99-3.04-.96.04-2.13.64-2.82 1.44-.61.71-1.15 1.86-1.01 2.97 1.08.08 2.18-.57 2.84-1.37z" />
+            </svg>
+          </button>
+          <button type="button" onClick={() => handleOAuth("oauth_facebook")} className={styles.socialBtn} aria-label="Sign in with Facebook">
+            <svg className={styles.socialIcon} viewBox="0 0 24 24" fill="#1877F2">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+          </button>
+          <button type="button" onClick={() => handleOAuth("oauth_google")} className={styles.socialBtn} aria-label="Sign in with Google">
+            <svg className={styles.socialIcon} viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+            </svg>
+          </button>
+        </div>
+
+        <div className={styles.divider}>
+          <span>or</span>
+        </div>
+
+        {error && <div className={styles.errorBanner}>{error}</div>}
+
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="email" className={styles.label}>
+              Email address
+            </label>
+            <div className={styles.inputWrapper}>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                className={styles.input}
+              />
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <div className={styles.inputWrapper}>
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className={`${styles.input} ${styles.inputWithToggle}`}
+              />
+              <button
+                type="button"
+                className={styles.eyeToggleBtn}
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" disabled={loading} className={styles.primaryBtn}>
+            {loading ? "Signing in..." : "Continue ›"}
+          </button>
+        </form>
+
+        <p className={styles.footerText}>
+          Don't have an account?{" "}
+          <Link href="/signup" className={styles.footerLink}>
+            Sign up
+          </Link>
+        </p>
       </div>
     </main>
   );
