@@ -303,10 +303,14 @@ export default function SignupPage() {
                 type="button"
                 tabIndex={-1}
                 className={styles.eyeToggleBtn}
-                onClick={(e) => {
+                onPointerDown={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   setShowPassword((prev) => !prev);
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                 }}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
@@ -343,10 +347,14 @@ export default function SignupPage() {
                 type="button"
                 tabIndex={-1}
                 className={styles.eyeToggleBtn}
-                onClick={(e) => {
+                onPointerDown={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   setShowConfirmPassword((prev) => !prev);
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                 }}
                 aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
               >
