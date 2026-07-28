@@ -10,6 +10,15 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   useEffect(() => {
     const handleAlerts = () => {
+      // Remove any Clerk "Last used" badges dynamically
+      const badges = document.querySelectorAll(".cl-badge, [class*='badge'], [class*='Badge']");
+      badges.forEach((b) => {
+        if (b.textContent?.toLowerCase().includes("last used")) {
+          (b as HTMLElement).style.display = "none";
+          b.remove();
+        }
+      });
+
       // Query for Clerk error alerts
       const alerts = document.querySelectorAll(".cl-alert--danger, .cl-alert--error, .cl-alert");
       alerts.forEach((alert) => {

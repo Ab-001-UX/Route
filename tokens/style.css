@@ -290,26 +290,45 @@ html[data-theme="dark"] button.secondary {
   }
 }
 
-/* Reset global button styles leaking into Clerk components */
+/* Reset global button styles leaking into Clerk components & position eye icon perfectly centered */
+.cl-rootBox .cl-formFieldInputGroup,
+.cl-rootBox [class*="formFieldInputGroup"],
+.cl-rootBox [class*="formFieldControl"] {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
 .cl-rootBox button.cl-passwordToggle,
 .cl-rootBox button.cl-formFieldActionButton,
 .cl-rootBox button.cl-formFieldAction__passwordToggle,
 .cl-rootBox button.cl-formFieldAction,
+.cl-rootBox [class*="formFieldAction"],
 button[class*="cl-formFieldAction"],
 button[class*="cl-passwordToggle"],
 button.cl-passwordToggle,
 button.cl-formFieldActionButton {
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
   min-height: 0 !important;
-  height: 36px !important;
-  width: 36px !important;
+  height: 32px !important;
+  width: 32px !important;
   padding: 0 !important;
+  margin: 0 !important;
   border-radius: 50% !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  transform: none !important;
   filter: none !important;
   outline: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
 }
 
 .cl-rootBox button.cl-passwordToggle:hover,
@@ -320,7 +339,10 @@ button[class*="cl-formFieldAction"]:hover,
 button[class*="cl-passwordToggle"]:hover,
 button.cl-passwordToggle:hover,
 button.cl-formFieldActionButton:hover {
-  background-color: var(--color-background-surface-hover, rgba(0, 0, 0, 0.05)) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: translateY(-50%) !important;
 }
 
 .cl-rootBox button.cl-passwordToggle svg,
