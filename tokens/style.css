@@ -458,27 +458,37 @@ button.cl-formFieldActionButton svg {
 
 .cl-rootBox .cl-headerTitle,
 .cl-rootBox [class*="headerTitle"] {
-  font-size: 1.25rem !important;
+  font-size: 1.35rem !important;
   font-weight: 800 !important;
-  margin: 0 0 2px 0 !important;
+  margin: 0 0 4px 0 !important;
   padding: 0 !important;
   line-height: 1.2 !important;
+  text-align: center !important;
 }
 
+/* Show subtext under header title by default on normal auth pages */
 .cl-rootBox .cl-headerSubtitle,
 .cl-rootBox [class*="headerSubtitle"] {
+  display: block !important;
   font-size: 0.8125rem !important;
   margin: 0 0 4px 0 !important;
   padding: 0 !important;
   line-height: 1.3 !important;
   color: var(--color-text-secondary) !important;
+  text-align: center !important;
+}
+
+/* Hide subtext ONLY during Cloudflare Turnstile CAPTCHA verification */
+.cl-rootBox:has([class*="captcha"]) .cl-headerSubtitle,
+.cl-rootBox:has([class*="captcha"]) [class*="headerSubtitle"] {
+  display: none !important;
 }
 
 .cl-rootBox .cl-formFieldLabel,
 .cl-rootBox [class*="formFieldLabel"] {
   font-size: 0.8125rem !important;
   font-weight: 600 !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 3px !important;
   color: var(--color-text-primary) !important;
 }
 
@@ -490,133 +500,79 @@ button.cl-formFieldActionButton svg {
 
 .cl-rootBox .cl-formField,
 .cl-rootBox [class*="formField"] {
-  margin-bottom: 4px !important;
+  margin-bottom: 8px !important;
   padding: 0 !important;
 }
 
 .cl-rootBox .cl-dividerRow,
 .cl-rootBox [class*="dividerRow"] {
-  margin: 4px 0 !important;
+  margin: 12px 0 !important;
   padding: 0 !important;
   height: 20px !important;
   min-height: 20px !important;
 }
 
-/* 2-Row Social Login Layout: Google full-width on top, Apple & Facebook side-by-side below */
+/* 3 Equal Social Login Buttons (Google, Apple, Facebook) in 1 Horizontal Row */
 .cl-rootBox .cl-socialButtons,
 .cl-rootBox [class*="socialButtons"] {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 10px !important;
   width: 100% !important;
   max-width: 100% !important;
-  justify-content: space-between !important;
   box-sizing: border-box !important;
   padding: 0 !important;
-  margin: 18px 0 12px 0 !important;
+  margin: 16px 0 12px 0 !important;
   clear: both !important;
 }
 
-/* Destroy Clerk's "Last used" text badge overlays completely */
+/* Hide Clerk's "Last used" text badge overlays and text labels completely */
 .cl-rootBox .cl-badge,
 .cl-rootBox [class*="badge"],
 .cl-rootBox [class*="Badge"],
 .cl-rootBox [class*="socialButtonsBlockButton__badge"],
 .cl-rootBox [class*="socialButtonsIconButton__badge"],
-.cl-rootBox [class*="socialButtons"] [class*="badge"] {
+.cl-rootBox .cl-socialButtonsBlockButtonText,
+.cl-rootBox [class*="socialButtonsBlockButtonText"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   width: 0 !important;
   height: 0 !important;
-  max-width: 0 !important;
-  max-height: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
   position: absolute !important;
-  top: -9999px !important;
-  left: -9999px !important;
   pointer-events: none !important;
-  clip: rect(0 0 0 0) !important;
 }
 
-/* 1st Row: Google button takes 100% full width */
-.cl-rootBox .cl-socialButtonsBlockButton__google,
-.cl-rootBox [class*="socialButtonsBlockButton__google"],
-.cl-rootBox .cl-socialButtonsIconButton__google,
-.cl-rootBox [class*="socialButtonsIconButton__google"],
-.cl-rootBox [class*="socialButtons"] > button:first-child,
-.cl-rootBox [class*="socialButtons"] > div:first-child {
-  order: 1 !important;
-  flex: 0 0 100% !important;
+/* Every social button (Google, Apple, Facebook) is a clean 46px height icon card */
+.cl-rootBox .cl-socialButtonsBlockButton,
+.cl-rootBox [class*="socialButtonsBlockButton"],
+.cl-rootBox .cl-socialButtonsIconButton,
+.cl-rootBox [class*="socialButtonsIconButton"],
+.cl-rootBox .cl-socialButtonsIconButton *,
+.cl-rootBox [class*="socialButtonsIconButton"] *,
+.cl-rootBox .cl-socialButtonsBlockButton *,
+.cl-rootBox [class*="socialButtonsBlockButton"] * {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+}
+
+.cl-rootBox .cl-socialButtonsBlockButton,
+.cl-rootBox [class*="socialButtonsBlockButton"],
+.cl-rootBox .cl-socialButtonsIconButton,
+.cl-rootBox [class*="socialButtonsIconButton"] {
   width: 100% !important;
-  max-width: 100% !important;
-  height: 48px !important;
-  min-height: 48px !important;
-  max-height: 48px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
   border-radius: 12px !important;
   border: 1px solid var(--color-border-default) !important;
   background: var(--color-background-surface, #ffffff) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
-  overflow: hidden !important;
   position: relative !important;
-}
-
-/* 2nd Row: Apple and Facebook buttons sit side-by-side taking 50% width each */
-.cl-rootBox .cl-socialButtonsBlockButton__apple,
-.cl-rootBox [class*="socialButtonsBlockButton__apple"],
-.cl-rootBox .cl-socialButtonsIconButton__apple,
-.cl-rootBox [class*="socialButtonsIconButton__apple"],
-.cl-rootBox .cl-socialButtonsBlockButton__facebook,
-.cl-rootBox [class*="socialButtonsBlockButton__facebook"],
-.cl-rootBox .cl-socialButtonsIconButton__facebook,
-.cl-rootBox [class*="socialButtonsIconButton__facebook"],
-.cl-rootBox [class*="socialButtons"] > button:nth-child(2),
-.cl-rootBox [class*="socialButtons"] > div:nth-child(2),
-.cl-rootBox [class*="socialButtons"] > button:nth-child(3),
-.cl-rootBox [class*="socialButtons"] > div:nth-child(3) {
-  order: 2 !important;
-  flex: 1 1 calc(50% - 5px) !important;
-  width: calc(50% - 5px) !important;
-  max-width: calc(50% - 5px) !important;
-  height: 48px !important;
-  min-height: 48px !important;
-  max-height: 48px !important;
-  border-radius: 12px !important;
-  border: 1px solid var(--color-border-default) !important;
-  background: var(--color-background-surface, #ffffff) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
   overflow: hidden !important;
-  position: relative !important;
-}
-
-/* Show Google button text, hide Apple & Facebook button text */
-.cl-rootBox .cl-socialButtonsBlockButton__google .cl-socialButtonsBlockButtonText,
-.cl-rootBox [class*="socialButtonsBlockButton__google"] [class*="socialButtonsBlockButtonText"] {
-  display: inline-block !important;
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-  color: var(--color-text-primary) !important;
-}
-
-.cl-rootBox .cl-socialButtonsBlockButton__apple .cl-socialButtonsBlockButtonText,
-.cl-rootBox [class*="socialButtonsBlockButton__apple"] [class*="socialButtonsBlockButtonText"],
-.cl-rootBox .cl-socialButtonsBlockButton__facebook .cl-socialButtonsBlockButtonText,
-.cl-rootBox [class*="socialButtonsBlockButton__facebook"] [class*="socialButtonsBlockButtonText"],
-.cl-rootBox [class*="socialButtons"] > button:nth-child(2) [class*="socialButtonsBlockButtonText"],
-.cl-rootBox [class*="socialButtons"] > div:nth-child(2) [class*="socialButtonsBlockButtonText"],
-.cl-rootBox [class*="socialButtons"] > button:nth-child(3) [class*="socialButtonsBlockButtonText"],
-.cl-rootBox [class*="socialButtons"] > div:nth-child(3) [class*="socialButtonsBlockButtonText"] {
-  display: none !important;
 }
 
 /* Ensure social provider icons/SVGs/images inside buttons stay strictly 24x24px and perfectly centered */
@@ -626,7 +582,9 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox .cl-socialButtonsBlockButton img,
 .cl-rootBox [class*="socialButtonsProviderIcon"],
 .cl-rootBox [class*="socialButtonsIconButton"] img,
-.cl-rootBox [class*="socialButtonsIconButton"] svg {
+.cl-rootBox [class*="socialButtonsIconButton"] svg,
+.cl-rootBox [class*="socialButtonsBlockButton"] img,
+.cl-rootBox [class*="socialButtonsBlockButton"] svg {
   width: 24px !important;
   height: 24px !important;
   max-width: 24px !important;
@@ -638,21 +596,13 @@ button.cl-formFieldActionButton svg {
   object-fit: contain !important;
 }
 
-.cl-rootBox .cl-badge,
-.cl-rootBox [class*="badge"],
-.cl-rootBox .cl-socialButtonsBlockButton__badge {
-  right: 12px !important;
-  top: -10px !important;
-  box-sizing: border-box !important;
-}
-
-/* Cloudflare Turnstile captcha widget spacing */
+/* Cloudflare Turnstile captcha widget spacing (centered with clean 32px top margin) */
 .cl-rootBox .cl-captchaRow,
 .cl-rootBox .cl-captcha,
 .cl-rootBox [class*="captchaRow"],
 .cl-rootBox [class*="captcha"],
 .cl-rootBox [class*="cl-captcha"] {
-  margin: 18px 0 12px 0 !important;
+  margin: 32px auto 20px auto !important;
   display: flex !important;
   justify-content: center !important;
 }
@@ -666,6 +616,7 @@ button.cl-formFieldActionButton svg {
   border: none !important;
   box-shadow: none !important;
   margin-top: 4px !important;
+  display: flex !important;
 }/* Global back button style (circular container with chevron) */
 .backBtn {
   width: 44px;
