@@ -27,6 +27,23 @@ function getFriendlyAuthError(err: any): string {
   return rawMsg || "Could not sign in. Please check your details and try again.";
 }
 
+function isValidEmailFormat(emailStr: string): { valid: boolean; reason?: string } {
+  const trimmed = emailStr.trim().toLowerCase();
+  const basicRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!basicRegex.test(trimmed)) {
+    return { valid: false, reason: "Please enter a valid email address (e.g. name@gmail.com)." };
+  }
+
+  const domain = trimmed.split("@")[1] || "";
+  const commonTypos = ["gail.com", "gmai.com", "gmial.com", "gamil.com", "yaho.com", "hotmial.com"];
+  if (commonTypos.includes(domain)) {
+    const suggested = domain === "yaho.com" ? "yahoo.com" : domain === "hotmial.com" ? "hotmail.com" : "gmail.com";
+    return { valid: false, reason: `Invalid email domain. Did you mean @${suggested}? Please check the spelling.` };
+  }
+
+  return { valid: true };
+}
+
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
@@ -53,12 +70,19 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoaded) return;
+
+    const emailCheck = isValidEmailFormat(email);
+    if (!emailCheck.valid) {
+      setError(emailCheck.reason || "Invalid email address format.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
       const result = await signIn.create({
-        identifier: email,
+        identifier: email.trim().toLowerCase(),
         password,
       });
 
@@ -256,8 +280,13 @@ export default function LoginPage() {
               />
               <button
                 type="button"
+                tabIndex={-1}
                 className={styles.eyeToggleBtn}
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPassword((prev) => !prev);
+                }}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (

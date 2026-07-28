@@ -7,6 +7,23 @@ import Link from "next/link";
 import RouteLogo from "@/components/ui/RouteLogo";
 import styles from "../auth.module.css";
 
+function isValidEmailFormat(emailStr: string): { valid: boolean; reason?: string } {
+  const trimmed = emailStr.trim().toLowerCase();
+  const basicRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!basicRegex.test(trimmed)) {
+    return { valid: false, reason: "Please enter a valid email address (e.g. name@gmail.com)." };
+  }
+
+  const domain = trimmed.split("@")[1] || "";
+  const commonTypos = ["gail.com", "gmai.com", "gmial.com", "gamil.com", "yaho.com", "hotmial.com"];
+  if (commonTypos.includes(domain)) {
+    const suggested = domain === "yaho.com" ? "yahoo.com" : domain === "hotmial.com" ? "hotmail.com" : "gmail.com";
+    return { valid: false, reason: `Invalid email domain. Did you mean @${suggested}? Please check the spelling.` };
+  }
+
+  return { valid: true };
+}
+
 function getFriendlyAuthError(err: any): string {
   const code = err?.errors?.[0]?.code || "";
   const rawMsg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "";
@@ -37,7 +54,9 @@ export default function SignupPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -57,12 +76,29 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoaded || !signUp) return;
+
+    const emailCheck = isValidEmailFormat(email);
+    if (!emailCheck.valid) {
+      setError(emailCheck.reason || "Invalid email address format.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match. Please check and try again.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
       await signUp.create({
-        emailAddress: email,
+        emailAddress: email.trim().toLowerCase(),
         password,
       });
 
@@ -222,7 +258,14 @@ export default function SignupPage() {
           <span>or</span>
         </div>
 
-        {error && <div className={styles.errorBanner}>{error}</div>}
+        {error && (
+          <div className={styles.errorBanner}>
+            <span>{error}</span>
+            <button type="button" className={styles.dismissErrorBtn} onClick={() => setError("")} aria-label="Dismiss error">
+              ✕
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.fieldGroup}>
@@ -258,11 +301,56 @@ export default function SignupPage() {
               />
               <button
                 type="button"
+                tabIndex={-1}
                 className={styles.eyeToggleBtn}
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPassword((prev) => !prev);
+                }}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label htmlFor="confirmPassword" className={styles.label}>
+              Confirm Password
+            </label>
+            <div className={styles.inputWrapper}>
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                className={`${styles.input} ${styles.inputWithToggle}`}
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                className={styles.eyeToggleBtn}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowConfirmPassword((prev) => !prev);
+                }}
+                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+              >
+                {showConfirmPassword ? (
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
                     <line x1="1" y1="1" x2="23" y2="23" />
