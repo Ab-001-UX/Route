@@ -1,7 +1,5 @@
-const CACHE_NAME = "route-cache-v4";
+const CACHE_NAME = "route-cache-v5";
 const STATIC_ASSETS = [
-  "/home",
-  "/saved",
   "/manifest.json"
 ];
 
@@ -9,7 +7,6 @@ const STATIC_ASSETS = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // We wrap in a try-catch/ignore to ensure install finishes even if some assets aren't present yet
       return cache.addAll(STATIC_ASSETS).catch((err) => {
         console.warn("Service worker cache.addAll warning during install:", err);
       });
@@ -17,7 +14,7 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// 2. Activate Event: Clean up outdated caches
+// 2. Activate Event: Clean up all outdated caches immediately
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,70 +29,62 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// 3. Fetch Event: Intercept requests and apply custom caching strategies
+// 3. Listen for SKIP_WAITING message
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+// 4. Fetch Event: Network-First for HTML navigations to prevent stale chunk mismatches
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // API Call to getSavedVehicles
-  if (url.pathname === "/api/saved-vehicles") {
-    event.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.match(event.request).then((cachedResponse) => {
-          const fetchPromise = fetch(event.request)
-            .then((networkResponse) => {
-              if (networkResponse.status === 200) {
-                cache.put(event.request, networkResponse.clone());
-              }
-              return networkResponse;
-            })
-            .catch((err) => {
-              console.log("SW: API fetch failed (offline). Serving from cache if available:", err);
-              return cachedResponse || Response.error();
-            });
-
-          // Serve cached response instantly if we have it, otherwise wait for network
-          return cachedResponse || fetchPromise;
-        });
-      })
-    );
-  } else {
-    // Standard static resource matching (Stale-While-Revalidate)
-    // Avoid caching POST requests, Chrome extensions, or Convex WebSocket/HTTP requests
-    if (
-      event.request.method !== "GET" ||
-      url.protocol.startsWith("chrome-extension") ||
-      url.hostname.includes("convex.cloud") ||
-      url.hostname.includes("clerk") ||
-      url.pathname.startsWith("/_next/webpack-hmr") ||
-      url.pathname === "/sw.js"
-    ) {
-      return;
-    }
-
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        const fetchPromise = fetch(event.request)
-          .then((networkResponse) => {
-            if (
-              networkResponse.status === 200 &&
-              (url.pathname.endsWith(".css") ||
-                url.pathname.endsWith(".js") ||
-                url.pathname.includes("/fonts/") ||
-                url.pathname.includes("/icons/"))
-            ) {
-              const cacheClone = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, cacheClone);
-              });
-            }
-            return networkResponse;
-          })
-          .catch(() => {
-            return cachedResponse || Response.error();
-          });
-
-        return cachedResponse || fetchPromise;
-      })
-    );
+  // Exclude non-GET, Clerk, Convex, Webpack HMR, and SW requests
+  if (
+    event.request.method !== "GET" ||
+    url.protocol.startsWith("chrome-extension") ||
+    url.hostname.includes("convex.cloud") ||
+    url.hostname.includes("clerk") ||
+    url.pathname.startsWith("/_next/webpack-hmr") ||
+    url.pathname === "/sw.js"
+  ) {
+    return;
   }
+
+  // Network-First for HTML Page Navigations (Prevents "This page couldn't load" chunk errors)
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const cacheClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cacheClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // If offline, fallback to cached HTML page
+          return caches.match(event.request).then((cached) => cached || caches.match("/home"));
+        })
+    );
+    return;
+  }
+
+  // Stale-While-Revalidate for static assets (images, css, js)
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const cacheClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cacheClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
+    })
+  );
 });
