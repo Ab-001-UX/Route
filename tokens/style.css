@@ -502,73 +502,65 @@ button.cl-formFieldActionButton svg {
   min-height: 20px !important;
 }
 
-/* 2-Row Social Login Layout: Google full-width on top, Apple & Facebook side-by-side below */
+/* 3-Column Social Login Layout: Google, Apple, Facebook sit in 1 clean horizontal row */
 .cl-rootBox .cl-socialButtons,
 .cl-rootBox [class*="socialButtons"] {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 10px !important;
   width: 100% !important;
   max-width: 100% !important;
-  justify-content: space-between !important;
   box-sizing: border-box !important;
   padding: 0 !important;
-  margin: 18px 0 10px 0 !important;
+  margin: 16px 0 16px 0 !important;
+  clear: both !important;
 }
 
-/* Hide Clerk's "Last used" text badge overlays */
+/* Hide Clerk's "Last used" text badge overlays and text labels completely */
 .cl-rootBox .cl-badge,
 .cl-rootBox [class*="badge"],
 .cl-rootBox [class*="socialButtonsBlockButton__badge"],
-.cl-rootBox [class*="socialButtonsIconButton__badge"] {
+.cl-rootBox [class*="socialButtonsIconButton__badge"],
+.cl-rootBox .cl-socialButtonsBlockButtonText,
+.cl-rootBox [class*="socialButtonsBlockButtonText"] {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
 }
 
-/* First button (Google) takes 100% full width */
-.cl-rootBox .cl-socialButtons > *:nth-child(1),
-.cl-rootBox [class*="socialButtons"] > *:nth-child(1) {
-  flex: 0 0 100% !important;
+/* Every social button (Google, Apple, Facebook) is a clean 46px height icon card */
+.cl-rootBox .cl-socialButtonsBlockButton,
+.cl-rootBox [class*="socialButtonsBlockButton"],
+.cl-rootBox .cl-socialButtonsIconButton,
+.cl-rootBox [class*="socialButtonsIconButton"],
+.cl-rootBox .cl-socialButtonsIconButton *,
+.cl-rootBox [class*="socialButtonsIconButton"] *,
+.cl-rootBox .cl-socialButtonsBlockButton *,
+.cl-rootBox [class*="socialButtonsBlockButton"] * {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+}
+
+.cl-rootBox .cl-socialButtonsBlockButton,
+.cl-rootBox [class*="socialButtonsBlockButton"],
+.cl-rootBox .cl-socialButtonsIconButton,
+.cl-rootBox [class*="socialButtonsIconButton"] {
   width: 100% !important;
-  max-width: 100% !important;
   height: 46px !important;
   min-height: 46px !important;
+  max-height: 46px !important;
   border-radius: 12px !important;
   border: 1px solid var(--color-border-default) !important;
   background: var(--color-background-surface, #ffffff) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
-}
-
-/* Second and Third buttons (Apple & Facebook) sit side-by-side taking 50% width each */
-.cl-rootBox .cl-socialButtons > *:nth-child(2),
-.cl-rootBox [class*="socialButtons"] > *:nth-child(2),
-.cl-rootBox .cl-socialButtons > *:nth-child(3),
-.cl-rootBox [class*="socialButtons"] > *:nth-child(3) {
-  flex: 1 1 calc(50% - 5px) !important;
-  width: calc(50% - 5px) !important;
-  max-width: calc(50% - 5px) !important;
-  height: 46px !important;
-  min-height: 46px !important;
-  border-radius: 12px !important;
-  border: 1px solid var(--color-border-default) !important;
-  background: var(--color-background-surface, #ffffff) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-}
-
-/* Hide button text for Apple & Facebook so they render as clean icon cards */
-.cl-rootBox .cl-socialButtons > *:nth-child(2) [class*="socialButtonsBlockButtonText"],
-.cl-rootBox [class*="socialButtons"] > *:nth-child(2) [class*="socialButtonsBlockButtonText"],
-.cl-rootBox .cl-socialButtons > *:nth-child(3) [class*="socialButtonsBlockButtonText"],
-.cl-rootBox [class*="socialButtons"] > *:nth-child(3) [class*="socialButtonsBlockButtonText"] {
-  display: none !important;
+  position: relative !important;
 }
 
 /* Ensure social provider icons/SVGs/images inside buttons stay strictly 24x24px and perfectly centered */

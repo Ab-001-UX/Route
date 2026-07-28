@@ -41,7 +41,7 @@ export default function SignupPage() {
           signInFallbackRedirectUrl="/login"
           appearance={{
             layout: {
-              socialButtonsVariant: "blockButton",
+              socialButtonsVariant: "iconButton",
               socialButtonsPlacement: "top",
               showOptionalFields: false,
             },
