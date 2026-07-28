@@ -445,14 +445,14 @@ button.cl-formFieldActionButton svg {
 
 .cl-rootBox .cl-main,
 .cl-rootBox [class*="main"] {
-  gap: 2px !important;
+  gap: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
 }
 
 .cl-rootBox .cl-header,
 .cl-rootBox [class*="header"] {
-  margin: 0 0 2px 0 !important;
+  margin: 0 0 16px 0 !important;
   padding: 0 !important;
 }
 
@@ -460,7 +460,7 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox [class*="headerTitle"] {
   font-size: 1.35rem !important;
   font-weight: 800 !important;
-  margin: 0 0 4px 0 !important;
+  margin: 0 0 6px 0 !important;
   padding: 0 !important;
   line-height: 1.2 !important;
   text-align: center !important;
@@ -484,12 +484,14 @@ button.cl-formFieldActionButton svg {
   display: none !important;
 }
 
+/* Label to input column distance: 4px gap matching Image 2 */
 .cl-rootBox .cl-formFieldLabel,
 .cl-rootBox [class*="formFieldLabel"] {
-  font-size: 0.8125rem !important;
+  font-size: 0.875rem !important;
   font-weight: 600 !important;
-  margin-bottom: 3px !important;
+  margin-bottom: 4px !important;
   color: var(--color-text-primary) !important;
+  display: block !important;
 }
 
 .cl-rootBox .cl-form,
@@ -498,31 +500,53 @@ button.cl-formFieldActionButton svg {
   padding: 0 !important;
 }
 
+/* Distance between Email column and Password label: 18px matching Image 2 */
 .cl-rootBox .cl-formField,
 .cl-rootBox [class*="formField"] {
-  margin-bottom: 8px !important;
+  margin-bottom: 18px !important;
   padding: 0 !important;
+  position: relative !important;
+}
+
+/* Password eye icon position: perfectly centered vertically, right 14px inside input box matching Image 2 */
+.cl-rootBox .cl-formFieldAction,
+.cl-rootBox [class*="formFieldAction"],
+.cl-rootBox [class*="passwordToggle"] {
+  position: absolute !important;
+  right: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  height: 32px !important;
+  width: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  z-index: 10 !important;
 }
 
 .cl-rootBox .cl-dividerRow,
 .cl-rootBox [class*="dividerRow"] {
-  margin: 12px 0 !important;
+  margin: 20px 0 !important;
   padding: 0 !important;
   height: 20px !important;
   min-height: 20px !important;
 }
 
-/* 3 Equal Social Login Buttons (Google, Apple, Facebook) in 1 Horizontal Row */
+/* 3 Equal Social Login Buttons (Apple, Facebook, Google) in 1 Horizontal Row matching Image 2 */
 .cl-rootBox .cl-socialButtons,
 .cl-rootBox [class*="socialButtons"] {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
-  gap: 10px !important;
+  gap: 12px !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
   padding: 0 !important;
-  margin: 16px 0 12px 0 !important;
+  margin: 24px 0 20px 0 !important;
   clear: both !important;
 }
 
@@ -543,7 +567,7 @@ button.cl-formFieldActionButton svg {
   pointer-events: none !important;
 }
 
-/* Every social button (Google, Apple, Facebook) is a clean 46px height icon card */
+/* Every social button (Apple, Facebook, Google) is a clean 48px height icon card matching Image 2 */
 .cl-rootBox .cl-socialButtonsBlockButton,
 .cl-rootBox [class*="socialButtonsBlockButton"],
 .cl-rootBox .cl-socialButtonsIconButton,
@@ -563,9 +587,9 @@ button.cl-formFieldActionButton svg {
 .cl-rootBox .cl-socialButtonsIconButton,
 .cl-rootBox [class*="socialButtonsIconButton"] {
   width: 100% !important;
-  height: 46px !important;
-  min-height: 46px !important;
-  max-height: 46px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
   border-radius: 12px !important;
   border: 1px solid var(--color-border-default) !important;
   background: var(--color-background-surface, #ffffff) !important;
@@ -596,7 +620,42 @@ button.cl-formFieldActionButton svg {
   object-fit: contain !important;
 }
 
-/* Cloudflare Turnstile captcha widget spacing (centered with clean 32px top margin) */
+/* OTP Verification screen spacing matching Image 1 fix */
+.cl-rootBox .cl-identityPreview,
+.cl-rootBox [class*="identityPreview"] {
+  margin: 16px 0 20px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+.cl-rootBox .cl-otpCodeFieldInputs,
+.cl-rootBox [class*="otpCodeFieldInputs"] {
+  margin: 24px 0 20px 0 !important;
+  gap: 10px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.cl-rootBox .cl-otpCodeFieldInput,
+.cl-rootBox [class*="otpCodeFieldInput"] {
+  width: 44px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+}
+
+.cl-rootBox .cl-formResendCodeLink,
+.cl-rootBox [class*="formResendCodeLink"] {
+  margin: 16px 0 24px 0 !important;
+  text-align: center !important;
+  display: block !important;
+}
+
+/* Cloudflare Turnstile captcha widget spacing */
 .cl-rootBox .cl-captchaRow,
 .cl-rootBox .cl-captcha,
 .cl-rootBox [class*="captchaRow"],
