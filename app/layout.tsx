@@ -72,9 +72,22 @@ export default function RootLayout({
             pointerEvents: "none",
           }}
         >
-          <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
-            <path d="M20 80 C 20 20, 80 20, 80 80" stroke="#111111" strokeWidth="12" strokeLinecap="round" />
-            <path d="M20 80 C 20 20, 80 20, 80 80" stroke="#ffffff" strokeWidth="3" strokeDasharray="6 6" strokeLinecap="round" />
+          <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M 28 82 C 24 55 24 35 34 22 C 46 8 72 8 82 22 C 92 36 86 52 70 58 C 55 64 36 60 36 60 C 36 60 52 74 68 82"
+              stroke="#111111"
+              strokeWidth="15"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M 28 82 C 24 55 24 35 34 22 C 46 8 72 8 82 22 C 92 36 86 52 70 58 C 55 64 36 60 36 60 C 36 60 52 74 68 82"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeDasharray="6 4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
         <script
