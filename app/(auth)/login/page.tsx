@@ -35,11 +35,16 @@ export default function LoginPage() {
         <RouteLogo size={56} color="var(--color-text-primary)" lineColor="var(--color-background-surface)" />
 
         <SignIn
-          path="/login"
+          routing="virtual"
           signUpUrl="/signup"
           fallbackRedirectUrl="/home"
           signUpFallbackRedirectUrl="/onboarding"
           appearance={{
+            layout: {
+              socialButtonsVariant: "blockButton",
+              socialButtonsPlacement: "top",
+              showOptionalFields: false,
+            },
             elements: {
               rootBox: {
                 width: "100%",
@@ -79,7 +84,7 @@ export default function LoginPage() {
               headerTitle: {
                 paddingLeft: "0",
                 overflow: "visible",
-                letterSpacing: "normal"
+                letterSpacing: "normal",
               },
               formFieldInput: {
                 width: "100%",
@@ -137,8 +142,8 @@ export default function LoginPage() {
               formFieldActionIcon: {
                 width: "18px",
                 height: "18px",
-              }
-            }
+              },
+            },
           }}
         />
       </div>
