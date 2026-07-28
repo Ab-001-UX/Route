@@ -7,6 +7,26 @@ import Link from "next/link";
 import RouteLogo from "@/components/ui/RouteLogo";
 import styles from "../auth.module.css";
 
+function getFriendlyAuthError(err: any): string {
+  const code = err?.errors?.[0]?.code || "";
+  const rawMsg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "";
+
+  if (code === "form_identifier_exists") {
+    return "An account with this email address already exists. Please tap 'Sign in' or log in with Google above.";
+  }
+  if (code === "form_password_incorrect" || code === "form_identifier_not_found") {
+    return "Incorrect email or password. Please check your details and try again.";
+  }
+  if (code === "strategy_not_supported" || rawMsg.includes("verification is not valid") || rawMsg.includes("strategy")) {
+    return "This email was registered using Google or Apple. Please tap the Google or Apple icon above to sign in.";
+  }
+  if (code === "form_code_incorrect") {
+    return "The 6-digit code you entered is incorrect. Please check your email and try again.";
+  }
+
+  return rawMsg || "Could not sign in. Please check your details and try again.";
+}
+
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
@@ -51,7 +71,7 @@ export default function LoginPage() {
         setError("Sign in incomplete. Please check your credentials.");
       }
     } catch (err: any) {
-      setError(err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "Invalid email or password.");
+      setError(getFriendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -83,7 +103,7 @@ export default function LoginPage() {
         setError("Verification code incorrect.");
       }
     } catch (err: any) {
-      setError(err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "Failed to verify code.");
+      setError(getFriendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -122,7 +142,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {error && <div className={styles.errorBanner}>{error}</div>}
+          {error && (
+            <div className={styles.errorBanner}>
+              <span>{error}</span>
+              <button type="button" className={styles.dismissErrorBtn} onClick={() => setError("")} aria-label="Dismiss error">
+                ✕
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleVerifyOtp} className={styles.form}>
             <div className={styles.otpGrid}>

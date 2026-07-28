@@ -7,6 +7,29 @@ import Link from "next/link";
 import RouteLogo from "@/components/ui/RouteLogo";
 import styles from "../auth.module.css";
 
+function getFriendlyAuthError(err: any): string {
+  const code = err?.errors?.[0]?.code || "";
+  const rawMsg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "";
+
+  if (code === "form_identifier_exists") {
+    return "An account with this email address already exists. Please tap 'Sign in' below or log in with Google above.";
+  }
+  if (code === "form_password_incorrect" || code === "form_identifier_not_found") {
+    return "Incorrect email or password. Please check your details and try again.";
+  }
+  if (code === "strategy_not_supported" || rawMsg.includes("verification is not valid") || rawMsg.includes("strategy")) {
+    return "This email was registered using Google or Apple. Please tap the Google or Apple icon above to sign in.";
+  }
+  if (code === "form_password_length_too_short") {
+    return "Password must be at least 8 characters long.";
+  }
+  if (code === "form_code_incorrect") {
+    return "The 6-digit code you entered is incorrect. Please check your email and try again.";
+  }
+
+  return rawMsg || "Could not create account. Please check your details and try again.";
+}
+
 export default function SignupPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const { isLoaded: isSignInLoaded, signIn } = useSignIn();
@@ -47,7 +70,7 @@ export default function SignupPage() {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setVerifying(true);
     } catch (err: any) {
-      setError(err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "Could not create account.");
+      setError(getFriendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -77,7 +100,7 @@ export default function SignupPage() {
         setError("Verification incomplete.");
       }
     } catch (err: any) {
-      setError(err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || "Invalid verification code.");
+      setError(getFriendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -115,7 +138,14 @@ export default function SignupPage() {
             </div>
           </div>
 
-          {error && <div className={styles.errorBanner}>{error}</div>}
+          {error && (
+            <div className={styles.errorBanner}>
+              <span>{error}</span>
+              <button type="button" className={styles.dismissErrorBtn} onClick={() => setError("")} aria-label="Dismiss error">
+                ✕
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleVerifyOtp} className={styles.form}>
             <div className={styles.otpGrid}>
