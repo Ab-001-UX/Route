@@ -7,9 +7,11 @@
   min-height: 100dvh;
   width: 100%;
   background-color: var(--color-background-surface, #ffffff);
-  padding: calc(env(safe-area-inset-top, 16px) + 20px) 20px 32px 20px;
+  padding: calc(env(safe-area-inset-top, 16px) + 20px) 20px 48px 20px;
   box-sizing: border-box;
   font-family: var(--font-manrope), sans-serif;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .card {
