@@ -35,12 +35,12 @@ export default function LandingClient() {
       const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       const isSmallViewport = window.innerWidth < 1024;
       if (isMobileDevice || isSmallViewport) {
-        router.push("/welcome");
+        window.location.href = "/welcome";
       } else {
         setShowDesktopPanel(prev => !prev);
       }
     }
-  }, [router]);
+  }, []);
 
   const handleCopyLink = useCallback(async () => {
     try {
