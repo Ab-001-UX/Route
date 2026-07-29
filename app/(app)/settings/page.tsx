@@ -34,6 +34,7 @@ import styles from "./settings.module.css";
 import { useSettings } from "@/components/providers/ThemeProvider";
 import { normalizeNigerianPhoneNumber } from "@/lib/validators";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
+import MicPermissionGuideModal from "@/components/features/MicPermissionGuideModal";
 import { safeLocalStorage } from "@/lib/storage";
 
 export default function SettingsPage() {
@@ -1110,41 +1111,13 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* GPS Permission Guide Modal */}
+      {/* GPS / Location Permission Guide Modal — shared component */}
       {showGpsGuide && (
-        <div className={styles.overlay}>
-          <div className={styles.backdrop} onClick={() => setShowGpsGuide(false)} />
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <Globe size={32} className={styles.warningIcon} style={{ color: "var(--color-brand-primary)" }} />
-              <h3>Enable Location Services</h3>
-            </div>
-            <div className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.6" }}>
-              <p style={{ margin: "0 0 12px 0" }}>
-                Route needs Location Services to automatically track your coordinates during active trips so your emergency contacts can view your live progress.
-              </p>
-
-              <div style={{ backgroundColor: "var(--color-background-app)", padding: "12px", borderRadius: "10px", border: "1px solid var(--color-border-default)", marginBottom: "12px" }}>
-                <strong>How to unblock Location in Safari:</strong>
-                <p style={{ margin: "6px 0 0 0", fontSize: "12px", fontWeight: 600, color: "var(--color-brand-primary)" }}>
-                  Tap Aa in the address bar, then Website Settings, then Allow.
-                </p>
-              </div>
-
-              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", margin: "0", fontStyle: "italic" }}>
-                Per-site permissions must be enabled in Safari. Tap below to open Route in Safari.
-              </p>
-            </div>
-            <div className={styles.modalActions}>
-              <button className="primary" onClick={() => { setShowGpsGuide(false); window.open("https://route-nine-dusky.vercel.app", "_blank"); }}>
-                Open Safari to Allow Location
-              </button>
-              <button className="secondary" onClick={() => setShowGpsGuide(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <MicPermissionGuideModal
+          type="location"
+          onDismiss={() => setShowGpsGuide(false)}
+          dismissLabel="Not now"
+        />
       )}
 
       {/* Push Notification Guide Modal */}
@@ -1180,41 +1153,13 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* Microphone Permission Guide Modal */}
+      {/* Microphone Permission Guide Modal — shared component */}
       {showMicGuide && (
-        <div className={styles.overlay}>
-          <div className={styles.backdrop} onClick={() => setShowMicGuide(false)} />
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <Mic size={32} className={styles.warningIcon} style={{ color: "hsl(200, 95%, 53%)" }} />
-              <h3>Enable Microphone Access</h3>
-            </div>
-            <div className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.6" }}>
-              <p style={{ margin: "0 0 12px 0" }}>
-                Route uses your microphone for hands-free speech-to-text so you can verify vehicle license plates out loud.
-              </p>
-
-              <div style={{ backgroundColor: "var(--color-background-app)", padding: "12px", borderRadius: "10px", border: "1px solid var(--color-border-default)", marginBottom: "12px" }}>
-                <strong>How to unblock Microphone in Safari:</strong>
-                <p style={{ margin: "6px 0 0 0", fontSize: "12px", fontWeight: 600, color: "var(--color-brand-primary)" }}>
-                  Tap Aa in the address bar, then Website Settings, then Allow.
-                </p>
-              </div>
-
-              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", margin: "0", fontStyle: "italic" }}>
-                Per-site permissions must be enabled in Safari. Tap below to open Route in Safari.
-              </p>
-            </div>
-            <div className={styles.modalActions}>
-              <button className="primary" onClick={() => { setShowMicGuide(false); window.open("https://route-nine-dusky.vercel.app", "_blank"); }}>
-                Open Safari to Allow Microphone
-              </button>
-              <button className="secondary" onClick={() => setShowMicGuide(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <MicPermissionGuideModal
+          type="microphone"
+          onDismiss={() => setShowMicGuide(false)}
+          dismissLabel="Close"
+        />
       )}
     </main>
   );

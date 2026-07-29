@@ -27,6 +27,7 @@ import { useRouter } from "next/navigation";
 import styles from "./home.module.css";
 import PostRideSurvey from "@/components/features/PostRideSurvey";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
+import MicPermissionGuideModal from "@/components/features/MicPermissionGuideModal";
 import Skeleton from "@/components/ui/Skeleton";
 import { trackEvent } from "@/lib/analytics";
 import { safeLocalStorage } from "@/lib/storage";
@@ -264,6 +265,9 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Mic permission guide modal
+  const [showMicGuide, setShowMicGuide] = useState(false);
 
   // Derive 3 most recent completed trips from already-loaded trips data
   const recentTrips = (trips ?? [])
@@ -517,7 +521,8 @@ export default function HomePage() {
           console.warn("Speech recognition error:", event.error);
           setIsListening(false);
           if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-            setErrorMsg("Microphone access was denied. Please allow microphone permissions or type manually.");
+            // Show the step-by-step guide modal instead of a generic banner
+            setShowMicGuide(true);
           } else {
             setErrorMsg("Speech recognition failed. Please try again or type manually.");
           }
@@ -929,6 +934,15 @@ export default function HomePage() {
                 <X size={16} />
               </button>
             </div>
+          )}
+
+          {/* Mic permission guide modal — fired when speech recognition is denied */}
+          {showMicGuide && (
+            <MicPermissionGuideModal
+              type="microphone"
+              onDismiss={() => setShowMicGuide(false)}
+              dismissLabel="Type manually instead"
+            />
           )}
 
           {showEmptyHome && recentTrips.length > 0 && (
