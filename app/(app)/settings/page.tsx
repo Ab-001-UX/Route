@@ -26,7 +26,8 @@ import {
   Loader2,
   X,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Mic
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./settings.module.css";
@@ -228,9 +229,10 @@ export default function SettingsPage() {
     setActiveSection(activeSection === section ? null : section);
   };
 
-  // Permissions States for Location & Push Notifications
+  // Permissions States for Location, Push Notifications & Microphone
   const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
   const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
+  const [micPermission, setMicPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
 
   useEffect(() => {
     // Check GPS permission state
@@ -249,11 +251,22 @@ export default function SettingsPage() {
     } else {
       setPushPermission("denied");
     }
+
+    // Check Microphone permission state
+    if (typeof navigator !== "undefined" && navigator.permissions) {
+      navigator.permissions.query({ name: "microphone" as any }).then((status) => {
+        setMicPermission(status.state);
+        status.onchange = () => setMicPermission(status.state);
+      }).catch(() => setMicPermission("prompt"));
+    } else {
+      setMicPermission("prompt");
+    }
   }, []);
 
   // Permission guide modals & device OS detection
   const [showGpsGuide, setShowGpsGuide] = useState(false);
   const [showPushGuide, setShowPushGuide] = useState(false);
+  const [showMicGuide, setShowMicGuide] = useState(false);
   const [deviceOS, setDeviceOS] = useState<"ios" | "android" | "other">("other");
 
   useEffect(() => {
@@ -330,6 +343,20 @@ export default function SettingsPage() {
       }
     } else {
       setShowPushGuide(true);
+    }
+  };
+
+  const handleEnableMic = async () => {
+    if (typeof navigator !== "undefined" && navigator.mediaDevices) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+        setMicPermission("granted");
+      } catch {
+        setShowMicGuide(true);
+      }
+    } else {
+      setShowMicGuide(true);
     }
   };
 
@@ -624,6 +651,31 @@ export default function SettingsPage() {
                   style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
                 >
                   Set Up Push
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Microphone Access Row */}
+          <div className={styles.rowItem} style={{ alignItems: "center" }}>
+            <div className={styles.rowLeft} style={{ alignItems: "center" }}>
+              <div className={styles.iconWrapper} style={{ color: "hsl(200, 95%, 53%)" }}>
+                <Mic size={20} />
+              </div>
+              <span className={styles.rowLabel}>Microphone (Voice Search)</span>
+            </div>
+            <div className={styles.rowRight}>
+              {micPermission === "granted" ? (
+                <span style={{ padding: "4px 12px", borderRadius: "12px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", fontSize: "13px", fontWeight: 600 }}>
+                  Active
+                </span>
+              ) : (
+                <button 
+                  onClick={handleEnableMic} 
+                  className="secondary"
+                  style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
+                >
+                  Set Up Mic
                 </button>
               )}
             </div>
@@ -1057,10 +1109,9 @@ export default function SettingsPage() {
                   <strong>How to turn on Location on iPhone:</strong>
                   <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
                     <li>Open your iPhone <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Privacy & Security</strong>.</li>
-                    <li>Tap <strong>Location Services</strong>.</li>
-                    <li>Scroll down and tap <strong>Route</strong>.</li>
-                    <li>Select <strong>While Using the App</strong>.</li>
+                    <li>Tap <strong>Safari</strong> (or <strong>Privacy & Security ➔ Location Services</strong>).</li>
+                    <li>Tap <strong>Location</strong> and select <strong>Allow</strong> or <strong>Ask</strong>.</li>
+                    <li>Return to Route and tap <strong>Try Requesting Again</strong> below.</li>
                   </ol>
                 </div>
               )}
@@ -1071,7 +1122,7 @@ export default function SettingsPage() {
                   <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
                     <li>Open your Android <strong>Settings</strong> app.</li>
                     <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
-                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Scroll down and tap <strong>Chrome</strong> (or <strong>Route</strong>).</li>
                     <li>Tap <strong>Permissions</strong>, then tap <strong>Location</strong>.</li>
                     <li>Select <strong>Allow only while using the app</strong>.</li>
                   </ol>
@@ -1082,14 +1133,14 @@ export default function SettingsPage() {
                 <div>
                   <strong>How to turn on Location:</strong>
                   <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Tap the <strong>Lock icon</strong> next to the URL in your browser.</li>
-                    <li>Select <strong>Site Settings</strong>.</li>
+                    <li>Tap the <strong>Lock icon 🔒</strong> next to the URL in your browser.</li>
+                    <li>Select <strong>Permissions / Site Settings</strong>.</li>
                     <li>Change <strong>Location</strong> permission to <strong>Allow</strong>.</li>
                   </ol>
                 </div>
               )}
               <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
-                Tip: Make sure you have added Route to your Home Screen to enable 1-tap emergency access and live trip tracking.
+                Tip: If added to your Home Screen, permissions are managed under iPhone Settings ➔ Safari.
               </p>
             </div>
             <div className={styles.modalActions}>
@@ -1124,9 +1175,9 @@ export default function SettingsPage() {
                   <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
                     <li>Open your iPhone <strong>Settings</strong> app.</li>
                     <li>Tap <strong>Notifications</strong>.</li>
-                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Scroll down and tap <strong>Safari</strong> (or <strong>Route</strong> if added to Home Screen).</li>
                     <li>Turn on <strong>Allow Notifications</strong>.</li>
-                    <li>Tap <strong>Try Requesting Again</strong> below.</li>
+                    <li>Return to Route and tap <strong>Try Requesting Again</strong> below.</li>
                   </ol>
                 </div>
               )}
@@ -1137,7 +1188,7 @@ export default function SettingsPage() {
                   <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
                     <li>Open your Android <strong>Settings</strong> app.</li>
                     <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
-                    <li>Scroll down and tap <strong>Route</strong>.</li>
+                    <li>Scroll down and tap <strong>Chrome</strong> (or <strong>Route</strong>).</li>
                     <li>Tap <strong>Notifications</strong> and turn on <strong>Allow Notifications</strong>.</li>
                     <li>Tap <strong>Try Requesting Again</strong> below.</li>
                   </ol>
@@ -1150,7 +1201,7 @@ export default function SettingsPage() {
                   <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
                     <li>Tap the <strong>Try Requesting Again</strong> button below.</li>
                     <li>Tap <strong>Allow</strong> on your browser notification pop-up.</li>
-                    <li>If blocked: Tap the <strong>Lock icon</strong> in your browser address bar, tap <strong>Notifications</strong>, and select <strong>Allow</strong>.</li>
+                    <li>If blocked: Tap the <strong>Lock icon 🔒</strong> in your browser address bar, tap <strong>Notifications</strong>, and select <strong>Allow</strong>.</li>
                   </ol>
                 </div>
               )}
@@ -1163,6 +1214,72 @@ export default function SettingsPage() {
                 Try Requesting Again
               </button>
               <button className="secondary" onClick={() => setShowPushGuide(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Microphone Permission Guide Modal */}
+      {showMicGuide && (
+        <div className={styles.overlay}>
+          <div className={styles.backdrop} onClick={() => setShowMicGuide(false)} />
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <Mic size={32} className={styles.warningIcon} style={{ color: "hsl(200, 95%, 53%)" }} />
+              <h3>Enable Microphone Access</h3>
+            </div>
+            <div className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.6" }}>
+              <p style={{ margin: "0 0 12px 0" }}>
+                Route uses your microphone for hands-free speech-to-text so you can verify vehicle license plates out loud.
+              </p>
+
+              {deviceOS === "ios" && (
+                <div>
+                  <strong>How to turn on Microphone on iPhone:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Open your iPhone <strong>Settings</strong> app.</li>
+                    <li>Tap <strong>Safari</strong> (or <strong>Route</strong> if added to Home Screen).</li>
+                    <li>Under <em>Permissions</em>, tap <strong>Microphone</strong>.</li>
+                    <li>Select <strong>Allow</strong> or <strong>Ask</strong>.</li>
+                    <li>Return to Route and tap <strong>Try Requesting Again</strong> below.</li>
+                  </ol>
+                </div>
+              )}
+
+              {deviceOS === "android" && (
+                <div>
+                  <strong>How to turn on Microphone on Android:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Open your Android <strong>Settings</strong> app.</li>
+                    <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
+                    <li>Scroll down and tap <strong>Chrome</strong> (or <strong>Route</strong>).</li>
+                    <li>Tap <strong>Permissions</strong> ➔ <strong>Microphone</strong>.</li>
+                    <li>Select <strong>Allow only while using the app</strong>.</li>
+                  </ol>
+                </div>
+              )}
+
+              {deviceOS === "other" && (
+                <div>
+                  <strong>How to turn on Microphone:</strong>
+                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
+                    <li>Tap the <strong>Lock icon 🔒</strong> next to the URL in your browser address bar.</li>
+                    <li>Select <strong>Permissions / Site Settings</strong>.</li>
+                    <li>Change <strong>Microphone</strong> permission to <strong>Allow</strong>.</li>
+                  </ol>
+                </div>
+              )}
+              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
+                Tip: Voice search is optional. You can also type plate numbers manually.
+              </p>
+            </div>
+            <div className={styles.modalActions}>
+              <button className="primary" onClick={() => { setShowMicGuide(false); handleEnableMic(); }}>
+                Try Requesting Again
+              </button>
+              <button className="secondary" onClick={() => setShowMicGuide(false)}>
                 Close
               </button>
             </div>

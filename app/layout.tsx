@@ -90,6 +90,11 @@ export default function RootLayout({
                 }
 
                 window.onerror = function(message, source, lineno, colno, error) {
+                  var msgStr = String(message || '');
+                  if (msgStr.indexOf('ChunkLoadError') !== -1 || msgStr.indexOf('Loading chunk') !== -1) {
+                    window.location.reload(true);
+                    return true;
+                  }
                   var stack = (error && error.stack) ? error.stack : (source + ':' + lineno + ':' + colno);
                   showErrorOverlay('RUNTIME ERROR', message, stack);
                   return false;
@@ -98,6 +103,10 @@ export default function RootLayout({
                 window.addEventListener('unhandledrejection', function(event) {
                   var reason = event.reason;
                   var msg = (reason && reason.message) ? reason.message : String(reason);
+                  if (msg.indexOf('ChunkLoadError') !== -1 || msg.indexOf('Loading chunk') !== -1) {
+                    window.location.reload(true);
+                    return;
+                  }
                   var stack = (reason && reason.stack) ? reason.stack : '';
                   showErrorOverlay('UNHANDLED PROMISE REJECTION', msg, stack);
                 });
