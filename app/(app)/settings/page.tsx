@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useUser, useClerk, SignOutButton } from "@clerk/nextjs";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useUser, SignOutButton } from "@clerk/nextjs";
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -33,6 +33,7 @@ import styles from "./settings.module.css";
 import { useSettings } from "@/components/providers/ThemeProvider";
 import { normalizeNigerianPhoneNumber } from "@/lib/validators";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
+import { safeLocalStorage } from "@/lib/storage";
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -44,6 +45,7 @@ export default function SettingsPage() {
   const updateProfile = useMutation(api.users.updateUser);
 
   const { theme, setTheme, fontSize, setFontSize, privacyMode, setPrivacyMode } = useSettings();
+  const { signOut } = useClerk();
   const router = useRouter();
 
   // Accordion active rows states
@@ -65,6 +67,7 @@ export default function SettingsPage() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [profileSuccess, setProfileSuccess] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     if (dbUser) {
@@ -933,15 +936,64 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* LOG OUT BUTTON (At the bottom of the page, styled as premium action in mockup) */}
+      {/* LOG OUT BUTTON */}
       <div className={styles.logoutSection}>
-        <SignOutButton>
-          <button className={styles.logoutBtn} aria-label="Sign out of Route">
-            <LogOut size={18} />
-            <span>Log Out</span>
-          </button>
-        </SignOutButton>
+        <button 
+          className={styles.logoutBtn} 
+          onClick={() => setShowLogoutModal(true)}
+          aria-label="Sign out of Route"
+        >
+          <LogOut size={18} />
+          <span>Log Out</span>
+        </button>
       </div>
+
+      {/* Log Out Confirmation Modal with Stacked CTAs */}
+      {showLogoutModal && (
+        <div className={styles.overlay}>
+          <div className={styles.backdrop} onClick={() => setShowLogoutModal(false)} />
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <LogOut size={32} className={styles.warningIcon} style={{ color: "var(--color-safety-status-dangerous)" }} />
+              <h3>Log Out</h3>
+            </div>
+            <p className={styles.modalText} style={{ textAlign: "center" }}>
+              Are you sure you want to log out of Route?
+            </p>
+            <div className={styles.modalActions}>
+              <button 
+                className="secondary" 
+                onClick={() => setShowLogoutModal(false)}
+                style={{ 
+                  backgroundColor: "var(--color-background-app)", 
+                  border: "1px solid var(--color-border-default)", 
+                  color: "var(--color-text-primary)",
+                  fontWeight: "700" 
+                }}
+              >
+                Dismiss
+              </button>
+              <button 
+                className="primary" 
+                onClick={async () => {
+                  setShowLogoutModal(false);
+                  safeLocalStorage.removeItem("route-last-active");
+                  await signOut();
+                  router.push("/login");
+                }}
+                style={{ 
+                  backgroundColor: "#dc2626", 
+                  color: "#ffffff", 
+                  border: "none",
+                  fontWeight: "700" 
+                }}
+              >
+                Yes, Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirm deletion warnings */}
       {showDeleteWarning && (
