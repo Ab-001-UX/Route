@@ -203,8 +203,8 @@ export const getHomeFeed = query({
 
       const uniqueCount = uniqueFlaggers.size;
 
-      // Inclusion condition: uniqueCount >= 3 OR dangerousStatus is true
-      if (uniqueCount >= 3 || vehicle.dangerousStatus) {
+      // Inclusion condition: uniqueCount > 1 (reported more than once)
+      if (uniqueCount > 1) {
         // Find most common incident type
         let primaryOffense = "Safety concern";
         const incidentTypes = incidents.map((i) => i.incidentType);
@@ -532,7 +532,7 @@ export const getSavedVehicles = query({
 
           const uniqueCount = uniqueFlaggers.size;
 
-          if (uniqueCount >= 3 || vehicle.dangerousStatus) {
+          if (uniqueCount > 1) {
             incidentsList = incidents.map(i => ({
               incidentType: i.incidentType,
               status: i.status,
