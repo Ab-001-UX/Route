@@ -9,8 +9,5 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Pass all fetch requests directly to the network without interfering with Next.js App Router chunks
-self.addEventListener("fetch", () => {
-  // Let the browser/Next.js handle all page routing & chunk fetching natively
-  return;
-});
+// Let the browser handle all page routing and chunk fetching natively without any interception
+
