@@ -29,6 +29,7 @@ import PostRideSurvey from "@/components/features/PostRideSurvey";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
 import Skeleton from "@/components/ui/Skeleton";
 import { trackEvent } from "@/lib/analytics";
+import { safeLocalStorage } from "@/lib/storage";
 
 interface VehicleData {
   plate: string;
@@ -319,8 +320,8 @@ export default function HomePage() {
         }, 500);
       }
       
-      // Load recent searches from localStorage
-      const saved = localStorage.getItem("route-recent-searches");
+      // Load recent searches from safeLocalStorage
+      const saved = safeLocalStorage.getItem("route-recent-searches");
       if (saved) {
         try {
           setRecentSearches(JSON.parse(saved));
@@ -332,14 +333,14 @@ export default function HomePage() {
   }, []);
 
   const clearRecentSearches = () => {
-    localStorage.removeItem("route-recent-searches");
+    safeLocalStorage.removeItem("route-recent-searches");
     setRecentSearches([]);
   };
 
   const removeRecentSearch = (plateToRemove: string) => {
     setRecentSearches((prev) => {
       const next = prev.filter((p) => p !== plateToRemove);
-      localStorage.setItem("route-recent-searches", JSON.stringify(next));
+      safeLocalStorage.setItem("route-recent-searches", JSON.stringify(next));
       return next;
     });
   };
@@ -457,10 +458,10 @@ export default function HomePage() {
       setSearchedPlate(query);
       setUiState("banner");
 
-      // Save to recent searches state and cache in localStorage
+      // Save to recent searches state and cache in safeLocalStorage
       setRecentSearches((prev) => {
         const next = [query, ...prev.filter((p) => p !== query)].slice(0, 4);
-        localStorage.setItem("route-recent-searches", JSON.stringify(next));
+        safeLocalStorage.setItem("route-recent-searches", JSON.stringify(next));
         return next;
       });
 

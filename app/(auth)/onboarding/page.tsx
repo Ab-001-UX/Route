@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { MapPin, Bell, Users, Check, ArrowRight, ChevronLeft, Trash2, Plus, Phone, User, Loader2 } from "lucide-react";
 import styles from "./onboarding.module.css";
 import { normalizeNigerianPhoneNumber } from "@/lib/validators";
+import { safeLocalStorage } from "@/lib/storage";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -37,18 +38,25 @@ export default function OnboardingPage() {
   const removeContact = useMutation(api.contacts.removeContact);
   const contacts = useQuery(api.contacts.getContacts) || [];
 
-  // Returning user guard — if user record exists in Convex, skip onboarding to /home directly.
+  // Returning user guard — if they have fully completed onboarding, skip onboarding.
+  // Otherwise, automatically advance to Step 2 if they already have a phone number.
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
-      router.replace("/home");
+      if (currentUser.displayName) {
+        router.replace("/home");
+      } else if (!hasAutoAdvanced) {
+        if (currentUser.phone) {
+          setPhone(currentUser.phone);
+        }
+        setHasAutoAdvanced(true);
+        setStep(2);
+      }
     }
-  }, [currentUser, router]);
+  }, [currentUser, router, hasAutoAdvanced]);
 
   // Reset/Initialize inactivity timer on mount to prevent premature logouts
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("route-last-active", Date.now().toString());
-    }
+    safeLocalStorage.setItem("route-last-active", Date.now().toString());
   }, []);
 
   const formatPhoneNumber = (num: string): string => {
@@ -218,9 +226,7 @@ export default function OnboardingPage() {
     setFinishLoading(true);
     try {
       await updateUser({ displayName });
-      if (typeof window !== "undefined") {
-        localStorage.setItem("route-last-active", Date.now().toString());
-      }
+      safeLocalStorage.setItem("route-last-active", Date.now().toString());
       router.push("/home");
     } catch (err: any) {
       setContactError(err.message || "Failed to save profile.");

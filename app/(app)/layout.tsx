@@ -11,6 +11,7 @@ import styles from "./layout.module.css";
 import Skeleton from "@/components/ui/Skeleton";
 import { identifyUser } from "@/lib/analytics";
 import { useClerk } from "@clerk/nextjs";
+import { safeLocalStorage } from "@/lib/storage";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -65,12 +66,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
   // Session inactivity/app closure timeout check (20 minutes)
   useEffect(() => {
     const checkSessionTimeout = async () => {
-      const lastActive = localStorage.getItem("route-last-active");
+      const lastActive = safeLocalStorage.getItem("route-last-active");
       if (lastActive) {
         const inactiveTime = Date.now() - parseInt(lastActive, 10);
         const twentyMinutes = 20 * 60 * 1000;
         if (inactiveTime > twentyMinutes) {
-          localStorage.removeItem("route-last-active");
+          safeLocalStorage.removeItem("route-last-active");
           try {
             await signOut();
             router.replace("/login");
@@ -80,7 +81,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           return;
         }
       }
-      localStorage.setItem("route-last-active", Date.now().toString());
+      safeLocalStorage.setItem("route-last-active", Date.now().toString());
     };
 
     checkSessionTimeout();
@@ -88,19 +89,19 @@ export default function AppLayout({ children }: AppLayoutProps) {
     // Event listeners to capture when the user leaves/minimizes the app
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        localStorage.setItem("route-last-active", Date.now().toString());
+        safeLocalStorage.setItem("route-last-active", Date.now().toString());
       } else {
         checkSessionTimeout();
       }
     };
 
     const handlePageHide = () => {
-      localStorage.setItem("route-last-active", Date.now().toString());
+      safeLocalStorage.setItem("route-last-active", Date.now().toString());
     };
 
     // Update active timestamp on user interaction
     const updateActivity = () => {
-      localStorage.setItem("route-last-active", Date.now().toString());
+      safeLocalStorage.setItem("route-last-active", Date.now().toString());
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -128,9 +129,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // Only redirect brand-new users without a Convex user record to /onboarding.
-    // Existing users stay on /home smoothly.
-    if (dbUser === null) {
+    // Redirect to onboarding if Convex profile does not exist OR is incomplete (missing displayName)
+    if (dbUser === null || (dbUser !== undefined && !dbUser.displayName)) {
       router.replace("/onboarding");
     }
   }, [dbUser, router]);

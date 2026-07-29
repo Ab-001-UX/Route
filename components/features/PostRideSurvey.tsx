@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import styles from "./post-ride-survey.module.css";
 import { trackEvent } from "@/lib/analytics";
+import { safeSessionStorage } from "@/lib/storage";
 
 const INCIDENT_CATEGORIES = [
   { value: "", label: "Choose an option..." },
@@ -39,7 +40,7 @@ export default function PostRideSurvey() {
   // Check if session storage snoozes this survey
   useEffect(() => {
     if (lastTrip) {
-      const isSnoozed = sessionStorage.getItem(`snoozed_survey_trip_${lastTrip._id}`) === "true";
+      const isSnoozed = safeSessionStorage.getItem(`snoozed_survey_trip_${lastTrip._id}`) === "true";
       if (!isSnoozed) {
         setIsOpen(true);
       }
@@ -51,7 +52,7 @@ export default function PostRideSurvey() {
   if (!lastTrip || !isOpen) return null;
 
   const handleSnooze = () => {
-    sessionStorage.setItem(`snoozed_survey_trip_${lastTrip._id}`, "true");
+    safeSessionStorage.setItem(`snoozed_survey_trip_${lastTrip._id}`, "true");
     setIsOpen(false);
   };
 

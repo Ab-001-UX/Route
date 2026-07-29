@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./cookie-consent.module.css";
+import { safeLocalStorage } from "@/lib/storage";
 
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     // Check if user has already made a choice
-    const consent = localStorage.getItem("route-cookie-consent");
+    const consent = safeLocalStorage.getItem("route-cookie-consent");
     if (!consent) {
       // Delay appearance slightly for better UX entry
       const timer = setTimeout(() => {
@@ -20,12 +21,12 @@ export default function CookieConsent() {
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem("route-cookie-consent", "accepted");
+    safeLocalStorage.setItem("route-cookie-consent", "accepted");
     setVisible(false);
   };
 
   const handleReject = () => {
-    localStorage.setItem("route-cookie-consent", "rejected");
+    safeLocalStorage.setItem("route-cookie-consent", "rejected");
     setVisible(false);
   };
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Share, MoreVertical, PlusSquare, Smartphone, X } from "lucide-react";
 import styles from "./pwa-install.module.css";
+import { safeLocalStorage } from "@/lib/storage";
 
 export default function PwaInstallBanner() {
   const [showBanner, setShowBanner] = useState(false);
@@ -25,7 +26,7 @@ export default function PwaInstallBanner() {
     }
 
     // Check if user dismissed banner recently
-    const dismissed = localStorage.getItem("route-pwa-banner-dismissed");
+    const dismissed = safeLocalStorage.getItem("route-pwa-banner-dismissed");
     if (dismissed && Date.now() - parseInt(dismissed, 10) < 86400000 * 3) {
       // Dismissed within last 3 days
       setShowBanner(false);
@@ -44,9 +45,7 @@ export default function PwaInstallBanner() {
 
   const handleDismiss = () => {
     setShowBanner(false);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("route-pwa-banner-dismissed", Date.now().toString());
-    }
+    safeLocalStorage.setItem("route-pwa-banner-dismissed", Date.now().toString());
   };
 
   if (!showBanner) return null;

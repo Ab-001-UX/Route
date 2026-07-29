@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RouteLogo from "@/components/ui/RouteLogo";
 import styles from "../auth.module.css";
+import { safeLocalStorage } from "@/lib/storage";
 
 function getFriendlyAuthError(err: any): string {
   const code = err?.errors?.[0]?.code || "";
@@ -87,9 +88,7 @@ export default function LoginPage() {
       });
 
       if (result.status === "complete") {
-        if (typeof window !== "undefined") {
-          localStorage.setItem("route-returning-user", "true");
-        }
+        safeLocalStorage.setItem("route-returning-user", "true");
         await setActive({ session: result.createdSessionId });
         router.push("/home");
       } else if (result.status === "needs_first_factor" || result.status === "needs_second_factor") {

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { initAnalytics } from "@/lib/analytics";
+import { safeLocalStorage } from "@/lib/storage";
 
 type Theme = "light" | "dark";
 type FontSize = "default" | "large" | "extra-large";
@@ -29,12 +30,12 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const [privacyMode, setPrivacyModeState] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
-  // 1. Initial load from localStorage (to prevent flash before Convex queries resolve)
+  // 1. Initial load from safeLocalStorage (to prevent flash before Convex queries resolve)
   useEffect(() => {
     initAnalytics();
-    const localTheme = localStorage.getItem("route-theme") as Theme;
-    const localFontSize = localStorage.getItem("route-fontsize") as FontSize;
-    const localPrivacy = localStorage.getItem("route-privacymode") === "true";
+    const localTheme = safeLocalStorage.getItem("route-theme") as Theme;
+    const localFontSize = safeLocalStorage.getItem("route-fontsize") as FontSize;
+    const localPrivacy = safeLocalStorage.getItem("route-privacymode") === "true";
 
     if (localTheme) {
       setThemeState(localTheme);
@@ -61,16 +62,16 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
       if (dbUser.theme && dbUser.theme !== theme) {
         setThemeState(dbUser.theme as Theme);
         document.documentElement.setAttribute("data-theme", dbUser.theme);
-        localStorage.setItem("route-theme", dbUser.theme);
+        safeLocalStorage.setItem("route-theme", dbUser.theme);
       }
       if (dbUser.fontSize && dbUser.fontSize !== fontSize) {
         setFontSizeState(dbUser.fontSize as FontSize);
         document.documentElement.setAttribute("data-font-size", dbUser.fontSize);
-        localStorage.setItem("route-fontsize", dbUser.fontSize);
+        safeLocalStorage.setItem("route-fontsize", dbUser.fontSize);
       }
       if (dbUser.privacyMode !== undefined && dbUser.privacyMode !== privacyMode) {
         setPrivacyModeState(dbUser.privacyMode);
-        localStorage.setItem("route-privacymode", dbUser.privacyMode ? "true" : "false");
+        safeLocalStorage.setItem("route-privacymode", dbUser.privacyMode ? "true" : "false");
       }
     }
   }, [dbUser]);
@@ -78,7 +79,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const setTheme = async (newTheme: Theme) => {
     setThemeState(newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("route-theme", newTheme);
+    safeLocalStorage.setItem("route-theme", newTheme);
     if (dbUser) {
       try {
         await updateUserSettings({ theme: newTheme });
@@ -91,7 +92,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const setFontSize = async (newSize: FontSize) => {
     setFontSizeState(newSize);
     document.documentElement.setAttribute("data-font-size", newSize);
-    localStorage.setItem("route-fontsize", newSize);
+    safeLocalStorage.setItem("route-fontsize", newSize);
     if (dbUser) {
       try {
         await updateUserSettings({ fontSize: newSize });
@@ -103,7 +104,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 
   const setPrivacyMode = async (newMode: boolean) => {
     setPrivacyModeState(newMode);
-    localStorage.setItem("route-privacymode", newMode ? "true" : "false");
+    safeLocalStorage.setItem("route-privacymode", newMode ? "true" : "false");
     if (dbUser) {
       try {
         await updateUserSettings({ privacyMode: newMode });
