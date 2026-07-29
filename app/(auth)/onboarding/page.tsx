@@ -37,12 +37,10 @@ export default function OnboardingPage() {
   const removeContact = useMutation(api.contacts.removeContact);
   const contacts = useQuery(api.contacts.getContacts) || [];
 
-  // Returning user guard — only redirect to /home if user has fully completed onboarding (displayName exists in Convex)
+  // Returning user guard — if user record exists in Convex, skip onboarding to /home directly.
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
-      if (currentUser.displayName) {
-        router.replace("/home");
-      }
+      router.replace("/home");
     }
   }, [currentUser, router]);
 

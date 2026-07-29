@@ -128,8 +128,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // If Convex user record is missing or incomplete (no displayName), redirect to /onboarding
-    if (dbUser === null || (dbUser !== undefined && !dbUser.displayName)) {
+    // Only redirect brand-new users without a Convex user record to /onboarding.
+    // Existing users stay on /home smoothly.
+    if (dbUser === null) {
       router.replace("/onboarding");
     }
   }, [dbUser, router]);
