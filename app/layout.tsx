@@ -92,7 +92,7 @@ export default function RootLayout({
                 window.onerror = function(message, source, lineno, colno, error) {
                   var msgStr = String(message || '');
                   if (msgStr.indexOf('ChunkLoadError') !== -1 || msgStr.indexOf('Loading chunk') !== -1) {
-                    window.location.reload(true);
+                    window.location.reload();
                     return true;
                   }
                   var stack = (error && error.stack) ? error.stack : (source + ':' + lineno + ':' + colno);
@@ -104,7 +104,7 @@ export default function RootLayout({
                   var reason = event.reason;
                   var msg = (reason && reason.message) ? reason.message : String(reason);
                   if (msg.indexOf('ChunkLoadError') !== -1 || msg.indexOf('Loading chunk') !== -1) {
-                    window.location.reload(true);
+                    window.location.reload();
                     return;
                   }
                   var stack = (reason && reason.stack) ? reason.stack : '';

@@ -323,9 +323,13 @@ export default function SettingsPage() {
     if (typeof navigator !== "undefined") {
       navigator.geolocation.getCurrentPosition(
         () => setGpsPermission("granted"),
-        () => setShowGpsGuide(true)
+        () => {
+          window.open("https://route-nine-dusky.vercel.app", "_blank");
+          setShowGpsGuide(true);
+        }
       );
     } else {
+      window.open("https://route-nine-dusky.vercel.app", "_blank");
       setShowGpsGuide(true);
     }
   };
@@ -353,9 +357,11 @@ export default function SettingsPage() {
         stream.getTracks().forEach((t) => t.stop());
         setMicPermission("granted");
       } catch {
+        window.open("https://route-nine-dusky.vercel.app", "_blank");
         setShowMicGuide(true);
       }
     } else {
+      window.open("https://route-nine-dusky.vercel.app", "_blank");
       setShowMicGuide(true);
     }
   };
@@ -607,12 +613,19 @@ export default function SettingsPage() {
           </div>
 
           {/* Location Services Row — Button-Only Status */}
-          <div className={styles.rowItem} style={{ alignItems: "center" }}>
-            <div className={styles.rowLeft} style={{ alignItems: "center" }}>
-              <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)" }}>
+          <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
+            <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
+              <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)", marginTop: "2px" }}>
                 <Globe size={20} />
               </div>
-              <span className={styles.rowLabel}>Location Services (GPS)</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className={styles.rowLabel}>Location Services (GPS)</span>
+                {gpsPermission !== "granted" && (
+                  <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                    Tap Aa in the address bar, then Website Settings, then Allow.
+                  </span>
+                )}
+              </div>
             </div>
             <div className={styles.rowRight}>
               {gpsPermission === "granted" ? (
@@ -657,12 +670,19 @@ export default function SettingsPage() {
           </div>
 
           {/* Microphone Access Row */}
-          <div className={styles.rowItem} style={{ alignItems: "center" }}>
-            <div className={styles.rowLeft} style={{ alignItems: "center" }}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(200, 95%, 53%)" }}>
+          <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
+            <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
+              <div className={styles.iconWrapper} style={{ color: "hsl(200, 95%, 53%)", marginTop: "2px" }}>
                 <Mic size={20} />
               </div>
-              <span className={styles.rowLabel}>Microphone (Voice Search)</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className={styles.rowLabel}>Microphone (Voice Search)</span>
+                {micPermission !== "granted" && (
+                  <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                    Tap Aa in the address bar, then Website Settings, then Allow.
+                  </span>
+                )}
+              </div>
             </div>
             <div className={styles.rowRight}>
               {micPermission === "granted" ? (
@@ -1104,48 +1124,20 @@ export default function SettingsPage() {
                 Route needs Location Services to automatically track your coordinates during active trips so your emergency contacts can view your live progress.
               </p>
 
-              {deviceOS === "ios" && (
-                <div>
-                  <strong>How to turn on Location on iPhone:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Open your iPhone <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Safari</strong> (or <strong>Privacy & Security ➔ Location Services</strong>).</li>
-                    <li>Tap <strong>Location</strong> and select <strong>Allow</strong> or <strong>Ask</strong>.</li>
-                    <li>Return to Route and tap <strong>Try Requesting Again</strong> below.</li>
-                  </ol>
-                </div>
-              )}
+              <div style={{ backgroundColor: "var(--color-background-app)", padding: "12px", borderRadius: "10px", border: "1px solid var(--color-border-default)", marginBottom: "12px" }}>
+                <strong>How to unblock Location in Safari:</strong>
+                <p style={{ margin: "6px 0 0 0", fontSize: "12px", fontWeight: 600, color: "var(--color-brand-primary)" }}>
+                  Tap Aa in the address bar, then Website Settings, then Allow.
+                </p>
+              </div>
 
-              {deviceOS === "android" && (
-                <div>
-                  <strong>How to turn on Location on Android:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Open your Android <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
-                    <li>Scroll down and tap <strong>Chrome</strong> (or <strong>Route</strong>).</li>
-                    <li>Tap <strong>Permissions</strong>, then tap <strong>Location</strong>.</li>
-                    <li>Select <strong>Allow only while using the app</strong>.</li>
-                  </ol>
-                </div>
-              )}
-
-              {deviceOS === "other" && (
-                <div>
-                  <strong>How to turn on Location:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Tap the <strong>Lock icon 🔒</strong> next to the URL in your browser.</li>
-                    <li>Select <strong>Permissions / Site Settings</strong>.</li>
-                    <li>Change <strong>Location</strong> permission to <strong>Allow</strong>.</li>
-                  </ol>
-                </div>
-              )}
-              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
-                Tip: If added to your Home Screen, permissions are managed under iPhone Settings ➔ Safari.
+              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", margin: "0", fontStyle: "italic" }}>
+                Per-site permissions must be enabled in Safari. Tap below to open Route in Safari.
               </p>
             </div>
             <div className={styles.modalActions}>
-              <button className="primary" onClick={() => { setShowGpsGuide(false); handleEnableGps(); }}>
-                Try Requesting Again
+              <button className="primary" onClick={() => { setShowGpsGuide(false); window.open("https://route-nine-dusky.vercel.app", "_blank"); }}>
+                Open Safari to Allow Location
               </button>
               <button className="secondary" onClick={() => setShowGpsGuide(false)}>
                 Close
@@ -1169,49 +1161,16 @@ export default function SettingsPage() {
                 Push notifications alert you instantly when a safety check-in is due or if an emergency contact responds.
               </p>
 
-              {deviceOS === "ios" && (
-                <div>
-                  <strong>How to unblock Notifications on iPhone:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Open your iPhone <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Notifications</strong>.</li>
-                    <li>Scroll down and tap <strong>Safari</strong> (or <strong>Route</strong> if added to Home Screen).</li>
-                    <li>Turn on <strong>Allow Notifications</strong>.</li>
-                    <li>Return to Route and tap <strong>Try Requesting Again</strong> below.</li>
-                  </ol>
-                </div>
-              )}
-
-              {deviceOS === "android" && (
-                <div>
-                  <strong>How to unblock Notifications on Android:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Open your Android <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
-                    <li>Scroll down and tap <strong>Chrome</strong> (or <strong>Route</strong>).</li>
-                    <li>Tap <strong>Notifications</strong> and turn on <strong>Allow Notifications</strong>.</li>
-                    <li>Tap <strong>Try Requesting Again</strong> below.</li>
-                  </ol>
-                </div>
-              )}
-
-              {deviceOS === "other" && (
-                <div>
-                  <strong>How to turn on Push Notifications:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Tap the <strong>Try Requesting Again</strong> button below.</li>
-                    <li>Tap <strong>Allow</strong> on your browser notification pop-up.</li>
-                    <li>If blocked: Tap the <strong>Lock icon 🔒</strong> in your browser address bar, tap <strong>Notifications</strong>, and select <strong>Allow</strong>.</li>
-                  </ol>
-                </div>
-              )}
-              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
-                Tip: Make sure you have added Route to your Home Screen to enable instant push notifications.
-              </p>
+              <div style={{ backgroundColor: "var(--color-background-app)", padding: "12px", borderRadius: "10px", border: "1px solid var(--color-border-default)", marginBottom: "12px" }}>
+                <strong>Enable directly inside app:</strong>
+                <p style={{ margin: "6px 0 0 0", fontSize: "12px", color: "var(--color-text-secondary)" }}>
+                  Push notifications can only be granted directly inside this installed app. Tap the button below to prompt permissions.
+                </p>
+              </div>
             </div>
             <div className={styles.modalActions}>
               <button className="primary" onClick={() => { setShowPushGuide(false); handleEnablePush(); }}>
-                Try Requesting Again
+                Request Notification Permission
               </button>
               <button className="secondary" onClick={() => setShowPushGuide(false)}>
                 Close
@@ -1235,49 +1194,20 @@ export default function SettingsPage() {
                 Route uses your microphone for hands-free speech-to-text so you can verify vehicle license plates out loud.
               </p>
 
-              {deviceOS === "ios" && (
-                <div>
-                  <strong>How to turn on Microphone on iPhone:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Open your iPhone <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Safari</strong> (or <strong>Route</strong> if added to Home Screen).</li>
-                    <li>Under <em>Permissions</em>, tap <strong>Microphone</strong>.</li>
-                    <li>Select <strong>Allow</strong> or <strong>Ask</strong>.</li>
-                    <li>Return to Route and tap <strong>Try Requesting Again</strong> below.</li>
-                  </ol>
-                </div>
-              )}
+              <div style={{ backgroundColor: "var(--color-background-app)", padding: "12px", borderRadius: "10px", border: "1px solid var(--color-border-default)", marginBottom: "12px" }}>
+                <strong>How to unblock Microphone in Safari:</strong>
+                <p style={{ margin: "6px 0 0 0", fontSize: "12px", fontWeight: 600, color: "var(--color-brand-primary)" }}>
+                  Tap Aa in the address bar, then Website Settings, then Allow.
+                </p>
+              </div>
 
-              {deviceOS === "android" && (
-                <div>
-                  <strong>How to turn on Microphone on Android:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Open your Android <strong>Settings</strong> app.</li>
-                    <li>Tap <strong>Apps</strong> (or <strong>App Management</strong>).</li>
-                    <li>Scroll down and tap <strong>Chrome</strong> (or <strong>Route</strong>).</li>
-                    <li>Tap <strong>Permissions</strong> ➔ <strong>Microphone</strong>.</li>
-                    <li>Select <strong>Allow only while using the app</strong>.</li>
-                  </ol>
-                </div>
-              )}
-
-              {deviceOS === "other" && (
-                <div>
-                  <strong>How to turn on Microphone:</strong>
-                  <ol style={{ paddingLeft: "20px", margin: "8px 0" }}>
-                    <li>Tap the <strong>Lock icon 🔒</strong> next to the URL in your browser address bar.</li>
-                    <li>Select <strong>Permissions / Site Settings</strong>.</li>
-                    <li>Change <strong>Microphone</strong> permission to <strong>Allow</strong>.</li>
-                  </ol>
-                </div>
-              )}
-              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", marginTop: "12px", marginBottom: "0", fontStyle: "italic" }}>
-                Tip: Voice search is optional. You can also type plate numbers manually.
+              <p style={{ fontSize: "11.5px", color: "var(--color-text-secondary)", margin: "0", fontStyle: "italic" }}>
+                Per-site permissions must be enabled in Safari. Tap below to open Route in Safari.
               </p>
             </div>
             <div className={styles.modalActions}>
-              <button className="primary" onClick={() => { setShowMicGuide(false); handleEnableMic(); }}>
-                Try Requesting Again
+              <button className="primary" onClick={() => { setShowMicGuide(false); window.open("https://route-nine-dusky.vercel.app", "_blank"); }}>
+                Open Safari to Allow Microphone
               </button>
               <button className="secondary" onClick={() => setShowMicGuide(false)}>
                 Close
