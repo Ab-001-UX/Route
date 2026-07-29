@@ -235,6 +235,17 @@ export default function OnboardingPage() {
     }
   };
 
+  if (currentUser === undefined) {
+    return (
+      <main className={styles.onboardingShell}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", gap: "16px", color: "var(--color-text-primary)" }}>
+          <Loader2 className={styles.spin} size={36} color="var(--color-brand-primary)" />
+          <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Checking profile status...</span>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
