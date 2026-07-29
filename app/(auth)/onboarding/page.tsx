@@ -37,21 +37,14 @@ export default function OnboardingPage() {
   const removeContact = useMutation(api.contacts.removeContact);
   const contacts = useQuery(api.contacts.getContacts) || [];
 
-  // Returning user guard — if they have fully completed onboarding, skip onboarding.
-  // Otherwise, automatically advance to Step 2 if they already have a phone number.
+  // Returning user guard — only redirect to /home if user has fully completed onboarding (displayName exists in Convex)
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
       if (currentUser.displayName) {
         router.replace("/home");
-      } else if (!hasAutoAdvanced) {
-        if (currentUser.phone) {
-          setPhone(currentUser.phone);
-        }
-        setHasAutoAdvanced(true);
-        setStep(2);
       }
     }
-  }, [currentUser, router, hasAutoAdvanced]);
+  }, [currentUser, router]);
 
   // Reset/Initialize inactivity timer on mount to prevent premature logouts
   useEffect(() => {

@@ -87,6 +87,9 @@ export default function LoginPage() {
       });
 
       if (result.status === "complete") {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("route-returning-user", "true");
+        }
         await setActive({ session: result.createdSessionId });
         router.push("/home");
       } else if (result.status === "needs_first_factor" || result.status === "needs_second_factor") {

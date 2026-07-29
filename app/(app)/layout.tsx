@@ -128,7 +128,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // If queries are loaded and user hasn't completed onboarding, redirect them
+    // If Convex user record is missing or incomplete (no displayName), redirect to /onboarding
     if (dbUser === null || (dbUser !== undefined && !dbUser.displayName)) {
       router.replace("/onboarding");
     }
