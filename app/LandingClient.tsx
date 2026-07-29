@@ -44,7 +44,10 @@ export default function LandingClient() {
 
   const handleCopyLink = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(window.location.origin);
+      const linkToCopy = typeof window !== "undefined" && window.location.origin.includes("localhost")
+        ? window.location.origin
+        : "https://route-nine-dusky.vercel.app";
+      await navigator.clipboard.writeText(linkToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -409,7 +412,13 @@ export default function LandingClient() {
             {/* QR Code */}
             <div className={styles.desktopModalQR}>
               <QRCodeSVG
-                value={typeof window !== "undefined" ? window.location.origin : "https://route.app"}
+                value={
+                  typeof window !== "undefined"
+                    ? window.location.origin.includes("localhost")
+                      ? window.location.origin
+                      : "https://route-nine-dusky.vercel.app"
+                    : "https://route-nine-dusky.vercel.app"
+                }
                 size={180}
                 bgColor="#ffffff"
                 fgColor="#0a0a0a"
@@ -419,7 +428,13 @@ export default function LandingClient() {
 
             {/* URL + copy */}
             <div className={styles.desktopModalUrl}>
-              <span>{typeof window !== "undefined" ? window.location.origin : "route.app"}</span>
+              <span>
+                {typeof window !== "undefined"
+                  ? window.location.origin.includes("localhost")
+                    ? window.location.origin
+                    : "https://route-nine-dusky.vercel.app"
+                  : "https://route-nine-dusky.vercel.app"}
+              </span>
               <button onClick={handleCopyLink} className={styles.desktopModalCopyBtn}>
                 {copied ? "✓ Copied!" : "Copy Link"}
               </button>
