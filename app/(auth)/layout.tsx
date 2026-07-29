@@ -15,7 +15,6 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       badges.forEach((b) => {
         if (b.textContent?.toLowerCase().includes("last used")) {
           (b as HTMLElement).style.display = "none";
-          b.remove();
         }
       });
 

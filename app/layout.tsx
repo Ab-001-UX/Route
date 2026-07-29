@@ -166,7 +166,7 @@ export default function RootLayout({
                   if (splash) {
                     splash.style.opacity = '0';
                     splash.style.visibility = 'hidden';
-                    setTimeout(function() { splash.remove(); }, 300);
+                    setTimeout(function() { splash.style.display = 'none'; }, 300);
                   }
                 }, 150);
               });
