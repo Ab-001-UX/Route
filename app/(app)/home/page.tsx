@@ -742,16 +742,6 @@ export default function HomePage() {
                   >
                     <ArrowRight size={18} />
                   </button>
-                ) : speechSupported ? (
-                  <button
-                    type="button"
-                    className={`${styles.searchCameraBtn} ${isListening ? styles.listeningBtn : ""}`}
-                    onClick={isListening ? stopListening : startListening}
-                    aria-label={isListening ? "Stop listening" : "Speak plate number"}
-                    title={isListening ? "Listening... click to stop" : "Speak plate number"}
-                  >
-                    <Mic size={18} />
-                  </button>
                 ) : null}
               </div>
             </form>
@@ -828,14 +818,7 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Mic permission guide modal — fired when speech recognition is denied */}
-          {showMicGuide && (
-            <MicPermissionGuideModal
-              type="microphone"
-              onDismiss={() => setShowMicGuide(false)}
-              dismissLabel="Type manually instead"
-            />
-          )}
+
 
           {showEmptyHome && recentTrips.length > 0 && (
             <section className={styles.recentChecksSection}>
@@ -1171,16 +1154,6 @@ export default function HomePage() {
                   >
                     <ArrowRight size={18} />
                   </button>
-                ) : speechSupported ? (
-                  <button
-                    type="button"
-                    className={`${styles.searchCameraBtn} ${isListening ? styles.listeningBtn : ""}`}
-                    onClick={isListening ? stopListening : startListening}
-                    aria-label={isListening ? "Stop listening" : "Speak plate number"}
-                    title={isListening ? "Listening... click to stop" : "Speak plate number"}
-                  >
-                    <Mic size={18} />
-                  </button>
                 ) : null}
               </div>
             </form>
@@ -1313,42 +1286,7 @@ export default function HomePage() {
       })()}
 
 
-      {/* STATE 2: VOICE LISTENING VIEWPORT */}
-      {uiState === "voice" && (
-        <div className={styles.voiceContainer}>
-          <div className={styles.voiceWaveWrapper}>
-            <div className={styles.voicePulseCircle} />
-            <div className={styles.voicePulseCircleDelay1} />
-            <div className={styles.voicePulseCircleDelay2} />
-            <Mic size={48} className={styles.voiceMicIcon} />
-          </div>
-          <h3 className={styles.voiceListeningTitle}>Listening for Plate...</h3>
-          <p className={styles.voiceListeningSubtitle}>Speak clearly e.g. "KJA 4-8-2 Q-R"</p>
-          {partialTranscript && (
-            <div className={styles.voicePartial}>"{partialTranscript}"</div>
-          )}
-          <button className={styles.stopVoiceBtn} onClick={stopListening}>
-            Cancel
-          </button>
-        </div>
-      )}
 
-      {/* STATE 3: VOICE TRANSCRIPTION CONFIRMATION */}
-      {uiState === "voice_confirm" && (
-        <div className={styles.voiceConfirmCard}>
-          <h3>Confirm Spoken Plate</h3>
-          <p className={styles.voicePrompt}>Is this plate correct?</p>
-          <div className={styles.voicePlateResult}>{voiceResult}</div>
-          <div className={styles.voiceConfirmActions}>
-            <button className="primary" onClick={handleVoiceConfirmYes}>
-              <CheckCircle size={18} /> Yes, correct
-            </button>
-            <button className="secondary" onClick={handleVoiceConfirmEdit}>
-              <X size={18} /> No, edit
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* STATE 4: VEHICLE DESCRIPTIONS FORM (AFTER OCR CONFIRMED) */}
       {uiState === "description" && (
