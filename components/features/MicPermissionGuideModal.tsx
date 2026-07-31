@@ -187,10 +187,11 @@ export default function MicPermissionGuideModal({
         inset: 0,
         zIndex: 9999,
         display: "flex",
-        alignItems: "flex-end",
+        alignItems: "center",
         justifyContent: "center",
         // Prevent touches on the outer wrapper from reaching the page
         touchAction: "none",
+        padding: "16px",
       }}
     >
       {/* Backdrop — tap to dismiss */}
@@ -207,7 +208,7 @@ export default function MicPermissionGuideModal({
         }}
       />
 
-      {/* Bottom sheet — touchAction: pan-y so only this scrolls */}
+      {/* Centered Modal — touchAction: pan-y so only this scrolls */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -216,8 +217,7 @@ export default function MicPermissionGuideModal({
           maxWidth: "480px",
           // Explicit background that will be clearly visible on any dark or light bg
           background: "var(--color-background-card, #1c1c2e)",
-          borderRadius: "20px 20px 0 0",
-          padding: "0 0 env(safe-area-inset-bottom, 20px)",
+          borderRadius: "20px",
           zIndex: 1,
           display: "flex",
           flexDirection: "column",
@@ -227,34 +227,21 @@ export default function MicPermissionGuideModal({
           overscrollBehavior: "contain",
         }}
       >
-        {/* ── Top bar: drag pill + close button ── */}
+        {/* ── Top bar: close button ── */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            padding: "12px 16px 0",
-            position: "relative",
+            justifyContent: "flex-end",
+            padding: "16px 16px 0",
             flexShrink: 0,
           }}
         >
-          {/* Drag pill */}
-          <div
-            style={{
-              width: "36px",
-              height: "4px",
-              borderRadius: "2px",
-              background: "rgba(255,255,255,0.18)",
-            }}
-          />
-          {/* X close button — top right */}
+          {/* X close button */}
           <button
             onClick={onDismiss}
             aria-label="Close"
             style={{
-              position: "absolute",
-              right: "16px",
-              top: "8px",
               width: "32px",
               height: "32px",
               borderRadius: "50%",

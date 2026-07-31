@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { 
   ArrowUpRight, 
   Search, 
@@ -26,7 +27,14 @@ import { QRCodeSVG } from "qrcode.react";
 
 export default function LandingClient() {
   const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
   const [showDesktopPanel, setShowDesktopPanel] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace("/home");
+    }
+  }, [isLoaded, isSignedIn, router]);
   const [copied, setCopied] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 

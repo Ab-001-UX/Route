@@ -2,10 +2,21 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { Camera, Bell, ShieldCheck, ArrowRight } from "lucide-react";
 import styles from "./welcome.module.css";
 
 export default function WelcomeClient() {
+  const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace("/home");
+    }
+  }, [isLoaded, isSignedIn, router]);
+
   useEffect(() => {
     document.documentElement.classList.add("pwa-mode");
     document.body.classList.add("pwa-mode");
