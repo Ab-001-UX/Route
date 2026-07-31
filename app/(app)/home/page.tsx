@@ -303,17 +303,9 @@ export default function HomePage() {
 
 
 
-  // When navigated from /trip with ?action=voice, auto-trigger speech recognition
+  // Load recent searches on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("action") === "voice" || params.get("action") === "camera") {
-        window.history.replaceState({}, document.title, window.location.pathname);
-        setTimeout(() => {
-          startListening();
-        }, 500);
-      }
-      
       // Load recent searches from safeLocalStorage
       const saved = safeLocalStorage.getItem("route-recent-searches");
       if (saved) {
