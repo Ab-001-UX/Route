@@ -258,28 +258,18 @@ export default function HomePage() {
   };
 
   // Navigation / Wizard UI States:
-  // "search" | "voice" | "voice_confirm" | "description" | "banner" | "results"
-  const [uiState, setUiState] = useState<"search" | "voice" | "voice_confirm" | "description" | "banner" | "results">("search");
+  // "search" | "description" | "banner" | "results"
+  const [uiState, setUiState] = useState<"search" | "description" | "banner" | "results">("search");
 
   // Search and Manual Inputs
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Mic permission guide modal
-  const [showMicGuide, setShowMicGuide] = useState(false);
-
   // Derive 3 most recent completed trips from already-loaded trips data
   const recentTrips = (trips ?? [])
     .filter((t) => t.status !== "active")
     .slice(0, 3);
-  
-  // Web Speech API processing states
-  const [isListening, setIsListening] = useState(false);
-  const [speechSupported, setSpeechSupported] = useState(false);
-  const [recognitionInstance, setRecognitionInstance] = useState<any>(null);
-  const [voiceResult, setVoiceResult] = useState("");
-  const [partialTranscript, setPartialTranscript] = useState("");
 
   // Description input states (Wizard Step 2)
   const [transportType, setTransportType] = useState("Uber/Bolt");
@@ -485,96 +475,6 @@ export default function HomePage() {
     }
   };
 
-  // 2. Web Speech Recognition API Integration
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        setSpeechSupported(true);
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = "en-NG";
-
-        recognition.onresult = (event: any) => {
-          let interim = "";
-          let finalTranscript = "";
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              finalTranscript = event.results[i][0].transcript;
-            } else {
-              interim += event.results[i][0].transcript;
-            }
-          }
-          if (finalTranscript) {
-            const clean = cleanPlateInput(finalTranscript);
-            setVoiceResult(clean);
-            setSearchQuery(clean);
-            setUiState("voice_confirm");
-          } else {
-            setPartialTranscript(interim);
-          }
-        };
-
-        recognition.onerror = (event: any) => {
-          console.warn("Speech recognition error:", event.error);
-          setIsListening(false);
-          if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-            // Show the step-by-step guide modal instead of a generic banner
-            setShowMicGuide(true);
-          } else {
-            setErrorMsg("Speech recognition failed. Please try again or type manually.");
-          }
-          setUiState("search");
-        };
-
-        recognition.onend = () => {
-          setIsListening(false);
-        };
-
-        setRecognitionInstance(recognition);
-      }
-    }
-  }, []);
-
-  const startListening = () => {
-    if (!recognitionInstance) return;
-    setErrorMsg("");
-    setVoiceResult("");
-    setPartialTranscript("");
-    setIsListening(true);
-    setUiState("voice");
-    try {
-      recognitionInstance.start();
-    } catch (e) {
-      console.error("Failed to start speech recognition:", e);
-      setIsListening(false);
-      setUiState("search");
-    }
-  };
-
-  const stopListening = () => {
-    if (!recognitionInstance) return;
-    setIsListening(false);
-    setUiState("search");
-    try {
-      recognitionInstance.stop();
-    } catch (e) {
-      console.error("Failed to stop speech recognition:", e);
-    }
-  };
-
-  const handleVoiceConfirmYes = () => {
-    setSearchQuery(voiceResult);
-    setUiState("description");
-  };
-
-  const handleVoiceConfirmEdit = () => {
-    setSearchQuery(voiceResult);
-    setUiState("search");
-    setErrorMsg("Please correct the plate number below.");
-  };
 
   // Proceed to log trip (Carries state to /trip/new)
   const handleProceedToTrip = (plateNum: string) => {

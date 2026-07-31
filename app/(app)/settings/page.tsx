@@ -230,10 +230,9 @@ export default function SettingsPage() {
     setActiveSection(activeSection === section ? null : section);
   };
 
-  // Permissions States for Location, Push Notifications & Microphone
+  // Permissions States for Location & Push Notifications
   const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
   const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
-  const [micPermission, setMicPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
 
   useEffect(() => {
     // Check GPS permission state
@@ -252,22 +251,11 @@ export default function SettingsPage() {
     } else {
       setPushPermission("denied");
     }
-
-    // Check Microphone permission state
-    if (typeof navigator !== "undefined" && navigator.permissions) {
-      navigator.permissions.query({ name: "microphone" as any }).then((status) => {
-        setMicPermission(status.state);
-        status.onchange = () => setMicPermission(status.state);
-      }).catch(() => setMicPermission("prompt"));
-    } else {
-      setMicPermission("prompt");
-    }
   }, []);
 
   // Permission guide modals & device OS detection
   const [showGpsGuide, setShowGpsGuide] = useState(false);
   const [showPushGuide, setShowPushGuide] = useState(false);
-  const [showMicGuide, setShowMicGuide] = useState(false);
   const [deviceOS, setDeviceOS] = useState<"ios" | "android" | "other">("other");
 
   useEffect(() => {
@@ -351,21 +339,6 @@ export default function SettingsPage() {
     }
   };
 
-  const handleEnableMic = async () => {
-    if (typeof navigator !== "undefined" && navigator.mediaDevices) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach((t) => t.stop());
-        setMicPermission("granted");
-      } catch {
-        window.open("https://route-nine-dusky.vercel.app", "_blank");
-        setShowMicGuide(true);
-      }
-    } else {
-      window.open("https://route-nine-dusky.vercel.app", "_blank");
-      setShowMicGuide(true);
-    }
-  };
 
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -665,38 +638,6 @@ export default function SettingsPage() {
                   style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
                 >
                   Set Up Push
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Microphone Access Row */}
-          <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
-            <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(200, 95%, 53%)", marginTop: "2px" }}>
-                <Mic size={20} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span className={styles.rowLabel}>Microphone (Voice Search)</span>
-                {micPermission !== "granted" && (
-                  <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
-                    Tap Aa in the address bar, then Website Settings, then Allow.
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className={styles.rowRight}>
-              {micPermission === "granted" ? (
-                <span style={{ padding: "4px 12px", borderRadius: "12px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", fontSize: "13px", fontWeight: 600 }}>
-                  Active
-                </span>
-              ) : (
-                <button 
-                  onClick={handleEnableMic} 
-                  className="secondary"
-                  style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
-                >
-                  Set Up Mic
                 </button>
               )}
             </div>
@@ -1153,14 +1094,6 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* Microphone Permission Guide Modal — shared component */}
-      {showMicGuide && (
-        <MicPermissionGuideModal
-          type="microphone"
-          onDismiss={() => setShowMicGuide(false)}
-          dismissLabel="Close"
-        />
-      )}
     </main>
   );
 }

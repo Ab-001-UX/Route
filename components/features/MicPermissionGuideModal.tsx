@@ -227,37 +227,30 @@ export default function MicPermissionGuideModal({
           overscrollBehavior: "contain",
         }}
       >
-        {/* ── Top bar: close button ── */}
-        <div
+        {/* X close button */}
+        <button
+          onClick={onDismiss}
+          aria-label="Close"
           style={{
+            position: "absolute",
+            top: "16px",
+            right: "16px",
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            border: "none",
+            background: "rgba(255,255,255,0.10)",
+            color: "rgba(255,255,255,0.7)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-end",
-            padding: "16px 16px 0",
-            flexShrink: 0,
+            justifyContent: "center",
+            cursor: "pointer",
+            padding: 0,
+            zIndex: 10,
           }}
         >
-          {/* X close button */}
-          <button
-            onClick={onDismiss}
-            aria-label="Close"
-            style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "50%",
-              border: "none",
-              background: "rgba(255,255,255,0.10)",
-              color: "rgba(255,255,255,0.7)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            <X size={16} strokeWidth={2.5} />
-          </button>
-        </div>
+          <X size={16} strokeWidth={2.5} />
+        </button>
 
         {/* ── Scrollable body ── */}
         <div
@@ -265,11 +258,12 @@ export default function MicPermissionGuideModal({
             overflowY: "auto",
             WebkitOverflowScrolling: "touch",
             overscrollBehavior: "contain",
-            padding: "16px 20px 24px",
+            padding: "24px 20px 24px",
             display: "flex",
             flexDirection: "column",
             gap: "16px",
             flex: 1,
+            touchAction: "pan-y",
           }}
         >
           {/* Header: icon + headline + body */}
@@ -279,7 +273,8 @@ export default function MicPermissionGuideModal({
                 width: "46px",
                 height: "46px",
                 borderRadius: "12px",
-                background: "rgba(99,102,241,0.15)",
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.12)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -287,9 +282,9 @@ export default function MicPermissionGuideModal({
               }}
             >
               {type === "microphone" ? (
-                <Mic size={22} color={accent} />
+                <Mic size={22} color="#ffffff" />
               ) : (
-                <MapPin size={22} color={accent} />
+                <MapPin size={22} color="#ffffff" />
               )}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
