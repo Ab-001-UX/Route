@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSignIn } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
+import { useSignIn, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RouteLogo from "@/components/ui/RouteLogo";
@@ -48,6 +48,7 @@ function isValidEmailFormat(emailStr: string): { valid: boolean; reason?: string
 
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { isSignedIn } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -61,6 +62,14 @@ export default function LoginPage() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
+
+  // If user already has a valid session (e.g. signed in via Safari, shared cookie),
+  // send them straight to the app — they should never see the login page.
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace("/home");
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   const handleOAuth = async (provider: "oauth_apple" | "oauth_facebook" | "oauth_google") => {
     if (!isLoaded) return;
@@ -228,6 +237,7 @@ export default function LoginPage() {
           <h1 className={styles.title}>Sign in to Route</h1>
           <p className={styles.subtitle}>Welcome back! Please sign in to continue</p>
         </div>
+
 
         {/* Unbreakable 3-Column Social Icons Row */}
         <div className={styles.socialRow}>
