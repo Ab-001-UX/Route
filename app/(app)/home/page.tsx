@@ -117,6 +117,19 @@ export default function HomePage() {
       description: "Multiple commuters reported being locked inside this vehicle along the third mainland bridge corridor.",
       uniqueFlaggersCount: 5
     },
+    {
+      _id: "mock-kja-999-xx",
+      plate: "KJA 999 XX",
+      flagCount: 2,
+      dangerousStatus: false,
+      safetyIndicator: "yellow",
+      isPinned: false,
+      isSaved: false,
+      transportType: "Uber/Bolt",
+      primaryOffense: "Reckless Driving",
+      description: "Driver was speeding aggressively and ignoring traffic lights near Ikeja City Mall.",
+      uniqueFlaggersCount: 2
+    },
     ...dbFeedList
   ] : undefined;
   const savedList = useQuery(api.vehicles.getSavedVehicles);
@@ -1187,53 +1200,35 @@ export default function HomePage() {
                   return (
                     <div key={item._id} className={styles.feedCard}>
                       <div className={styles.feedCardHeader}>
-                        <div className={styles.plateContainer} style={{ borderColor: getPlateBorderColor(item.flagCount) }}>
-                          <span className={styles.plateLagosText}>Lagos</span>
-                          <span className={styles.plateNumber}>{item.plate}</span>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
+                          <div className={styles.plateContainer} style={{ borderColor: getPlateBorderColor(item.flagCount) }}>
+                            <span className={styles.plateLagosText}>Lagos</span>
+                            <span className={styles.plateNumber}>{item.plate}</span>
+                          </div>
+                          {item.transportType && (
+                            <span className={styles.infoBadge}>{item.transportType}</span>
+                          )}
                         </div>
                         
-                        <div className={styles.controls}>
+                        <div className={styles.controls} style={{ alignSelf: "flex-start" }}>
                           <button
                             className={`${styles.actionButton} ${item.isPinned ? styles.pinButtonActive : ""}`}
                             onClick={() => handlePinToggle(item.plate)}
-                            disabled={!item.isSaved}
-                            title={!item.isSaved ? "Bookmark vehicle first to pin" : item.isPinned ? "Unpin vehicle" : "Pin vehicle"}
-                            style={{ opacity: !item.isSaved ? 0.5 : 1 }}
+                            title={item.isPinned ? "Unpin vehicle" : "Pin vehicle"}
                           >
-                            <Pin size={15} style={{ fill: item.isPinned ? "currentColor" : "none" }} />
+                            <Pin size={20} style={{ fill: item.isPinned ? "currentColor" : "none" }} />
                           </button>
                           <button
                             className={`${styles.actionButton} ${item.isSaved ? styles.active : ""}`}
                             onClick={() => handleSaveToggle(item.plate, item.isSaved)}
                             title={item.isSaved ? "Remove from bookmarks" : "Bookmark vehicle"}
                           >
-                            <Bookmark size={15} style={{ fill: item.isSaved ? "currentColor" : "none" }} />
+                            <Bookmark size={20} style={{ fill: item.isSaved ? "currentColor" : "none" }} />
                           </button>
                         </div>
                       </div>
 
                       <div className={styles.feedCardBody}>
-                        <div className={styles.metaRow}>
-                          <span 
-                            className={`${styles.safetyBadge} ${
-                              item.dangerousStatus || item.safetyIndicator === "red"
-                                ? styles["feedBadge-red"]
-                                : item.safetyIndicator === "green"
-                                ? styles["feedBadge-green"]
-                                : styles["feedBadge-yellow"]
-                            }`}
-                          >
-                            <span className={styles.dot} />
-                            {item.dangerousStatus || item.safetyIndicator === "red"
-                              ? "Dangerous"
-                              : item.safetyIndicator === "green"
-                              ? "Safe"
-                              : "Be Careful"}
-                          </span>
-                          {item.transportType && (
-                            <span className={styles.infoBadge}>{item.transportType}</span>
-                          )}
-                        </div>
                         {item.safetyIndicator !== "green" && (
                           <div style={{ fontSize: "13.5px", fontWeight: 700, marginTop: 4, color: "var(--color-text-primary)" }}>
                             Primary Concern: <span style={{ color: "var(--color-text-secondary)", fontWeight: 600 }}>{item.primaryOffense}</span>
