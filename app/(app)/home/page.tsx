@@ -15,6 +15,7 @@ import {
   AlertCircle,
   ArrowRight,
   ChevronLeft,
+  ChevronRight,
   RefreshCw,
   Pin,
   Bookmark,
@@ -110,7 +111,7 @@ export default function HomePage() {
       dangerousStatus: true,
       safetyIndicator: "red",
       isPinned: false,
-      isSaved: true,
+      isSaved: false,
       transportType: "Danfo",
       primaryOffense: "One-Chance Syndicate",
       description: "Multiple commuters reported being locked inside this vehicle along the third mainland bridge corridor.",
@@ -134,6 +135,9 @@ export default function HomePage() {
   const pinnedCount = savedList?.filter((item) => item.pinned).length ?? 0;
   const pinnedVehicles = savedList?.filter((item) => item.pinned) || [];
   const isHomeLoading = feedList === undefined || savedList === undefined || trips === undefined;
+  
+
+
   const hasHomeActivity = feedCount > 0 || savedCount > 0 || !!activeTrip;
   const showEmptyHome = !isHomeLoading && !hasHomeActivity;
   const activePreviewVehicles = [
@@ -165,6 +169,68 @@ export default function HomePage() {
   const [sosError, setSosError] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [showResultsMenu, setShowResultsMenu] = useState(false);
+
+  // Feed Filter States
+  const [feedFilterOpen, setFeedFilterOpen] = useState(false);
+  const [feedFilterArea, setFeedFilterArea] = useState("All");
+  const [feedFilterType, setFeedFilterType] = useState("All");
+  const [feedFilterDate, setFeedFilterDate] = useState<Date | null>(null);
+  const [filterViewingMonth, setFilterViewingMonth] = useState<Date>(() => {
+    const today = new Date();
+    today.setDate(1);
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
+
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const generateFilterCalendarDays = () => {
+    const year = filterViewingMonth.getFullYear();
+    const month = filterViewingMonth.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const startDayOfWeek = firstDayOfMonth.getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const prevMonthDays = new Date(year, month, 0).getDate();
+
+    const days: { date: Date; isCurrentMonth: boolean }[] = [];
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+      days.push({ date: new Date(year, month - 1, prevMonthDays - i, 0, 0, 0, 0), isCurrentMonth: false });
+    }
+    for (let day = 1; day <= totalDays; day++) {
+      days.push({ date: new Date(year, month, day, 0, 0, 0, 0), isCurrentMonth: true });
+    }
+    const nextMonthFillerCount = (days.length <= 35 ? 35 : 42) - days.length;
+    for (let day = 1; day <= nextMonthFillerCount; day++) {
+      days.push({ date: new Date(year, month + 1, day, 0, 0, 0, 0), isCurrentMonth: false });
+    }
+    return days;
+  };
+
+  // Apply feed filters locally
+  let filteredFeedList = feedList ? [...feedList] : undefined;
+  if (filteredFeedList && filteredFeedList.length > 0) {
+    if (feedFilterArea !== "All") {
+      filteredFeedList = filteredFeedList.filter(item => 
+        item.description?.toLowerCase().includes(feedFilterArea.toLowerCase()) || 
+        item.primaryOffense?.toLowerCase().includes(feedFilterArea.toLowerCase())
+      );
+    }
+    if (feedFilterType !== "All") {
+      filteredFeedList = filteredFeedList.filter(item => 
+        item.transportType?.toLowerCase() === feedFilterType.toLowerCase()
+      );
+    }
+    if (feedFilterDate) {
+      filteredFeedList = filteredFeedList.filter(item => {
+        if (!item._creationTime) return true; 
+        const d = new Date(item._creationTime);
+        return d.getDate() === feedFilterDate.getDate() &&
+               d.getMonth() === feedFilterDate.getMonth() &&
+               d.getFullYear() === feedFilterDate.getFullYear();
+      });
+    }
+  }
 
   // Flag report modal state
   const [showFlagModal, setShowFlagModal] = useState(false);
@@ -941,11 +1007,142 @@ export default function HomePage() {
 
           {/* LIVE SAFETY FEED SECTION */}
           <section id="feed-section" className={`${styles.feedSection} ${showEmptyHome ? styles.feedSectionCompact : ""}`}>
-            <div className={styles.feedTitle}>
-              <div>
-                <p className={styles.sectionKicker}>Community signal</p>
-                <span>Live Safety Feed</span>
+            <div className={styles.feedHeaderRow}>
+              <div className={styles.feedTitle}>
+                <div>
+                  <p className={styles.sectionKicker}>Community signal</p>
+                  <span>Live Safety Feed</span>
+                </div>
               </div>
+              <button 
+                className={styles.feedFilterBtn} 
+                onClick={() => setFeedFilterOpen(!feedFilterOpen)}
+                aria-label="Filter Live Safety Feed"
+              >
+                <MoreVertical size={20} />
+              </button>
+              
+              {feedFilterOpen && (
+                feedList === undefined || feedList.length === 0 ? (
+                  <div className={styles.feedFilterDropdownEmpty}>
+                    No safety alerts available yet to filter.
+                  </div>
+                ) : (
+                  <div className={styles.feedFilterDropdown}>
+                    <div className={styles.feedFilterGroup}>
+                      <label>Area</label>
+                      <select 
+                        className={styles.feedFilterSelect}
+                        value={feedFilterArea}
+                        onChange={(e) => setFeedFilterArea(e.target.value)}
+                      >
+                        <option value="All">All Locations</option>
+                        <option value="Ikeja">Ikeja</option>
+                        <option value="Oshodi">Oshodi</option>
+                        <option value="Lekki">Lekki</option>
+                        <option value="Mainland">Mainland</option>
+                      </select>
+                    </div>
+
+                    <div className={styles.feedFilterGroup}>
+                      <label>Vehicle Type</label>
+                      <select 
+                        className={styles.feedFilterSelect}
+                        value={feedFilterType}
+                        onChange={(e) => setFeedFilterType(e.target.value)}
+                      >
+                        <option value="All">All Types</option>
+                        <option value="Danfo">Danfo</option>
+                        <option value="Uber/Bolt">Uber/Bolt</option>
+                        <option value="Taxi">Taxi</option>
+                        <option value="Keke">Keke</option>
+                      </select>
+                    </div>
+
+                    <div className={styles.feedFilterGroup} style={{ marginBottom: 0 }}>
+                      <label>Date</label>
+                      <div className={styles.feedFilterCalendar}>
+                        <div className={styles.calendarHeader}>
+                          <button
+                            type="button"
+                            className={styles.calendarNavBtn}
+                            onClick={() => {
+                              setFilterViewingMonth((prev) => {
+                                const d = new Date(prev);
+                                d.setMonth(d.getMonth() - 1);
+                                return d;
+                              });
+                            }}
+                          >
+                            <ChevronLeft size={16} />
+                          </button>
+                          <span>
+                            {filterViewingMonth.toLocaleDateString([], { month: "long", year: "numeric" })}
+                          </span>
+                          <button
+                            type="button"
+                            className={styles.calendarNavBtn}
+                            onClick={() => {
+                              setFilterViewingMonth((prev) => {
+                                const d = new Date(prev);
+                                d.setMonth(d.getMonth() + 1);
+                                return d;
+                              });
+                            }}
+                          >
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                        <div className={styles.calendarGrid}>
+                          {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+                            <div key={day} className={styles.calendarDayHeader}>
+                              {day}
+                            </div>
+                          ))}
+                          {generateFilterCalendarDays().map((item, idx) => {
+                            const isSelected =
+                              feedFilterDate &&
+                              item.date.getDate() === feedFilterDate.getDate() &&
+                              item.date.getMonth() === feedFilterDate.getMonth() &&
+                              item.date.getFullYear() === feedFilterDate.getFullYear();
+
+                            return (
+                              <div
+                                key={idx}
+                                className={`${styles.calendarCell} ${
+                                  !item.isCurrentMonth ? styles.inactive : ""
+                                } ${isSelected ? styles.selected : ""}`}
+                                onClick={() => setFeedFilterDate(item.date)}
+                              >
+                                {item.date.getDate()}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.filterActions}>
+                      <button 
+                        className={styles.clearFilterBtn}
+                        onClick={() => {
+                          setFeedFilterArea("All");
+                          setFeedFilterType("All");
+                          setFeedFilterDate(null);
+                        }}
+                      >
+                        Reset
+                      </button>
+                      <button 
+                        className={styles.applyFilterBtn}
+                        onClick={() => setFeedFilterOpen(false)}
+                      >
+                        Apply Filters
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
             </div>
 
             {feedList === undefined ? (
@@ -976,9 +1173,17 @@ export default function HomePage() {
                   <p>No high-risk commercial vehicles have entered your feed recently.</p>
                 </div>
               </div>
+            ) : filteredFeedList?.length === 0 ? (
+              <div className={styles.emptyFeedCard}>
+                <Search className={styles.emptyFeedIcon} size={24} />
+                <div>
+                  <strong>No matching alerts</strong>
+                  <p>No alerts match your selected filters. Try resetting them.</p>
+                </div>
+              </div>
             ) : (
               <div className={styles.feedGrid}>
-                {feedList.map((item) => {
+                {filteredFeedList?.map((item) => {
                   return (
                     <div key={item._id} className={styles.feedCard}>
                       <div className={styles.feedCardHeader}>
@@ -1038,7 +1243,7 @@ export default function HomePage() {
                           {item.description}
                         </p>
                         <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginTop: 2 }}>
-                          🚨 Flagged by <strong>{item.uniqueFlaggersCount}</strong> unique commuter{item.uniqueFlaggersCount !== 1 ? "s" : ""}
+                          🚨 Flagged by <strong>{item.uniqueFlaggersCount}</strong> commuter{item.uniqueFlaggersCount !== 1 ? "s" : ""}
                         </div>
                       </div>
                     </div>

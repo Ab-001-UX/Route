@@ -1156,25 +1156,42 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 8px; /* space for last card shadow */
+}
+
+.feedGrid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.feedGrid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.feedGrid::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
 }
 
 .feedCard {
-  background: var(--color-background-surface);
-  border: 1.5px solid var(--color-border-default);
-  border-radius: 18px;
-  padding: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  gap: var(--spacing-md);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0,0,0,0.02);
 }
 
 @media (hover: hover) {
   .feedCard:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0, 0, 0, 0.10);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+    transform: translateY(-4px);
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -1191,32 +1208,32 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
-  border: 2px solid hsl(0, 0%, 15%);
-  border-radius: 8px;
-  padding: 4px 12px;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  border: 2.5px solid hsl(0, 0%, 12%);
+  border-radius: 10px;
+  padding: 6px 16px;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 1), 0 4px 8px rgba(0, 0, 0, 0.06);
   font-family: var(--font-montserrat), sans-serif;
-  font-weight: 700;
-  min-width: 120px;
+  font-weight: 800;
+  min-width: 140px;
   user-select: none;
 }
 
 .plateLagosText {
-  font-size: 0.5rem;
-  color: hsl(0, 0%, 20%);
-  font-weight: 700;
+  font-size: 0.65rem;
+  color: #1a1a1a;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   line-height: 1;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .plateNumber {
-  font-size: 0.875rem;
-  color: hsl(0, 0%, 12%);
+  font-size: 1.3rem;
+  color: #000000;
   line-height: 1.1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .controls {
@@ -3468,6 +3485,190 @@
   background-color: var(--color-border-default) !important;
 }
 
+/* Live Feed Filter Dropdown */
+.feedHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
 
+.feedFilterBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: -4px;
+}
 
+@media (hover: hover) {
+  .feedFilterBtn:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--color-text-primary);
+  }
+}
 
+.feedFilterDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  z-index: 50;
+  min-width: 280px;
+}
+
+.feedFilterDropdownEmpty {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  z-index: 50;
+  min-width: 220px;
+}
+
+.feedFilterGroup {
+  margin-bottom: 16px;
+}
+
+.feedFilterGroup label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.feedFilterSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-background-app);
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  appearance: auto;
+}
+
+.feedFilterCalendar {
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid var(--color-border-default);
+  background: var(--color-background-app);
+}
+
+.calendarHeader span {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.calendarNavBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendarNavBtn:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 8px;
+}
+
+.calendarDayHeader {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding-bottom: 4px;
+}
+
+.calendarCell {
+  text-align: center;
+  padding: 6px 0;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+.calendarCell:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+.calendarCell.inactive {
+  color: var(--color-text-tertiary);
+  opacity: 0.5;
+}
+
+.calendarCell.selected {
+  background: var(--color-brand-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.filterActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.filterActions button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clearFilterBtn {
+  background: transparent;
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-primary);
+}
+
+.applyFilterBtn {
+  background: var(--color-brand-primary);
+  border: 1px solid var(--color-brand-primary);
+  color: #fff;
+}
