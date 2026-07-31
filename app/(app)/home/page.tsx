@@ -101,7 +101,23 @@ export default function HomePage() {
   const hasFewerThanTwoContacts = contacts.length < 2;
 
   // Live feed and saved lists queries
-  const feedList = useQuery(api.vehicles.getHomeFeed);
+  const dbFeedList = useQuery(api.vehicles.getHomeFeed);
+  const feedList = dbFeedList ? [
+    {
+      _id: "mock-aaa-123-qr",
+      plate: "AAA 123 QR",
+      flagCount: 5,
+      dangerousStatus: true,
+      safetyIndicator: "red",
+      isPinned: false,
+      isSaved: true,
+      transportType: "Danfo",
+      primaryOffense: "One-Chance Syndicate",
+      description: "Multiple commuters reported being locked inside this vehicle along the third mainland bridge corridor.",
+      uniqueFlaggersCount: 5
+    },
+    ...dbFeedList
+  ] : undefined;
   const savedList = useQuery(api.vehicles.getSavedVehicles);
   const trips = useQuery(api.trips.getTrips);
   const notifications = useQuery(api.notifications.getNotifications) || [];
