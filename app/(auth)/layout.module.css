@@ -3,8 +3,10 @@
   justify-content: center;
   align-items: stretch;
   width: 100vw;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   background: radial-gradient(120% 120% at 50% 10%, #f1f5f9 0%, #e2e8f0 100%);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -22,8 +24,8 @@
   flex-direction: column;
   position: relative;
   box-shadow: 0 24px 64px rgba(31, 38, 135, 0.06), 0 4px 12px rgba(0, 0, 0, 0.01);
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100%;
+  height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
