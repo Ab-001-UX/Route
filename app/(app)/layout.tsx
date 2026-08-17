@@ -129,8 +129,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // Redirect to onboarding if Convex profile does not exist OR is incomplete (missing displayName)
-    if (dbUser === null || (dbUser !== undefined && !dbUser.displayName)) {
+    // Redirect to onboarding ONLY if Convex profile does not exist (brand new user)
+    if (dbUser === null) {
       router.replace("/onboarding");
     }
   }, [dbUser, router]);

@@ -42,12 +42,9 @@ export default function OnboardingPage() {
   // Otherwise, automatically advance to Step 2 if they already have a phone number.
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
-      if (currentUser.displayName) {
+      if (currentUser.displayName || currentUser.phone || currentUser._id) {
         router.replace("/home");
       } else if (!hasAutoAdvanced) {
-        if (currentUser.phone) {
-          setPhone(currentUser.phone);
-        }
         setHasAutoAdvanced(true);
         setStep(2);
       }
@@ -249,30 +246,34 @@ export default function OnboardingPage() {
   return (
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
-        <div className={styles.progressBarWrapper}>
-          {/* Row 1: Back button row */}
-          <div className={styles.headerTopRow}>
-            {step > 1 && (
-              <button
-                type="button"
-                onClick={goBack}
-                className={styles.backBtn}
-                aria-label="Go back"
-              >
-                <ChevronLeft size={24} />
-              </button>
-            )}
-          </div>
-          {/* Row 2: Progress Bar */}
-          <div className={styles.progressBar}>
+        {/* 1. Segmented Progress Bar (5 bars at top) */}
+        <div className={styles.segmentedProgressBar}>
+          {[1, 2, 3, 4, 5].map((s) => (
             <div
-              className={styles.progressFill}
-              style={{ width: `${(step / 5) * 100}%` }}
+              key={s}
+              className={`${styles.segment} ${s <= step ? styles.segmentActive : ""}`}
             />
-          </div>
-          {/* Row 3: Step Indicator */}
-          <p className={styles.stepIndicator}>Step {step} of 5</p>
+          ))}
         </div>
+
+        {/* 2. Step Indicator Count */}
+        <div className={styles.stepIndicatorRow}>
+          <span className={styles.stepIndicator}>Step {step} of 5</span>
+        </div>
+
+        {/* 3. Back Button Row — Positioned UNDER the progress bar */}
+        {step > 1 && (
+          <div className={styles.backRow}>
+            <button
+              type="button"
+              onClick={goBack}
+              className={styles.backBtn}
+              aria-label="Go back"
+            >
+              <ChevronLeft size={22} />
+            </button>
+          </div>
+        )}
       </header>
 
       {/* STEP 1: WHATSAPP NUMBER */}
