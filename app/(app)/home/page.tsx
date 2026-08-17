@@ -183,6 +183,10 @@ export default function HomePage() {
   const [showMenu, setShowMenu] = useState(false);
   const [showResultsMenu, setShowResultsMenu] = useState(false);
 
+  // Instant Optimistic Toggle States for Pin & Bookmark
+  const [optimisticSaved, setOptimisticSaved] = useState<Set<string>>(new Set());
+  const [optimisticPinned, setOptimisticPinned] = useState<Set<string>>(new Set());
+
   // Feed Filter States
   const [feedFilterOpen, setFeedFilterOpen] = useState(false);
   const [feedFilterArea, setFeedFilterArea] = useState("All");
@@ -278,6 +282,24 @@ export default function HomePage() {
   };
 
   const handleSaveToggle = async (plate: string, isSaved: boolean) => {
+    const normPlate = plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
+
+    // Instant optimistic state update
+    if (isSaved) {
+      setOptimisticSaved((prev) => {
+        const next = new Set(prev);
+        next.delete(normPlate);
+        return next;
+      });
+      setOptimisticPinned((prev) => {
+        const next = new Set(prev);
+        next.delete(normPlate);
+        return next;
+      });
+    } else {
+      setOptimisticSaved((prev) => new Set(prev).add(normPlate));
+    }
+
     try {
       if (isSaved) {
         await unsaveVehicle({ plate });
@@ -287,11 +309,36 @@ export default function HomePage() {
         addToast(`Vehicle ${plate} saved successfully.`, "success");
       }
     } catch (err: any) {
+      if (isSaved) {
+        setOptimisticSaved((prev) => new Set(prev).add(normPlate));
+      } else {
+        setOptimisticSaved((prev) => {
+          const next = new Set(prev);
+          next.delete(normPlate);
+          return next;
+        });
+      }
       addToast(getCleanError(err), "error");
     }
   };
 
   const handlePinToggle = async (plate: string) => {
+    const normPlate = plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
+    const currentlyPinned = optimisticPinned.has(normPlate) || (savedList?.some((s) => s.plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim() === normPlate && s.pinned) ?? false);
+    const willPin = !currentlyPinned;
+
+    // Instant optimistic state update
+    if (willPin) {
+      setOptimisticPinned((prev) => new Set(prev).add(normPlate));
+      setOptimisticSaved((prev) => new Set(prev).add(normPlate));
+    } else {
+      setOptimisticPinned((prev) => {
+        const next = new Set(prev);
+        next.delete(normPlate);
+        return next;
+      });
+    }
+
     try {
       const result = await togglePinVehicle({ plate });
       if (result.pinned) {
@@ -300,6 +347,15 @@ export default function HomePage() {
         addToast(`Vehicle ${plate} unpinned.`, "success");
       }
     } catch (err: any) {
+      if (willPin) {
+        setOptimisticPinned((prev) => {
+          const next = new Set(prev);
+          next.delete(normPlate);
+          return next;
+        });
+      } else {
+        setOptimisticPinned((prev) => new Set(prev).add(normPlate));
+      }
       addToast(getCleanError(err), "error");
     }
   };
@@ -1208,6 +1264,13 @@ export default function HomePage() {
             ) : (
               <div className={styles.feedGrid}>
                 {filteredFeedList?.map((item) => {
+                  const normPlate = item.plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
+                  const isSavedInDb = savedList?.some((s) => s.plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim() === normPlate) ?? false;
+                  const isPinnedInDb = savedList?.some((s) => s.plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim() === normPlate && s.pinned) ?? false;
+
+                  const isSaved = optimisticSaved.has(normPlate) || isSavedInDb || !!item.isSaved;
+                  const isPinned = optimisticPinned.has(normPlate) || isPinnedInDb || !!item.isPinned;
+
                   return (
                     <div 
                       key={item._id} 
@@ -1227,18 +1290,26 @@ export default function HomePage() {
                         
                         <div className={styles.controls} style={{ alignSelf: "flex-start" }}>
                           <button
-                            className={`${styles.actionButton} ${item.isPinned ? styles.pinButtonActive : ""}`}
-                            onClick={() => handlePinToggle(item.plate)}
-                            title={item.isPinned ? "Unpin vehicle" : "Pin vehicle"}
+                            type="button"
+                            className={`${styles.actionButton} ${isPinned ? styles.pinButtonActive : ""}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePinToggle(item.plate);
+                            }}
+                            title={isPinned ? "Unpin vehicle" : "Pin vehicle"}
                           >
-                            <Pin size={20} style={{ fill: item.isPinned ? "currentColor" : "none" }} />
+                            <Pin size={20} style={{ fill: isPinned ? "#ffffff" : "none", color: isPinned ? "#ffffff" : "currentColor" }} />
                           </button>
                           <button
-                            className={`${styles.actionButton} ${item.isSaved ? styles.active : ""}`}
-                            onClick={() => handleSaveToggle(item.plate, item.isSaved)}
-                            title={item.isSaved ? "Remove from bookmarks" : "Bookmark vehicle"}
+                            type="button"
+                            className={`${styles.actionButton} ${isSaved ? styles.active : ""}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSaveToggle(item.plate, isSaved);
+                            }}
+                            title={isSaved ? "Remove from bookmarks" : "Bookmark vehicle"}
                           >
-                            <Bookmark size={20} style={{ fill: item.isSaved ? "currentColor" : "none" }} />
+                            <Bookmark size={20} style={{ fill: isSaved ? "#ffffff" : "none", color: isSaved ? "#ffffff" : "currentColor" }} />
                           </button>
                         </div>
                       </div>
