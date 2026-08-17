@@ -490,93 +490,85 @@ export const getSavedVehicles = query({
           incidents: [],
         });
       } else {
-        // Others' flagged vehicle: Display full details
-        let primaryOffense = "Clean Record";
-        let incidentsList: any[] = [];
+        // Others' flagged vehicle / Live Feed Bookmarks: Display full community details
+        const incidents = await ctx.db
+          .query("incidents")
+          .withIndex("by_plate", (q) => q.eq("plate", item.plate))
+          .collect();
 
-        if (vehicle) {
-          const tripsForPlate = await ctx.db
-            .query("trips")
-            .withIndex("by_plate", (q) => q.eq("plate", vehicle.plate))
-            .collect();
+        const tripsForPlate = await ctx.db
+          .query("trips")
+          .withIndex("by_plate", (q) => q.eq("plate", item.plate))
+          .collect();
 
-          const tripIds = tripsForPlate.map((t) => t._id);
-          const tripToUser = new Map(tripsForPlate.map((t) => [t._id.toString(), t.userId.toString()]));
+        const tripToUser = new Map(tripsForPlate.map((t) => [t._id.toString(), t.userId.toString()]));
+        const uniqueFlaggers = new Set<string>();
 
-          const uniqueFlaggers = new Set<string>();
+        for (const inc of incidents) {
+          if (inc.tripId) {
+            const userIdStr = tripToUser.get(inc.tripId.toString());
+            if (userIdStr) uniqueFlaggers.add(userIdStr);
+          }
+        }
 
-          const incidents = await ctx.db
-            .query("incidents")
-            .withIndex("by_plate", (q) => q.eq("plate", item.plate))
-            .collect();
+        for (const trip of tripsForPlate) {
+          const survey = await ctx.db
+            .query("postRideSurveys")
+            .withIndex("by_tripId", (q) => q.eq("tripId", trip._id))
+            .first();
 
-          for (const inc of incidents) {
-            if (inc.tripId) {
-              const userIdStr = tripToUser.get(inc.tripId.toString());
-              if (userIdStr) {
-                uniqueFlaggers.add(userIdStr);
-              }
+          if (survey && survey.response === "felt-off") {
+            uniqueFlaggers.add(survey.userId.toString());
+          }
+        }
+
+        const uniqueCount = uniqueFlaggers.size;
+        const rawFlagCount = vehicle ? vehicle.flagCount : 0;
+        const effectiveFlagCount = Math.max(rawFlagCount, incidents.length, uniqueCount);
+
+        const hasReports = effectiveFlagCount > 0 || (vehicle && vehicle.flagCount > 0) || incidents.length > 0;
+
+        if (hasReports) {
+          const incidentsList = incidents.map(i => ({
+            incidentType: i.incidentType,
+            status: i.status,
+            createdAt: i.createdAt,
+          }));
+
+          let primaryOffense = "Safety concern";
+          const incidentTypes = incidents.map((i) => i.incidentType);
+          if (incidentTypes.length > 0) {
+            const counts: Record<string, number> = {};
+            for (const t of incidentTypes) {
+              counts[t] = (counts[t] || 0) + 1;
             }
+            primaryOffense = Object.keys(counts).reduce((a, b) => (counts[a] > counts[b] ? a : b));
+          } else if (vehicle && vehicle.transportType) {
+            primaryOffense = `${vehicle.transportType} Safety Alert`;
           }
 
-          for (const tripId of tripIds) {
-            const survey = await ctx.db
-              .query("postRideSurveys")
-              .withIndex("by_tripId", (q) => q.eq("tripId", tripId))
-              .first();
+          let safetyIndicator: "green" | "yellow" | "orange" | "red" = vehicle
+            ? vehicle.safetyIndicator
+            : (effectiveFlagCount >= 5 ? "red" : effectiveFlagCount >= 3 ? "orange" : "yellow");
 
-            if (survey && survey.response === "felt-off") {
-              uniqueFlaggers.add(survey.userId.toString());
-            }
-          }
+          const dangerousStatus = vehicle ? vehicle.dangerousStatus : (safetyIndicator === "red" || safetyIndicator === "orange");
 
-          const uniqueCount = uniqueFlaggers.size;
-
-          if (uniqueCount > 1) {
-            incidentsList = incidents.map(i => ({
-              incidentType: i.incidentType,
-              status: i.status,
-              createdAt: i.createdAt,
-            }));
-
-            const incidentTypes = incidents.map((i) => i.incidentType);
-            if (incidentTypes.length > 0) {
-              const counts: Record<string, number> = {};
-              for (const t of incidentTypes) {
-                counts[t] = (counts[t] || 0) + 1;
-              }
-              primaryOffense = Object.keys(counts).reduce((a, b) => (counts[a] > counts[b] ? a : b));
-            }
-
-            results.push({
-              _id: item._id,
-              plate: item.plate,
-              pinned: !!item.pinned,
-              savedAt: item.savedAt,
-              isOwnFlagged: false,
-              transportType: vehicle ? vehicle.transportType : "Unknown",
-              description: vehicle ? vehicle.description : "This vehicle has safety reports but no description.",
-              flagCount: vehicle ? vehicle.flagCount : uniqueCount,
-              safetyIndicator: vehicle ? vehicle.safetyIndicator : "orange",
-              dangerousStatus: vehicle ? vehicle.dangerousStatus : false,
-              primaryOffense,
-              incidents: incidentsList,
-            });
-          } else {
-            results.push({
-              _id: item._id,
-              plate: item.plate,
-              pinned: !!item.pinned,
-              savedAt: item.savedAt,
-              isOwnFlagged: false,
-              description: "No previous safety concerns reported.",
-              flagCount: 0,
-              safetyIndicator: "green",
-              dangerousStatus: false,
-              primaryOffense: "Safe",
-              incidents: [],
-            });
-          }
+          results.push({
+            _id: item._id,
+            plate: item.plate,
+            pinned: !!item.pinned,
+            savedAt: item.savedAt,
+            isOwnFlagged: false,
+            isLiveFeed: true,
+            reportedByOthers: true,
+            transportType: vehicle ? vehicle.transportType : "Commercial Vehicle",
+            description: vehicle && vehicle.description ? vehicle.description : "Reported by commuters in Live Safety Feed.",
+            flagCount: effectiveFlagCount || 1,
+            safetyIndicator,
+            dangerousStatus,
+            primaryOffense,
+            incidents: incidentsList,
+          });
         } else {
           results.push({
             _id: item._id,
@@ -584,6 +576,8 @@ export const getSavedVehicles = query({
             pinned: !!item.pinned,
             savedAt: item.savedAt,
             isOwnFlagged: false,
+            isLiveFeed: false,
+            reportedByOthers: false,
             description: "No previous safety concerns reported.",
             flagCount: 0,
             safetyIndicator: "green",

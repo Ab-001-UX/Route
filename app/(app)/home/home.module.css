@@ -1176,8 +1176,9 @@
 }
 
 .feedCard {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--color-background-surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top-width: 4px;
   border-radius: 20px;
   padding: 24px;
   display: flex;
@@ -1234,6 +1235,7 @@
   color: #000000;
   line-height: 1.1;
   letter-spacing: 0.08em;
+  font-weight: 900;
 }
 
 .controls {
@@ -1265,18 +1267,14 @@
   }
 }
 
-.actionButton.active {
-  color: var(--color-brand-primary);
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.20);
-}
-
+.actionButton.active,
 .actionButton.pinButtonActive {
   background: #000000 !important;
   border-color: #000000 !important;
   color: #ffffff !important;
 }
 
+.actionButton.active svg,
 .actionButton.pinButtonActive svg {
   color: #ffffff !important;
   stroke: #ffffff !important;
@@ -1284,10 +1282,11 @@
 }
 
 @media (hover: hover) {
-  .actionButton.active:hover {
-    color: var(--color-safety-status-dangerous);
-    background: rgba(239, 68, 68, 0.06);
-    border-color: rgba(239, 68, 68, 0.2);
+  .actionButton.active:hover,
+  .actionButton.pinButtonActive:hover {
+    background: #222222 !important;
+    border-color: #222222 !important;
+    color: #ffffff !important;
   }
 }
 

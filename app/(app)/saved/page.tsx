@@ -25,6 +25,8 @@ interface SavedVehicle {
   pinned: boolean;
   savedAt: number;
   isOwnFlagged: boolean;
+  isLiveFeed?: boolean;
+  reportedByOthers?: boolean;
   primaryOffense: string;
   description: string;
   flagCount: number;
@@ -39,7 +41,10 @@ interface Toast {
   type: "success" | "error";
 }
 
-const getPlateBorderColor = (flagCount?: number) => {
+const getStatusColor = (flagCount?: number, indicator?: string, dangerous?: boolean) => {
+  if (dangerous || indicator === "red") return "var(--color-safety-status-dangerous)";
+  if (indicator === "orange") return "var(--color-safety-status-warning)";
+  if (indicator === "yellow") return "var(--color-safety-status-caution)";
   const count = flagCount ?? 0;
   if (count === 0) return "var(--color-safety-status-safe)";
   if (count === 1 || count === 2) return "var(--color-safety-status-caution)";
@@ -67,7 +72,8 @@ function VehicleCard({
     vehicle.dangerousStatus ||
     vehicle.safetyIndicator === "red" ||
     vehicle.safetyIndicator === "orange";
-  const hasFlags = flagCount > 0;
+  const isLiveFeedItem = vehicle.isLiveFeed || vehicle.reportedByOthers || flagCount > 0;
+  const hasFlags = flagCount > 0 || isLiveFeedItem;
 
   // Close menu on outside click
   useEffect(() => {
@@ -80,10 +86,15 @@ function VehicleCard({
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [menuOpen]);
 
+  const topColor = getStatusColor(vehicle.flagCount, vehicle.safetyIndicator, vehicle.dangerousStatus);
+
   return (
     <div
       className={styles.compactCard}
-      style={vehicle.pinned ? { borderLeft: "4px solid #10b981" } : undefined}
+      style={{
+        borderTopColor: topColor,
+        ...(vehicle.pinned ? { borderLeft: "4px solid #10b981" } : {}),
+      }}
     >
       {/* Flag chip — hangs off top-right corner */}
       {hasFlags && (
@@ -96,19 +107,23 @@ function VehicleCard({
           ) : (
             <>
               <Flag size={10} />
-              {flagCount} flag{flagCount > 1 ? "s" : ""}
+              {flagCount > 0 ? flagCount : 1} flag{flagCount > 1 ? "s" : ""}
             </>
           )}
         </div>
       )}
 
+      {/* Live Safety Feed Source Badge */}
+      {isLiveFeedItem && !vehicle.isOwnFlagged && (
+        <div className={styles.liveFeedTag}>
+          ⚡ Live Safety Feed • Reported by commuters
+        </div>
+      )}
+
       {/* Card row: plate info + 3-dot menu */}
       <div className={styles.compactCardRow}>
-        {/* Plate display — styled plate container with dynamic border color */}
-        <div 
-          className={styles.plateContainer}
-          style={{ borderColor: getPlateBorderColor(vehicle.flagCount) }}
-        >
+        {/* Plate display — neutral plate container */}
+        <div className={styles.plateContainer}>
           <span className={styles.plateLagosText}>Lagos</span>
           <span className={styles.plateNumber}>{vehicle.plate}</span>
         </div>
@@ -158,15 +173,19 @@ function VehicleCard({
       {isDangerous ? (
         <div className={styles.dangerousStrip}>
           <span className={styles.dangerDot} />
-          Vehicle escalated — multiple safety concerns reported
+          Vehicle escalated — safety concern reported in Live Safety Feed
         </div>
-      ) : !hasFlags ? (
-        <p className={styles.noFlagMemo}>
-          This vehicle has not been flagged by any commuters.
+      ) : vehicle.isOwnFlagged ? (
+        <p className={styles.vigilantMemo}>
+          🔒 Flagged by you anonymously ({vehicle.primaryOffense})
+        </p>
+      ) : isLiveFeedItem ? (
+        <p className={styles.vigilantMemo}>
+          ⚠️ Reported by community commuters in Live Safety Feed — stay alert.
         </p>
       ) : (
-        <p className={styles.vigilantMemo}>
-          ⚠️ {flagCount} flag report{flagCount > 1 ? "s" : ""} from commuters — stay alert.
+        <p className={styles.noFlagMemo}>
+          This vehicle has no safety concerns reported.
         </p>
       )}
     </div>

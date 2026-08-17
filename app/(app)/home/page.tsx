@@ -597,6 +597,17 @@ export default function HomePage() {
     return "var(--color-safety-status-dangerous)";
   };
 
+  const getStatusColor = (flagCount?: number, indicator?: string, dangerous?: boolean) => {
+    if (dangerous || indicator === "red") return "var(--color-safety-status-dangerous)";
+    if (indicator === "orange") return "var(--color-safety-status-warning)";
+    if (indicator === "yellow") return "var(--color-safety-status-caution)";
+    const count = flagCount ?? 0;
+    if (count === 0) return "var(--color-safety-status-safe)";
+    if (count === 1 || count === 2) return "var(--color-safety-status-caution)";
+    if (count === 3) return "var(--color-safety-status-warning)";
+    return "var(--color-safety-status-dangerous)";
+  };
+
   return (
     <main className={styles.container}>
       <PostRideSurvey />
@@ -1198,10 +1209,14 @@ export default function HomePage() {
               <div className={styles.feedGrid}>
                 {filteredFeedList?.map((item) => {
                   return (
-                    <div key={item._id} className={styles.feedCard}>
+                    <div 
+                      key={item._id} 
+                      className={styles.feedCard}
+                      style={{ borderTopColor: getStatusColor(item.flagCount, item.safetyIndicator, item.dangerousStatus) }}
+                    >
                       <div className={styles.feedCardHeader}>
                         <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
-                          <div className={styles.plateContainer} style={{ borderColor: getPlateBorderColor(item.flagCount) }}>
+                          <div className={styles.plateContainer}>
                             <span className={styles.plateLagosText}>Lagos</span>
                             <span className={styles.plateNumber}>{item.plate}</span>
                           </div>
