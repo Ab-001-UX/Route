@@ -976,33 +976,23 @@ export default function SettingsPage() {
             </p>
             <div className={styles.modalActions}>
               <button 
-                className="secondary" 
-                onClick={() => setShowLogoutModal(false)}
-                style={{ 
-                  backgroundColor: "var(--color-background-app)", 
-                  border: "1px solid var(--color-border-default)", 
-                  color: "var(--color-text-primary)",
-                  fontWeight: "700" 
-                }}
-              >
-                Dismiss
-              </button>
-              <button 
-                className="primary" 
+                type="button"
+                className={styles.logoutConfirmBtn} 
                 onClick={async () => {
                   setShowLogoutModal(false);
                   safeLocalStorage.removeItem("route-last-active");
                   await signOut();
                   router.push("/login");
                 }}
-                style={{ 
-                  backgroundColor: "#dc2626", 
-                  color: "#ffffff", 
-                  border: "none",
-                  fontWeight: "700" 
-                }}
               >
                 Yes, Log Out
+              </button>
+              <button 
+                type="button"
+                className={styles.logoutDismissBtn} 
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Dismiss
               </button>
             </div>
           </div>
