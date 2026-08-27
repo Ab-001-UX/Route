@@ -14,8 +14,8 @@
   --color-safety-status-warning: hsl(25, 95%, 53%); /* Indicates a warning status, more severe than caution. Should be paired with an icon and label, distinct enough from dangerous to avoid confusion at a glance. */
   --color-safety-status-dangerous: hsl(0, 72%, 51%); /* Indicates a dangerous status, the highest severity. Should be paired with an icon and label, and is intended to grab attention immediately. */
   --visual-ratio-surface: 70%; /* White surfaces dominate the interface, keeping it clean and calm. */
-  --visual-ratio-background: 20%; /* Very light blue background carries secondary visual weight. */
-  --visual-ratio-brand: 10%; /* Royal blue reserved for guiding key actions so safety status colors stand out clearly when they appear. */
+  --visual-ratio-background: 20%; /* Warm pearl background carries secondary visual weight. */
+  --visual-ratio-brand: 10%; /* Deep near-black reserved for guiding key actions so safety status colors stand out clearly when they appear. */
 
   /* === TYPOGRAPHY, SPACING & GRIDS === */
   --grid-desktop-grid-pattern: columns;

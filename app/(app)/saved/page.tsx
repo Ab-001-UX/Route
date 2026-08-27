@@ -443,7 +443,7 @@ export default function SavedPage() {
                   <option>Keke</option>
                   <option>Okada</option>
                   <option>Taxi (Personal)</option>
-                  <option>Uber / Bolt</option>
+                  <option>Uber</option>
                   <option>Shuttle</option>
                   <option>Other</option>
                 </select>

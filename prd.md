@@ -116,7 +116,7 @@ These fields exist so a contact or witness can identify the vehicle fast on the 
 - User logs a trip in under 10 seconds
 - **Required fields:**
   - Plate number (from F4)
-  - Transport type: Danfo | Keke | Bike (Okada) | Uber/Bolt | Shuttle | Other
+  - Transport type: Danfo | Keke | Bike (Okada) | Uber | Shuttle | Other
   - Boarding location (auto-filled from GPS, or user can type)
   - Check-in timer: user sets this via dropdown — **15 mins | 30 mins | 1 hour | 2 hours | 3 hours**. Default pre-selected value is **1 hour**. User can change it before submitting.
 - **Contact selection:**

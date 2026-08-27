@@ -142,11 +142,21 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+:global(html[data-theme="dark"]) .navItem {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:global(html[data-theme="dark"]) .navItem:hover {
+  color: #ffffff;
+}
+
 :global(html[data-theme="dark"]) .active {
+  background-color: #ffffff;
   color: hsl(0, 0%, 10%) !important;
 }
 
-:global(html[data-theme="dark"]) .active .label {
+:global(html[data-theme="dark"]) .active .label,
+:global(html[data-theme="dark"]) .active .icon {
   color: hsl(0, 0%, 10%);
 }
 

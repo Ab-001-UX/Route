@@ -2,23 +2,23 @@
   "color": {
     "brand": {
       "primary": {
-        "value": "hsl(221, 83%, 53%)",
+        "value": "hsl(0, 0%, 10%)",
         "type": "color",
-        "context": "Royal Blue",
+        "context": "Deep Near-Black",
         "semantic": "Primary brand color. Use for primary buttons, active states, links, icons, navigation indicators. Reserve for purposeful actions only, roughly 10% of the visual surface."
       },
       "primaryHover": {
-        "value": "hsl(224, 76%, 48%)",
+        "value": "hsl(0, 0%, 6%)",
         "type": "color",
-        "context": "Royal Blue, hover/pressed",
+        "context": "Deep Near-Black, hover/pressed",
         "semantic": "Primary hover and pressed state for buttons and interactive elements."
       }
     },
     "background": {
       "app": {
-        "value": "hsl(216, 100%, 98%)",
+        "value": "hsl(40, 8%, 97%)",
         "type": "color",
-        "context": "Very Light Blue",
+        "context": "Warm Pearl Near-White",
         "semantic": "Default page background, replaces pure white. Carries roughly 20% of the visual surface, gives the app a calm ambient feel without competing with content."
       },
       "surface": {
@@ -30,23 +30,23 @@
     },
     "text": {
       "primary": {
-        "value": "hsl(222, 47%, 11%)",
+        "value": "hsl(0, 0%, 9%)",
         "type": "color",
-        "context": "Dark Navy",
+        "context": "Near-Black",
         "semantic": "Headings, vehicle plates, important information."
       },
       "secondary": {
-        "value": "hsl(215, 16%, 47%)",
+        "value": "hsl(0, 0%, 44%)",
         "type": "color",
-        "context": "Slate Gray",
+        "context": "Mid-Gray",
         "semantic": "Supporting text, timestamps, descriptions, empty states."
       }
     },
     "border": {
       "default": {
-        "value": "hsl(214, 32%, 91%)",
+        "value": "hsl(40, 6%, 90%)",
         "type": "color",
-        "context": "Light Gray Blue",
+        "context": "Warm Neutral Border",
         "semantic": "Inputs, dividers, cards."
       }
     },
@@ -84,11 +84,11 @@
     },
     "background": {
       "value": "20%",
-      "semantic": "Very light blue background carries secondary visual weight."
+      "semantic": "Warm pearl near-white background carries secondary visual weight."
     },
     "brand": {
       "value": "10%",
-      "semantic": "Royal blue reserved for guiding key actions so safety status colors stand out clearly when they appear."
+      "semantic": "Deep near-black reserved for guiding key actions so safety status colors stand out clearly when they appear."
     }
   }
 }

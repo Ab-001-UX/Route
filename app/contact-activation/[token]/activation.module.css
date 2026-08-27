@@ -73,7 +73,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: rgba(37, 99, 235, 0.08);
+  background-color: var(--color-border-default);
   color: var(--color-brand-primary);
   font-family: var(--typography-label-medium-font-family);
   font-size: 0.75rem;

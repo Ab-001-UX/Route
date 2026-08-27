@@ -153,7 +153,7 @@ export default function LandingClient() {
             <span>Okada Bikes</span>
           </div>
           <div className={styles.logoItem}>
-            <span>Uber & Bolt</span>
+            <span>Uber</span>
           </div>
           <div className={styles.logoItem}>
             <span>Shuttle Buses</span>

@@ -125,7 +125,7 @@ export default function HomePage() {
       safetyIndicator: "yellow",
       isPinned: false,
       isSaved: false,
-      transportType: "Uber/Bolt",
+      transportType: "Uber",
       primaryOffense: "Reckless Driving",
       description: "Driver was speeding aggressively and ignoring traffic lights near Ikeja City Mall.",
       uniqueFlaggersCount: 2
@@ -423,7 +423,7 @@ export default function HomePage() {
     .slice(0, 3);
 
   // Description input states (Wizard Step 2)
-  const [transportType, setTransportType] = useState("Uber/Bolt");
+  const [transportType, setTransportType] = useState("Uber");
   const [vehicleColor, setVehicleColor] = useState("");
   const [vehicleWindows, setVehicleWindows] = useState("");
   const [vehicleCondition, setVehicleCondition] = useState("");
@@ -633,7 +633,7 @@ export default function HomePage() {
 
   // Check if we should render the windows dropdown
   const showWindowsDropdown = 
-    transportType === "Uber/Bolt" || transportType === "Taxi";
+    transportType === "Uber" || transportType === "Taxi";
 
   const getSafetyBadgeStyle = (indicator?: string) => {
     switch (indicator) {
@@ -801,7 +801,7 @@ export default function HomePage() {
                     <p className={styles.sectionKicker}>Current Transit</p>
                     <h2>Active Trip: {activeTrip.plate}</h2>
                   </div>
-                  <span className={styles.modePill} style={{ backgroundColor: "rgba(37, 99, 235, 0.08)", color: "#2563eb", borderColor: "rgba(37, 99, 235, 0.15)" }}>
+                  <span className={styles.modePill}>
                     {activeTrip.status === "active" ? "In Transit" : "Review Needed"}
                   </span>
                 </div>
@@ -1133,7 +1133,7 @@ export default function HomePage() {
                       >
                         <option value="All">All Types</option>
                         <option value="Danfo">Danfo</option>
-                        <option value="Uber/Bolt">Uber/Bolt</option>
+                        <option value="Uber">Uber</option>
                         <option value="Taxi">Taxi</option>
                         <option value="Keke">Keke</option>
                       </select>
@@ -1605,7 +1605,7 @@ export default function HomePage() {
                 value={transportType} 
                 onChange={(e) => setTransportType(e.target.value)}
               >
-                <option value="Uber/Bolt">Uber/Bolt</option>
+                <option value="Uber">Uber</option>
                 <option value="Taxi">Taxi (Personal)</option>
                 <option value="Danfo">Danfo</option>
                 <option value="Keke">Keke</option>
@@ -1908,7 +1908,7 @@ export default function HomePage() {
                   <option>Keke</option>
                   <option>Okada</option>
                   <option>Taxi (Personal)</option>
-                  <option>Uber / Bolt</option>
+                  <option>Uber</option>
                   <option>Shuttle</option>
                   <option>Other</option>
                 </select>
