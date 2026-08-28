@@ -106,7 +106,7 @@ export const plateSchema = z.preprocess(
   sanitizePlate,
   z
     .string()
-    .min(1, { message: "Plate number is required." })
+    .min(1, { message: "Please enter a valid plate number." })
     .max(15, { message: "Plate number cannot exceed 15 characters." })
 );
 

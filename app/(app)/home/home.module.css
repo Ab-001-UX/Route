@@ -323,6 +323,18 @@
   cursor: not-allowed !important;
 }
 
+.errorBanner {
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+}
+
 
 .statusPanel {
   background: var(--color-background-surface);

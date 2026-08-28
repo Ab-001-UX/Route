@@ -575,7 +575,9 @@ export default function HomePage() {
     if (e) e.preventDefault();
     const query = cleanPlateInput(plateToSearch || searchQuery);
     if (!query) {
-      setErrorMsg("Please enter a valid plate number.");
+      const msg = "Please enter a valid plate number.";
+      setErrorMsg(msg);
+      addToast(msg, "error");
       return;
     }
 
@@ -608,10 +610,12 @@ export default function HomePage() {
         transportType: data.data.vehicle?.transportType || "unknown"
       });
     } catch (err: any) {
-      setErrorMsg(err.message || "An error occurred during plate search.");
+      const cleanMsg = err.message || "An error occurred during plate search.";
+      setErrorMsg(cleanMsg);
+      addToast(cleanMsg, "error");
       trackEvent("Plate Searched", {
         success: false,
-        error: err.message || "Unknown error"
+        error: cleanMsg
       });
     } finally {
       setLoading(false);
@@ -875,7 +879,7 @@ export default function HomePage() {
 
           {/* BARE SEARCH BAR GROUP */}
           <div className={styles.searchContainer}>
-            <form onSubmit={(e) => handleSearchSubmit(e)} className={styles.searchSection}>
+            <form onSubmit={(e) => handleSearchSubmit(e)} className={styles.searchSection} noValidate>
               <div className={styles.searchRow}>
                 <div className={styles.searchInputWrapper}>
                   <input
@@ -883,7 +887,10 @@ export default function HomePage() {
                     className={styles.searchInput}
                     placeholder="Enter plate e.g. BDG 123 - AA"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(cleanPlateInput(e.target.value))}
+                    onChange={(e) => {
+                      setErrorMsg("");
+                      setSearchQuery(cleanPlateInput(e.target.value));
+                    }}
                     disabled={loading}
                     inputMode="text"
                     autoComplete="off"
@@ -907,6 +914,8 @@ export default function HomePage() {
                 ) : null}
               </div>
             </form>
+
+            {errorMsg && <div className={styles.errorBanner}>{errorMsg}</div>}
 
             {/* SEARCH HELPER CAPTION */}
             <p className={styles.searchHelperText}>
@@ -1421,7 +1430,7 @@ export default function HomePage() {
 
           {/* Search Input Bar below Back Button */}
           <div className={styles.searchContainer} style={{ marginTop: "12px", marginBottom: "16px" }}>
-            <form onSubmit={(e) => handleSearchSubmit(e)} className={styles.searchSection}>
+            <form onSubmit={(e) => handleSearchSubmit(e)} className={styles.searchSection} noValidate>
               <div className={styles.searchRow}>
                 <div className={styles.searchInputWrapper}>
                   <input
@@ -1430,6 +1439,7 @@ export default function HomePage() {
                     placeholder="Enter plate e.g. BDG 123 - AA"
                     value={searchQuery}
                     onChange={(e) => {
+                      setErrorMsg("");
                       const newVal = cleanPlateInput(e.target.value);
                       setSearchQuery(newVal);
                       // Make card disappear only when search input has been completely cleared
