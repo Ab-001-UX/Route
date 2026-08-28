@@ -35,14 +35,23 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   useEffect(() => {
     const updateIndicator = () => {
-      const activeEl = document.querySelector(`.${styles.navItem}.${styles.active}`) as HTMLElement;
-      if (activeEl) {
-        setIndicatorStyle({
-          width: `${activeEl.offsetWidth}px`,
-          transform: `translateX(${activeEl.offsetLeft}px)`,
-          opacity: 1,
-        });
-      } else {
+      try {
+        if (!styles.navItem || !styles.active) {
+          setIndicatorStyle({ opacity: 0 });
+          return;
+        }
+        const selector = `.${styles.navItem}.${styles.active}`;
+        const activeEl = document.querySelector(selector) as HTMLElement | null;
+        if (activeEl) {
+          setIndicatorStyle({
+            width: `${activeEl.offsetWidth}px`,
+            transform: `translateX(${activeEl.offsetLeft}px)`,
+            opacity: 1,
+          });
+        } else {
+          setIndicatorStyle({ opacity: 0 });
+        }
+      } catch {
         setIndicatorStyle({ opacity: 0 });
       }
     };

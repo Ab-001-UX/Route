@@ -6,7 +6,12 @@ import { ConvexError } from "convex/values";
  * Normalises a license plate string to ensure lookup consistency.
  */
 function normalizePlate(plate: string): string {
-  return plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
+  return plate
+    .replace(/-/g, " ")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .toUpperCase()
+    .trim();
 }
 
 /**
