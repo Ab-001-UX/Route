@@ -1332,7 +1332,7 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* 2. Body: Primary Concern -> Vehicle Type -> Reported by X commuters -> Description */}
+                      {/* 2. Body: Primary Concern -> Vehicle Type -> Summary/Description -> Reported by X commuters */}
                       <div className={styles.feedCardBody}>
                         {item.primaryOffense && (
                           <div className={styles.feedPrimaryConcern}>
@@ -1346,15 +1346,15 @@ export default function HomePage() {
                           </div>
                         )}
 
-                        <div className={styles.feedReportCount}>
-                          Reported by <strong>{item.uniqueFlaggersCount || item.flagCount || 1}</strong> {item.uniqueFlaggersCount === 1 || item.flagCount === 1 ? "commuter" : "commuters"}
-                        </div>
-
                         {item.description && (
                           <p className={styles.feedDescription}>
                             {item.description}
                           </p>
                         )}
+
+                        <div className={styles.feedReportCount}>
+                          Reported by <strong>{item.uniqueFlaggersCount || item.flagCount || 1}</strong> {item.uniqueFlaggersCount === 1 || item.flagCount === 1 ? "commuter" : "commuters"}
+                        </div>
                       </div>
                     </div>
                   );

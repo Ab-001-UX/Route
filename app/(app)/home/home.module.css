@@ -1338,23 +1338,23 @@
   font-weight: 700;
 }
 
-.feedReportCount {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  margin-top: 2px;
-}
-
-.feedReportCount strong {
-  color: var(--color-text-primary);
-  font-weight: 700;
-}
-
 .feedDescription {
   font-size: 0.84375rem;
   line-height: 1.45;
   color: var(--color-text-secondary);
   margin-top: 4px;
+}
+
+.feedReportCount {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 6px;
+}
+
+.feedReportCount strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
 }
 
 .emptyFeedCard {
