@@ -1081,16 +1081,22 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 44px 20px;
+  padding: 36px 20px;
   background: var(--color-background-surface);
   border: 1px solid var(--color-border-default);
   border-radius: 20px;
   margin-top: 16px;
-  gap: 16px;
+  gap: 12px;
+}
+
+.emptyIcon {
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+  margin-bottom: 2px;
 }
 
 .emptyText {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
@@ -1100,17 +1106,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 6px;
+  padding: 8px 16px;
   border-radius: 99px;
   background: var(--color-brand-primary);
   color: #ffffff;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   border: none;
   cursor: pointer;
   transition: transform 0.15s ease, background-color 0.15s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .emptyCtaBtn:hover {

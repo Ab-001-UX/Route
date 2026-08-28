@@ -395,6 +395,11 @@ export default function SavedPage() {
       {/* Card List */}
       {displayList === null && convexList === undefined ? null : activeList.length === 0 ? (
         <div className={styles.emptyState}>
+          {filterMode === "pinned" ? (
+            <Pin className={styles.emptyIcon} size={36} />
+          ) : (
+            <Bookmark className={styles.emptyIcon} size={36} />
+          )}
           <p className={styles.emptyText}>
             {filterMode === "pinned"
               ? "Pinned vehicles will appear here"
@@ -407,7 +412,7 @@ export default function SavedPage() {
             className={styles.emptyCtaBtn}
             onClick={() => router.push("/trip/new")}
           >
-            Log a Trip <ArrowRight size={16} />
+            Log a Trip <ArrowRight size={14} />
           </button>
         </div>
       ) : (
