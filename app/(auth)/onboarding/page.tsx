@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useMutation, useQuery, useAction, useConvexAuth } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
-import { MapPin, Bell, Users, Check, ArrowRight, ChevronLeft, Trash2, Plus, Phone, User, Loader2 } from "lucide-react";
+import { Users, Check, ArrowRight, ChevronLeft, Trash2, Plus, Phone, User, Loader2 } from "lucide-react";
 import styles from "./onboarding.module.css";
 import { normalizeNigerianPhoneNumber } from "@/lib/validators";
 import { safeLocalStorage } from "@/lib/storage";
@@ -15,8 +15,6 @@ export default function OnboardingPage() {
   const [phone, setPhone] = useState("");
   const [hasAutoAdvanced, setHasAutoAdvanced] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [locationState, setLocationState] = useState<"idle" | "granted" | "denied">("idle");
-  const [notificationState, setNotificationState] = useState<"idle" | "granted" | "denied">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +47,7 @@ export default function OnboardingPage() {
         if (currentUser.phone && !currentUser.displayName) {
           setStep(2);
         } else if (currentUser.displayName) {
-          setStep(4);
+          setStep(3);
         }
       }
     }
@@ -114,29 +112,6 @@ export default function OnboardingPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const requestLocation = () => {
-    setLoading(true);
-    if (!navigator.geolocation) {
-      setLocationState("denied");
-      setLoading(false);
-      setStep(4);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      () => {
-        setLocationState("granted");
-        setLoading(false);
-        setStep(4);
-      },
-      () => {
-        setLocationState("denied");
-        setLoading(false);
-        setStep(4);
-      }
-    );
   };
 
   // State to track active invitation link for specific contact during onboarding
@@ -245,9 +220,9 @@ export default function OnboardingPage() {
   return (
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
-        {/* 1. Segmented Progress Bar (4 bars at top) */}
+        {/* 1. Segmented Progress Bar (3 bars at top) */}
         <div className={styles.segmentedProgressBar}>
-          {[1, 2, 3, 4].map((s) => (
+          {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`${styles.segment} ${s <= step ? styles.segmentActive : ""}`}
@@ -269,7 +244,7 @@ export default function OnboardingPage() {
           ) : (
             <div style={{ width: "32px" }} />
           )}
-          <span className={styles.stepIndicator}>Step {step} of 4</span>
+          <span className={styles.stepIndicator}>Step {step} of 3</span>
         </div>
       </header>
 
@@ -348,28 +323,8 @@ export default function OnboardingPage() {
         </section>
       )}
 
-      {/* STEP 3: GEOLOCATION ACCESS */}
+      {/* STEP 3: TRUSTED CONTACTS & FINISH */}
       {step === 3 && (
-        <section className={styles.stepContent}>
-          <div className={styles.iconContainer}>
-            <MapPin size={48} className={styles.accentIcon} />
-          </div>
-          <h1>Enable Geolocation</h1>
-          <p>Route collects coordinates periodically during active trips to keep your emergency contacts updated in case of delays or emergencies.</p>
-
-          <div className={styles.actions}>
-            <button onClick={requestLocation} className="primary" disabled={loading}>
-              {loading ? <Loader2 className={styles.spin} size={18} /> : "Grant Location Access"}
-            </button>
-            <button onClick={() => setStep(4)} className="secondary" disabled={loading}>
-              Skip for now
-            </button>
-          </div>
-        </section>
-      )}
-
-      {/* STEP 4: TRUSTED CONTACTS & FINISH */}
-      {step === 4 && (
         <section className={styles.stepContent}>
           <div className={styles.contactsHeader}>
             <Users size={32} className={styles.accentIconSmall} />
