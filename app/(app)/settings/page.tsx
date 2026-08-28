@@ -47,9 +47,10 @@ export default function SettingsPage() {
   const updateUserSettingsAction = useAction(api.rateLimitedActions.rateLimitedUpdateUserSettings);
   const updateProfile = useMutation(api.users.updateUser);
 
-  // App-level permission toggle states
+  // App-level permission toggle states & iOS guide modal
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
+  const [permissionModal, setPermissionModal] = useState<"location" | "push" | null>(null);
 
   useEffect(() => {
     if (dbUser) {
@@ -60,31 +61,51 @@ export default function SettingsPage() {
 
   const handleToggleLocation = async (enabled: boolean) => {
     setLocationEnabled(enabled);
-    if (enabled && typeof navigator !== "undefined" && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        () => setGpsPermission("granted"),
-        () => {}
-      );
-    }
     try {
       await updateUserSettingsAction({ locationEnabled: enabled });
     } catch (e) {
       console.error("Failed to update location preference", e);
     }
+
+    if (enabled) {
+      if (typeof navigator !== "undefined" && "geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            setGpsPermission("granted");
+          },
+          (err) => {
+            setShowGpsGuide(true);
+          },
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        );
+      } else {
+        setShowGpsGuide(true);
+      }
+    }
   };
 
   const handleTogglePush = async (enabled: boolean) => {
     setPushEnabled(enabled);
-    if (enabled && typeof window !== "undefined" && "Notification" in window) {
-      try {
-        const res = await Notification.requestPermission();
-        setPushPermission(res);
-      } catch (e) {}
-    }
     try {
       await updateUserSettingsAction({ pushNotificationsEnabled: enabled });
     } catch (e) {
       console.error("Failed to update push notification preference", e);
+    }
+
+    if (enabled) {
+      if (typeof window !== "undefined" && "Notification" in window) {
+        try {
+          const res = await Notification.requestPermission();
+          setPushPermission(res);
+          if (res !== "granted") {
+            setShowPushGuide(true);
+          }
+        } catch (e) {
+          setShowPushGuide(true);
+        }
+      } else {
+        setShowPushGuide(true);
+      }
     }
   };
 
@@ -636,7 +657,7 @@ export default function SettingsPage() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                 <span className={styles.rowLabel}>Location Services (GPS)</span>
-                <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                <span style={{ fontSize: "0.875rem", lineHeight: "1.35", color: "var(--color-text-secondary)", marginTop: "2px" }}>
                   Allow Route to track live trip coordinates during active rides.
                 </span>
               </div>
@@ -661,7 +682,7 @@ export default function SettingsPage() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                 <span className={styles.rowLabel}>Push Notifications</span>
-                <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                <span style={{ fontSize: "0.875rem", lineHeight: "1.35", color: "var(--color-text-secondary)", marginTop: "2px" }}>
                   Receive safety check prompts and check-in timer alerts.
                 </span>
               </div>
