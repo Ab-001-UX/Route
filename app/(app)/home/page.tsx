@@ -1299,15 +1299,11 @@ export default function HomePage() {
                       className={styles.feedCard}
                       style={{ borderTopColor: getStatusColor(item.flagCount, item.safetyIndicator, item.dangerousStatus) }}
                     >
+                      {/* 1. Header: Plate Number + Controls (Pin & Bookmark) */}
                       <div className={styles.feedCardHeader}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
-                          <div className={styles.plateContainer}>
-                            <span className={styles.plateLagosText}>Lagos</span>
-                            <span className={styles.plateNumber}>{item.plate}</span>
-                          </div>
-                          {item.transportType && (
-                            <span className={styles.infoBadge}>{item.transportType}</span>
-                          )}
+                        <div className={styles.plateContainer}>
+                          <span className={styles.plateLagosText}>Lagos</span>
+                          <span className={styles.plateNumber}>{item.plate}</span>
                         </div>
                         
                         <div className={styles.controls} style={{ alignSelf: "flex-start" }}>
@@ -1336,18 +1332,29 @@ export default function HomePage() {
                         </div>
                       </div>
 
+                      {/* 2. Body: Primary Concern -> Vehicle Type -> Reported by X commuters -> Description */}
                       <div className={styles.feedCardBody}>
-                        {item.safetyIndicator !== "green" && (
-                          <div style={{ fontSize: "13.5px", fontWeight: 700, marginTop: 4, color: "var(--color-text-primary)" }}>
-                            Primary Concern: <span style={{ color: "var(--color-text-secondary)", fontWeight: 600 }}>{item.primaryOffense}</span>
+                        {item.primaryOffense && (
+                          <div className={styles.feedPrimaryConcern}>
+                            Primary Concern: <span>{item.primaryOffense}</span>
                           </div>
                         )}
-                        <p className={styles.feedDescription}>
-                          {item.description}
-                        </p>
-                        <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginTop: 2 }}>
-                          🚨 Flagged by <strong>{item.uniqueFlaggersCount}</strong> commuter{item.uniqueFlaggersCount !== 1 ? "s" : ""}
+
+                        {item.transportType && (
+                          <div className={styles.feedVehicleType}>
+                            Vehicle Type: <span>{item.transportType}</span>
+                          </div>
+                        )}
+
+                        <div className={styles.feedReportCount}>
+                          Reported by <strong>{item.uniqueFlaggersCount || item.flagCount || 1}</strong> {item.uniqueFlaggersCount === 1 || item.flagCount === 1 ? "commuter" : "commuters"}
                         </div>
+
+                        {item.description && (
+                          <p className={styles.feedDescription}>
+                            {item.description}
+                          </p>
+                        )}
                       </div>
                     </div>
                   );
