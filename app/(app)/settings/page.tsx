@@ -45,6 +45,7 @@ export default function SettingsPage() {
   const removeContact = useMutation(api.contacts.removeContact);
   const resendInvite = useAction(api.rateLimitedActions.rateLimitedResendInvite);
   const updateUserSettingsAction = useAction(api.rateLimitedActions.rateLimitedUpdateUserSettings);
+  const updateProfile = useMutation(api.users.updateUser);
 
   // App-level permission toggle states
   const [locationEnabled, setLocationEnabled] = useState(false);
