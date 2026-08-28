@@ -412,7 +412,7 @@ export default function SavedPage() {
             className={styles.emptyCtaBtn}
             onClick={() => router.push("/trip/new")}
           >
-            Log a Trip <ArrowRight size={14} />
+            Log a Trip <ArrowRight size={13} />
           </button>
         </div>
       ) : (
