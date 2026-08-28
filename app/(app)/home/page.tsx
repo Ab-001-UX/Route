@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useQuery, useAction, useMutation } from "convex/react";
+import { useQuery, useAction, useMutation, useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { 
   Bell,
@@ -98,6 +98,7 @@ export default function HomePage() {
   const { user } = useUser();
   const dbUser = useQuery(api.users.getCurrentUser);
   const router = useRouter();
+  const convex = useConvex();
   const contacts = useQuery(api.contacts.getContacts) || [];
   const hasFewerThanTwoContacts = contacts.length < 2;
 
@@ -570,7 +571,7 @@ export default function HomePage() {
     );
   };
 
-  // 1. Direct Search Handler
+  // 1. Direct Search Handler (Dual-Layer: API Route + Direct Convex Query Fallback)
   const handleSearchSubmit = async (e?: React.FormEvent, plateToSearch?: string) => {
     if (e) e.preventDefault();
     const query = cleanPlateInput(plateToSearch || searchQuery);
@@ -584,16 +585,28 @@ export default function HomePage() {
     setLoading(true);
     setErrorMsg("");
     try {
-      const res = await fetch(`/api/vehicles/search?plate=${encodeURIComponent(query)}`);
-      if (res.status === 429) {
-        throw new Error("Rate limit exceeded. You can only perform 30 searches per hour.");
+      let data: SearchResponse | null = null;
+
+      // Layer 1: API Route Search
+      try {
+        const res = await fetch(`/api/vehicles/search?plate=${encodeURIComponent(query)}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success) {
+            data = json.data;
+          }
+        }
+      } catch {
+        /* Silently fallback to direct Convex query below */
       }
-      if (!res.ok) {
-        const errJson = await res.json();
-        throw new Error(errJson.message || "Failed to search vehicle.");
+
+      // Layer 2: Direct Convex Client Fallback (guarantees search always works even if API route fails)
+      if (!data) {
+        const result = await convex.query(api.vehicles.getVehicleByPlate, { plate: query });
+        data = result;
       }
-      const data = await res.json();
-      setSearchResults(data.data);
+
+      setSearchResults(data);
       setSearchedPlate(query);
       setUiState("banner");
 
@@ -606,11 +619,11 @@ export default function HomePage() {
 
       trackEvent("Plate Searched", {
         success: true,
-        found: !!data.data.vehicle,
-        transportType: data.data.vehicle?.transportType || "unknown"
+        found: !!data?.vehicle,
+        transportType: data?.vehicle?.transportType || "unknown"
       });
     } catch (err: any) {
-      const cleanMsg = err.message || "An error occurred during plate search.";
+      const cleanMsg = getCleanError(err);
       setErrorMsg(cleanMsg);
       addToast(cleanMsg, "error");
       trackEvent("Plate Searched", {
