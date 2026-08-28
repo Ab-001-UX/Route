@@ -11,6 +11,8 @@ export default defineSchema({
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
     privacyMode: v.optional(v.boolean()),
+    locationEnabled: v.optional(v.boolean()),
+    pushNotificationsEnabled: v.optional(v.boolean()),
     createdAt: v.number(),
   })
     .index("by_clerkId", ["clerkId"])

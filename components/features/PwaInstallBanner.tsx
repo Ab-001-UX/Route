@@ -19,16 +19,8 @@ export default function PwaInstallBanner() {
       (window.navigator as any).standalone === true ||
       document.referrer.includes("android-app://");
 
-    // If already installed to home screen, do NOT show banner
+    // If already installed and running in standalone home screen mode, do NOT show banner
     if (isStandalone) {
-      setShowBanner(false);
-      return;
-    }
-
-    // Check if user dismissed banner recently
-    const dismissed = safeLocalStorage.getItem("route-pwa-banner-dismissed");
-    if (dismissed && Date.now() - parseInt(dismissed, 10) < 86400000 * 3) {
-      // Dismissed within last 3 days
       setShowBanner(false);
       return;
     }

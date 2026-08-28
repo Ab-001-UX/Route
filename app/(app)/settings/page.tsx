@@ -44,7 +44,48 @@ export default function SettingsPage() {
   const addContact = useAction(api.rateLimitedActions.rateLimitedAddContact);
   const removeContact = useMutation(api.contacts.removeContact);
   const resendInvite = useAction(api.rateLimitedActions.rateLimitedResendInvite);
-  const updateProfile = useMutation(api.users.updateUser);
+  const updateUserSettingsAction = useAction(api.rateLimitedActions.rateLimitedUpdateUserSettings);
+
+  // App-level permission toggle states
+  const [locationEnabled, setLocationEnabled] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+
+  useEffect(() => {
+    if (dbUser) {
+      setLocationEnabled(dbUser.locationEnabled ?? false);
+      setPushEnabled(dbUser.pushNotificationsEnabled ?? false);
+    }
+  }, [dbUser]);
+
+  const handleToggleLocation = async (enabled: boolean) => {
+    setLocationEnabled(enabled);
+    if (enabled && typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        () => setGpsPermission("granted"),
+        () => {}
+      );
+    }
+    try {
+      await updateUserSettingsAction({ locationEnabled: enabled });
+    } catch (e) {
+      console.error("Failed to update location preference", e);
+    }
+  };
+
+  const handleTogglePush = async (enabled: boolean) => {
+    setPushEnabled(enabled);
+    if (enabled && typeof window !== "undefined" && "Notification" in window) {
+      try {
+        const res = await Notification.requestPermission();
+        setPushPermission(res);
+      } catch (e) {}
+    }
+    try {
+      await updateUserSettingsAction({ pushNotificationsEnabled: enabled });
+    } catch (e) {
+      console.error("Failed to update push notification preference", e);
+    }
+  };
 
   const { theme, setTheme, fontSize, setFontSize, privacyMode, setPrivacyMode } = useSettings();
   const { signOut } = useClerk();
@@ -586,7 +627,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Location Services Row — Button-Only Status */}
+          {/* Location Services Row — Interactive Toggle Switch */}
           <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
             <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
               <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)", marginTop: "2px" }}>
@@ -594,52 +635,45 @@ export default function SettingsPage() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                 <span className={styles.rowLabel}>Location Services (GPS)</span>
-                {gpsPermission !== "granted" && (
-                  <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
-                    Tap Aa in the address bar, then Website Settings, then Allow.
-                  </span>
-                )}
+                <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                  Allow Route to track live trip coordinates during active rides.
+                </span>
               </div>
             </div>
-            <div className={styles.rowRight}>
-              {gpsPermission === "granted" ? (
-                <span style={{ padding: "4px 12px", borderRadius: "12px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", fontSize: "13px", fontWeight: 600 }}>
-                  Active
-                </span>
-              ) : (
-                <button 
-                  onClick={handleEnableGps} 
-                  className="secondary"
-                  style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
-                >
-                  Set Up GPS
-                </button>
-              )}
+            <div className={styles.rowRight} style={{ marginTop: "4px" }}>
+              <label className={styles.switch}>
+                <input 
+                  type="checkbox" 
+                  checked={locationEnabled} 
+                  onChange={(e) => handleToggleLocation(e.target.checked)}
+                />
+                <span className={styles.slider}></span>
+              </label>
             </div>
           </div>
 
-          {/* Push Notifications Row — Button-Only Status */}
-          <div className={styles.rowItem} style={{ alignItems: "center" }}>
-            <div className={styles.rowLeft} style={{ alignItems: "center" }}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(25, 95%, 53%)" }}>
+          {/* Push Notifications Row — Interactive Toggle Switch */}
+          <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
+            <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
+              <div className={styles.iconWrapper} style={{ color: "hsl(25, 95%, 53%)", marginTop: "2px" }}>
                 <Bell size={20} />
               </div>
-              <span className={styles.rowLabel}>Push Notifications</span>
-            </div>
-            <div className={styles.rowRight}>
-              {pushPermission === "granted" ? (
-                <span style={{ padding: "4px 12px", borderRadius: "12px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", fontSize: "13px", fontWeight: 600 }}>
-                  Active
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className={styles.rowLabel}>Push Notifications</span>
+                <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
+                  Receive safety check prompts and check-in timer alerts.
                 </span>
-              ) : (
-                <button 
-                  onClick={handleEnablePush} 
-                  className="secondary"
-                  style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px" }}
-                >
-                  Set Up Push
-                </button>
-              )}
+              </div>
+            </div>
+            <div className={styles.rowRight} style={{ marginTop: "4px" }}>
+              <label className={styles.switch}>
+                <input 
+                  type="checkbox" 
+                  checked={pushEnabled} 
+                  onChange={(e) => handleTogglePush(e.target.checked)}
+                />
+                <span className={styles.slider}></span>
+              </label>
             </div>
           </div>
 

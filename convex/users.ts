@@ -117,6 +117,8 @@ export const updateUserSettings = mutation({
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
     privacyMode: v.optional(v.boolean()),
+    locationEnabled: v.optional(v.boolean()),
+    pushNotificationsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -137,6 +139,8 @@ export const updateUserSettings = mutation({
       theme?: string;
       fontSize?: string;
       privacyMode?: boolean;
+      locationEnabled?: boolean;
+      pushNotificationsEnabled?: boolean;
     } = {};
 
     if (args.theme !== undefined) {
@@ -161,6 +165,14 @@ export const updateUserSettings = mutation({
         throw new ConvexError(parsedPrivacyMode.error.issues[0].message);
       }
       updates.privacyMode = parsedPrivacyMode.data;
+    }
+
+    if (args.locationEnabled !== undefined) {
+      updates.locationEnabled = args.locationEnabled;
+    }
+
+    if (args.pushNotificationsEnabled !== undefined) {
+      updates.pushNotificationsEnabled = args.pushNotificationsEnabled;
     }
 
     await ctx.db.patch(user._id, updates);
