@@ -138,11 +138,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // Redirect to onboarding ONLY if Convex profile does not exist (brand new user)
-    if (dbUser === null) {
+    // Redirect to onboarding if profile does not exist or onboarding is incomplete (missing displayName or fewer than 2 contacts)
+    if (dbUser === null || (dbUser && !dbUser.displayName) || (contacts && contacts.length < 2)) {
       router.replace("/onboarding");
     }
-  }, [dbUser, router]);
+  }, [dbUser, contacts, router]);
 
   // Show a loading screen while checking onboarding state
   if (dbUser === undefined || contacts === undefined) {
@@ -187,9 +187,18 @@ export default function AppLayout({ children }: AppLayoutProps) {
     );
   }
 
-  // If redirected, prevent rendering children
-  if (dbUser === null || !dbUser.displayName) {
-    return null;
+  // If user profile is not found or onboarding is incomplete, show loading indicator while redirecting to onboarding
+  if (dbUser === null || !dbUser.displayName || (contacts && contacts.length < 2)) {
+    return (
+      <div className={styles.shell}>
+        <div className={styles.viewport}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", gap: "16px", color: "var(--color-text-primary)" }}>
+            <Skeleton variant="circular" width={44} height={44} />
+            <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Redirecting to setup...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const navItems = [

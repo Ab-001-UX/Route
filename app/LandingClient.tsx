@@ -32,7 +32,7 @@ export default function LandingClient() {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace("/home");
+      router.replace("/onboarding");
     }
   }, [isLoaded, isSignedIn, router]);
   const [copied, setCopied] = useState(false);

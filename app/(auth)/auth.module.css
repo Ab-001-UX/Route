@@ -91,6 +91,10 @@
   margin: auto !important;
 }
 
+.appleIcon {
+  color: var(--color-text-primary, #111111);
+}
+
 .divider {
   display: flex;
   align-items: center;
@@ -152,7 +156,7 @@
   color: var(--color-text-primary, #111111);
   box-sizing: border-box;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
   font-family: inherit;
 }
 
@@ -200,7 +204,7 @@
   color: #ffffff;
   font-size: 0.95rem;
   font-weight: 700;
-  border: none;
+  border: 1.5px solid transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -208,7 +212,7 @@
   gap: 8px;
   margin-top: 6px;
   margin-bottom: 20px;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
   font-family: inherit;
 }
 
@@ -221,8 +225,10 @@
 }
 
 .primaryBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.45;
   cursor: not-allowed;
+  background-color: #e2e8f0;
+  color: #718096;
 }
 
 .errorBanner {
@@ -288,11 +294,11 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background-color: #f7fafc;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-background-app, #f7fafc);
+  border: 1px solid var(--color-border-default, #e2e8f0);
   border-radius: 20px;
   font-size: 0.875rem;
-  color: #2d3748;
+  color: var(--color-text-primary, #2d3748);
   margin: 12px 0 24px 0;
 }
 
@@ -308,23 +314,25 @@
   width: 44px;
   height: 50px;
   border-radius: 12px;
-  border: 1.5px solid #cbd5e0;
-  background-color: #ffffff;
+  border: 1.5px solid var(--color-border-default, #cbd5e0);
+  background-color: var(--color-background-surface, #ffffff);
+  color: var(--color-text-primary, #111111);
   font-size: 1.25rem;
   font-weight: 700;
   text-align: center;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  caret-color: var(--color-brand-primary, #111111);
 }
 
 .otpInput:focus {
-  border-color: #111111;
-  box-shadow: 0 0 0 1px #111111;
+  border-color: var(--color-text-primary, #111111);
+  box-shadow: 0 0 0 1px var(--color-text-primary, #111111);
 }
 
 .resendText {
   font-size: 0.8125rem;
-  color: #718096;
+  color: var(--color-text-secondary, #718096);
   text-align: center;
   margin-bottom: 24px;
 }
@@ -332,7 +340,7 @@
 .resendBtn {
   background: none;
   border: none;
-  color: #111111;
+  color: var(--color-text-primary, #111111);
   font-weight: 700;
   cursor: pointer;
   padding: 0;
@@ -351,4 +359,130 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Dark theme specific overrides */
+:global(html[data-theme="dark"]) .title {
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .subtitle {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+:global(html[data-theme="dark"]) .label {
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .appleIcon {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+:global(html[data-theme="dark"]) .socialBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+:global(html[data-theme="dark"]) .socialBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+:global(html[data-theme="dark"]) .divider {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+:global(html[data-theme="dark"]) .divider::before,
+:global(html[data-theme="dark"]) .divider::after {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+:global(html[data-theme="dark"]) .input {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+:global(html[data-theme="dark"]) .input:focus {
+  border-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(html[data-theme="dark"]) .eyeToggleBtn {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+:global(html[data-theme="dark"]) .eyeToggleBtn:hover {
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .emailBadge {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .otpInput {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff !important;
+  caret-color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .otpInput:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 1px #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+:global(html[data-theme="dark"]) .resendText {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+:global(html[data-theme="dark"]) .resendBtn {
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .resendBtn:hover {
+  color: #e2e8f0;
+}
+
+:global(html[data-theme="dark"]) .primaryBtn {
+  background-color: #ffffff;
+  color: #111111;
+  border-color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .primaryBtn:hover {
+  background-color: #f0f0f0;
+}
+
+:global(html[data-theme="dark"]) .primaryBtn:disabled {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.35);
+  border-color: transparent;
+  opacity: 1;
+}
+
+:global(html[data-theme="dark"]) .footerText {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+:global(html[data-theme="dark"]) .footerLink {
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .errorBanner {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+:global(html[data-theme="dark"]) .dismissErrorBtn {
+  color: #f87171;
 }

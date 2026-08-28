@@ -42,14 +42,18 @@ export default function OnboardingPage() {
   // Otherwise, automatically advance to Step 2 if they already have a phone number.
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
-      if (currentUser.displayName || currentUser.phone || currentUser._id) {
+      if (currentUser.displayName && contacts && contacts.length >= 2) {
         router.replace("/home");
       } else if (!hasAutoAdvanced) {
         setHasAutoAdvanced(true);
-        setStep(2);
+        if (currentUser.phone && !currentUser.displayName) {
+          setStep(2);
+        } else if (currentUser.displayName) {
+          setStep(5);
+        }
       }
     }
-  }, [currentUser, router, hasAutoAdvanced]);
+  }, [currentUser, contacts, router, hasAutoAdvanced]);
 
   // Reset/Initialize inactivity timer on mount to prevent premature logouts
   useEffect(() => {
@@ -96,7 +100,20 @@ export default function OnboardingPage() {
 
   const handleUpdateName = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep(3);
+    if (!displayName.trim()) {
+      setErrorMsg("Please enter a display name.");
+      return;
+    }
+    setErrorMsg("");
+    setLoading(true);
+    try {
+      await updateUser({ displayName: displayName.trim() });
+      setStep(3);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update display name.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const requestLocation = () => {
@@ -222,7 +239,9 @@ export default function OnboardingPage() {
     }
     setFinishLoading(true);
     try {
-      await updateUser({ displayName });
+      if (displayName.trim()) {
+        await updateUser({ displayName: displayName.trim() });
+      }
       safeLocalStorage.setItem("route-last-active", Date.now().toString());
       router.push("/home");
     } catch (err: any) {
