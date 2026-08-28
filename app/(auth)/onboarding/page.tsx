@@ -49,7 +49,7 @@ export default function OnboardingPage() {
         if (currentUser.phone && !currentUser.displayName) {
           setStep(2);
         } else if (currentUser.displayName) {
-          setStep(5);
+          setStep(4);
         }
       }
     }
@@ -137,26 +137,6 @@ export default function OnboardingPage() {
         setStep(4);
       }
     );
-  };
-
-  const requestNotifications = async () => {
-    setLoading(true);
-    if (!("Notification" in window)) {
-      setNotificationState("denied");
-      setLoading(false);
-      setStep(5);
-      return;
-    }
-
-    try {
-      const permission = await Notification.requestPermission();
-      setNotificationState(permission === "granted" ? "granted" : "denied");
-    } catch {
-      setNotificationState("denied");
-    } finally {
-      setLoading(false);
-      setStep(5);
-    }
   };
 
   // State to track active invitation link for specific contact during onboarding
@@ -265,9 +245,9 @@ export default function OnboardingPage() {
   return (
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
-        {/* 1. Segmented Progress Bar (5 bars at top) */}
+        {/* 1. Segmented Progress Bar (4 bars at top) */}
         <div className={styles.segmentedProgressBar}>
-          {[1, 2, 3, 4, 5].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
               className={`${styles.segment} ${s <= step ? styles.segmentActive : ""}`}
@@ -275,14 +255,9 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        {/* 2. Step Indicator Count */}
-        <div className={styles.stepIndicatorRow}>
-          <span className={styles.stepIndicator}>Step {step} of 5</span>
-        </div>
-
-        {/* 3. Back Button Row — Positioned UNDER the progress bar */}
-        {step > 1 && (
-          <div className={styles.backRow}>
+        {/* 2. Controls Row: Back button on the LEFT, Step indicator on the RIGHT (Same line) */}
+        <div className={styles.stepControlsRow}>
+          {step > 1 ? (
             <button
               type="button"
               onClick={goBack}
@@ -291,8 +266,11 @@ export default function OnboardingPage() {
             >
               <ChevronLeft size={22} />
             </button>
-          </div>
-        )}
+          ) : (
+            <div style={{ width: "32px" }} />
+          )}
+          <span className={styles.stepIndicator}>Step {step} of 4</span>
+        </div>
       </header>
 
       {/* STEP 1: WHATSAPP NUMBER */}
@@ -390,28 +368,8 @@ export default function OnboardingPage() {
         </section>
       )}
 
-      {/* STEP 4: NOTIFICATIONS ACCESS */}
+      {/* STEP 4: TRUSTED CONTACTS & FINISH */}
       {step === 4 && (
-        <section className={styles.stepContent}>
-          <div className={styles.iconContainer}>
-            <Bell size={48} className={styles.accentIcon} />
-          </div>
-          <h1>Enable Notifications</h1>
-          <p>Receive safety check prompts, transit alerts, and check-in timer updates.</p>
-
-          <div className={styles.actions}>
-            <button onClick={requestNotifications} className="primary" disabled={loading}>
-              {loading ? <Loader2 className={styles.spin} size={18} /> : "Enable Push Notifications"}
-            </button>
-            <button onClick={() => setStep(5)} className="secondary" disabled={loading}>
-              Skip for now
-            </button>
-          </div>
-        </section>
-      )}
-
-      {/* STEP 5: TRUSTED CONTACTS & FINISH */}
-      {step === 5 && (
         <section className={styles.stepContent}>
           <div className={styles.contactsHeader}>
             <Users size={32} className={styles.accentIconSmall} />
