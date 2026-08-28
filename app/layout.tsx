@@ -42,13 +42,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${montserrat.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${manrope.variable}`} data-theme="dark">
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/route-logo.png" />
         <link rel="apple-touch-icon" href="/route-logo.svg" type="image/svg+xml" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem("route-theme") || "dark";
+                  document.documentElement.setAttribute("data-theme", t);
+                  var s = localStorage.getItem("route-fontsize") || "default";
+                  document.documentElement.setAttribute("data-font-size", s);
+                } catch(e){}
+              })();
+            `,
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -126,7 +140,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body style={{ backgroundColor: "#ffffff", margin: 0 }}>
+      <body style={{ backgroundColor: "#111111", margin: 0 }}>
         {/* Instant PWA Startup Splash Screen (renders in 50ms before client JS hydrates) */}
         <div
           id="app-startup-splash"
@@ -138,7 +152,7 @@ export default function RootLayout({
             bottom: 0,
             width: "100vw",
             height: "100vh",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#111111",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -151,14 +165,14 @@ export default function RootLayout({
           <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M 28 82 C 24 55 24 35 34 22 C 46 8 72 8 82 22 C 92 36 86 52 70 58 C 55 64 36 60 36 60 C 36 60 52 74 68 82"
-              stroke="#111111"
+              stroke="#ffffff"
               strokeWidth="15"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="M 28 82 C 24 55 24 35 34 22 C 46 8 72 8 82 22 C 92 36 86 52 70 58 C 55 64 36 60 36 60 C 36 60 52 74 68 82"
-              stroke="#ffffff"
+              stroke="#111111"
               strokeWidth="2.5"
               strokeDasharray="6 4"
               strokeLinecap="round"

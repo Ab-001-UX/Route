@@ -25,7 +25,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const dbUser = useQuery(api.users.getCurrentUser);
   const updateUserSettings = useAction(api.rateLimitedActions.rateLimitedUpdateUserSettings);
 
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>("dark");
   const [fontSize, setFontSizeState] = useState<FontSize>("default");
   const [privacyMode, setPrivacyModeState] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
@@ -41,8 +41,8 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
       setThemeState(localTheme);
       document.documentElement.setAttribute("data-theme", localTheme);
     } else {
-      setThemeState("light");
-      document.documentElement.setAttribute("data-theme", "light");
+      setThemeState("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
     }
 
     if (localFontSize) {
