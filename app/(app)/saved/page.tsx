@@ -16,6 +16,7 @@ import {
   MoreVertical,
   Flag,
   Bookmark,
+  ArrowRight,
 } from "lucide-react";
 import styles from "./saved.module.css";
 
@@ -394,15 +395,20 @@ export default function SavedPage() {
       {/* Card List */}
       {displayList === null && convexList === undefined ? null : activeList.length === 0 ? (
         <div className={styles.emptyState}>
-          <Car className={styles.emptyIcon} size={44} />
-          <h3>{filterMode === "pinned" ? "No Pinned Vehicles" : "No Bookmarked Vehicles"}</h3>
-          <p>
+          <p className={styles.emptyText}>
             {filterMode === "pinned"
-              ? "Pin a vehicle from the 3-dot menu to see it here."
+              ? "Pinned vehicles will appear here"
               : searchQuery
-              ? "No bookmarks match your filter."
-              : "Vehicles you bookmark will appear here."}
+              ? "No bookmarks match your filter"
+              : "Bookmarked vehicles will appear here"}
           </p>
+          <button
+            type="button"
+            className={styles.emptyCtaBtn}
+            onClick={() => router.push("/trip/new")}
+          >
+            Log a Trip <ArrowRight size={16} />
+          </button>
         </div>
       ) : (
         <div className={styles.compactGrid}>

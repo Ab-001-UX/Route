@@ -1073,3 +1073,55 @@
   opacity: 0.6;
   cursor: not-allowed !important;
 }
+
+/* Empty State Styling */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 44px 20px;
+  background: var(--color-background-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 20px;
+  margin-top: 16px;
+  gap: 16px;
+}
+
+.emptyText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.emptyCtaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 99px;
+  background: var(--color-brand-primary);
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.emptyCtaBtn:hover {
+  transform: translateY(-1px);
+}
+
+.emptyCtaBtn:active {
+  transform: scale(0.97);
+}
+
+:global(html[data-theme="dark"]) .emptyCtaBtn {
+  background: #ffffff;
+  color: hsl(0, 0%, 10%);
+}
