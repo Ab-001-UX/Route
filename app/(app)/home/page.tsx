@@ -114,7 +114,7 @@ export default function HomePage() {
       isPinned: false,
       isSaved: false,
       transportType: "Danfo",
-      primaryOffense: "One-Chance Syndicate",
+      primaryOffense: "One-Chance",
       description: "Multiple commuters reported being locked inside this vehicle along the third mainland bridge corridor.",
       uniqueFlaggersCount: 5
     },
