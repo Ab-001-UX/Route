@@ -103,36 +103,7 @@ export default function HomePage() {
   const hasFewerThanTwoContacts = contacts.length < 2;
 
   // Live feed and saved lists queries
-  const dbFeedList = useQuery(api.vehicles.getHomeFeed);
-  const feedList = dbFeedList ? [
-    {
-      _id: "mock-aaa-123-qr",
-      plate: "AAA 123 QR",
-      flagCount: 5,
-      dangerousStatus: true,
-      safetyIndicator: "red",
-      isPinned: false,
-      isSaved: false,
-      transportType: "Danfo",
-      primaryOffense: "One-Chance",
-      description: "Multiple commuters reported being locked inside this vehicle along the third mainland bridge corridor.",
-      uniqueFlaggersCount: 5
-    },
-    {
-      _id: "mock-kja-999-xx",
-      plate: "KJA 999 XX",
-      flagCount: 2,
-      dangerousStatus: false,
-      safetyIndicator: "yellow",
-      isPinned: false,
-      isSaved: false,
-      transportType: "Uber",
-      primaryOffense: "Reckless Driving",
-      description: "Driver was speeding aggressively and ignoring traffic lights near Ikeja City Mall.",
-      uniqueFlaggersCount: 2
-    },
-    ...dbFeedList
-  ] : undefined;
+  const feedList = useQuery(api.vehicles.getHomeFeed);
   const savedList = useQuery(api.vehicles.getSavedVehicles);
   const trips = useQuery(api.trips.getTrips);
   const notifications = useQuery(api.notifications.getNotifications) || [];
@@ -154,20 +125,6 @@ export default function HomePage() {
 
   const hasHomeActivity = feedCount > 0 || savedCount > 0 || !!activeTrip;
   const showEmptyHome = !isHomeLoading && !hasHomeActivity;
-  const activePreviewVehicles = [
-    {
-      plate: "KJA 482 QR",
-      status: "Watchlist",
-      detail: "2 flags",
-      note: "Route deviation near Oshodi",
-    },
-    {
-      plate: "APP 193 XY",
-      status: "Saved",
-      detail: "Pinned",
-      note: "Frequently used morning shuttle",
-    },
-  ];
 
   // Actions
   const saveVehicle = useAction(api.rateLimitedActions.rateLimitedSaveVehicle);
