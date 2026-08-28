@@ -1,6 +1,6 @@
 # Route — Product Requirements Document (PRD)
 **Version:** Final  
-**Built by:** Abimbola  
+**Built by:** 2-Person Product & Engineering Team  
 **Platform:** Mobile-only PWA  
 **Scope:** Lagos State, Nigeria
 
