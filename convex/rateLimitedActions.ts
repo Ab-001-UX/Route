@@ -8,7 +8,7 @@ import { checkRateLimit } from "../lib/upstash";
 
 /**
  * Convex Action: Rate-limits and executes the addContact mutation.
- * Limit: 10 per user per day (86400 seconds)
+ * Limit: 30 per user per hour (3600 seconds)
  */
 export const rateLimitedAddContact = action({
   args: {
@@ -23,9 +23,9 @@ export const rateLimitedAddContact = action({
       throw new ConvexError("Unauthenticated request");
     }
 
-    const rateLimit = await checkRateLimit(identity.subject, "add_contact", 10, 86400);
+    const rateLimit = await checkRateLimit(identity.subject, "add_contact", 30, 3600);
     if (!rateLimit.success) {
-      throw new ConvexError("Rate limit exceeded: You can only add up to 10 contacts per day.");
+      throw new ConvexError("Rate limit exceeded: Please wait a few minutes before adding more contacts.");
     }
 
     return await ctx.runMutation(api.contacts.addContact, args);
@@ -34,7 +34,7 @@ export const rateLimitedAddContact = action({
 
 /**
  * Convex Action: Rate-limits and executes the resendInvite mutation.
- * Limit: 10 per user per day (86400 seconds)
+ * Limit: 20 per user per hour (3600 seconds)
  */
 export const rateLimitedResendInvite = action({
   args: {
@@ -46,9 +46,9 @@ export const rateLimitedResendInvite = action({
       throw new ConvexError("Unauthenticated request");
     }
 
-    const rateLimit = await checkRateLimit(identity.subject, "resend_invite", 10, 86400);
+    const rateLimit = await checkRateLimit(identity.subject, "resend_invite", 20, 3600);
     if (!rateLimit.success) {
-      throw new ConvexError("Rate limit exceeded: You can only regenerate invite links 10 times per day.");
+      throw new ConvexError("Rate limit exceeded: Please wait a few minutes before regenerating invite links.");
     }
 
     return await ctx.runMutation(api.contacts.resendInvite, args);
