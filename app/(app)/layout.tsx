@@ -5,7 +5,7 @@ import type { MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, History, Bookmark, Settings } from "lucide-react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import styles from "./layout.module.css";
 import Skeleton from "@/components/ui/Skeleton";
@@ -24,6 +24,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
   
   const dbUser = useQuery(api.users.getCurrentUser);
   const contacts = useQuery(api.contacts.getContacts);
+  const ensureUser = useMutation(api.users.ensureUser);
+
+  // Auto-sync Convex user record if signed in via OAuth (e.g. Google)
+  useEffect(() => {
+    if (dbUser === null) {
+      ensureUser().catch(() => {});
+    }
+  }, [dbUser, ensureUser]);
 
   const hideBottomNav = pathname.startsWith("/trip/");
 
@@ -138,11 +146,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // Redirect to onboarding if profile does not exist or onboarding is incomplete (missing displayName or fewer than 2 contacts)
-    if (dbUser === null || (dbUser && !dbUser.displayName) || (contacts && contacts.length < 2)) {
+    // Redirect to onboarding only if profile is missing phone number
+    if (dbUser && !dbUser.phone) {
       router.replace("/onboarding");
     }
-  }, [dbUser, contacts, router]);
+  }, [dbUser, router]);
 
   // Show a loading screen while checking onboarding state
   if (dbUser === undefined || contacts === undefined) {
@@ -187,8 +195,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
     );
   }
 
-  // If user profile is not found or onboarding is incomplete, show loading indicator while redirecting to onboarding
-  if (dbUser === null || !dbUser.displayName || (contacts && contacts.length < 2)) {
+  // If user profile is missing required phone number, redirect to setup
+  if (dbUser && !dbUser.phone) {
     return (
       <div className={styles.shell}>
         <div className={styles.viewport}>

@@ -40,7 +40,7 @@ export default function OnboardingPage() {
   // Otherwise, automatically advance to Step 2 if they already have a phone number.
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
-      if (currentUser.displayName && contacts && contacts.length >= 2) {
+      if (currentUser.phone || currentUser.displayName) {
         router.replace("/home");
       } else if (!hasAutoAdvanced) {
         setHasAutoAdvanced(true);

@@ -54,7 +54,43 @@ export const createUser = mutation({
 
     return await ctx.db.insert("users", {
       clerkId: identity.subject,
+      displayName: identity.name || undefined,
       phone: parsedPhone.data,
+      contributorStatus: false,
+      tripCountToday: 0,
+      createdAt: Date.now(),
+    });
+  },
+});
+
+/**
+ * Ensures user record exists in Convex upon auth login (e.g. Google OAuth).
+ * Creates or updates identity details automatically.
+ */
+export const ensureUser = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (existing) {
+      if (!existing.displayName && identity.name) {
+        await ctx.db.patch(existing._id, { displayName: identity.name });
+      }
+      return existing._id;
+    }
+
+    return await ctx.db.insert("users", {
+      clerkId: identity.subject,
+      displayName: identity.name || undefined,
+      phone: identity.phoneNumber || "",
       contributorStatus: false,
       tripCountToday: 0,
       createdAt: Date.now(),
