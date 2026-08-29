@@ -67,7 +67,7 @@ export default function LoginPage() {
   // send them straight to the app — they should never see the login page.
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace("/onboarding");
+      router.replace("/home");
     }
   }, [isLoaded, isSignedIn, router]);
 

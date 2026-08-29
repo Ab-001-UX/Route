@@ -13,7 +13,7 @@ export default function WelcomeClient() {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace("/onboarding");
+      router.replace("/home");
     }
   }, [isLoaded, isSignedIn, router]);
 
