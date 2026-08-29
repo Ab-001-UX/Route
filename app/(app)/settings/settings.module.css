@@ -446,22 +446,26 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--color-background-surface);
-  border: 1px solid hsl(0, 72%, 90%);
-  color: var(--color-safety-status-dangerous);
+  background: var(--color-safety-status-dangerous, #ef4444) !important;
+  border: none !important;
+  color: #ffffff !important;
   font-size: 0.9375rem;
   font-weight: 700;
   padding: 16px;
-  border-radius: 20px;
+  border-radius: 16px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.02);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
   transition: all 0.2s ease;
 }
 
 .logoutBtn:hover {
-  background: hsl(0, 72%, 98%);
+  background: hsl(0, 72%, 46%) !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.05);
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35);
+}
+
+.logoutBtn:active {
+  transform: scale(0.98);
 }
 
 /* Overlay Warnings */
