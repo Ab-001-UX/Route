@@ -50,7 +50,40 @@ export default function SettingsPage() {
   // App-level permission toggle states & iOS guide modal
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
-  const [permissionModal, setPermissionModal] = useState<"location" | "push" | null>(null);
+
+  // Live Permission States
+  const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
+  const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
+
+  // Function to re-check actual device/browser permissions live and sync UI + DB
+  const checkLivePermissions = async () => {
+    // 1. Live Check Push Notifications
+    if (typeof window !== "undefined" && "Notification" in window) {
+      const currentPush = Notification.permission;
+      setPushPermission(currentPush);
+      if (currentPush === "granted") {
+        setLocationEnabled(true);
+        setPushEnabled(true);
+      } else {
+        setPushEnabled(false);
+      }
+    }
+
+    // 2. Live Check Location (GPS)
+    if (typeof navigator !== "undefined" && navigator.permissions) {
+      try {
+        const status = await navigator.permissions.query({ name: "geolocation" });
+        setGpsPermission(status.state);
+        if (status.state === "granted") {
+          setLocationEnabled(true);
+        } else if (status.state === "denied") {
+          setLocationEnabled(false);
+        }
+      } catch {
+        /* fallback handled on toggle */
+      }
+    }
+  };
 
   useEffect(() => {
     if (dbUser) {
@@ -59,53 +92,96 @@ export default function SettingsPage() {
     }
   }, [dbUser]);
 
+  useEffect(() => {
+    checkLivePermissions();
+
+    const handleFocus = () => {
+      checkLivePermissions();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [dbUser]);
+
   const handleToggleLocation = async (enabled: boolean) => {
-    setLocationEnabled(enabled);
-    try {
-      await updateUserSettingsAction({ locationEnabled: enabled });
-    } catch (e) {
-      console.error("Failed to update location preference", e);
+    if (!enabled) {
+      setLocationEnabled(false);
+      try {
+        await updateUserSettingsAction({ locationEnabled: false });
+      } catch (e) {
+        console.error("Failed to update location preference", e);
+      }
+      return;
     }
 
-    if (enabled) {
-      if (typeof navigator !== "undefined" && "geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          () => {
-            setGpsPermission("granted");
-          },
-          (err) => {
-            setShowGpsGuide(true);
-          },
-          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-        );
-      } else {
-        setShowGpsGuide(true);
-      }
+    if (typeof navigator !== "undefined" && "geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async () => {
+          setGpsPermission("granted");
+          setLocationEnabled(true);
+          try {
+            await updateUserSettingsAction({ locationEnabled: true });
+          } catch (e) {
+            console.error("Failed to update location preference", e);
+          }
+        },
+        async () => {
+          setGpsPermission("denied");
+          setLocationEnabled(false);
+          try {
+            await updateUserSettingsAction({ locationEnabled: false });
+          } catch (e) {}
+          setShowGpsGuide(true);
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    } else {
+      setLocationEnabled(false);
+      setShowGpsGuide(true);
     }
   };
 
   const handleTogglePush = async (enabled: boolean) => {
-    setPushEnabled(enabled);
-    try {
-      await updateUserSettingsAction({ pushNotificationsEnabled: enabled });
-    } catch (e) {
-      console.error("Failed to update push notification preference", e);
+    if (!enabled) {
+      setPushEnabled(false);
+      try {
+        await updateUserSettingsAction({ pushNotificationsEnabled: false });
+      } catch (e) {
+        console.error("Failed to update push notification preference", e);
+      }
+      return;
     }
 
-    if (enabled) {
-      if (typeof window !== "undefined" && "Notification" in window) {
-        try {
-          const res = await Notification.requestPermission();
-          setPushPermission(res);
-          if (res !== "granted") {
-            setShowPushGuide(true);
+    if (typeof window !== "undefined" && "Notification" in window) {
+      try {
+        const res = await Notification.requestPermission();
+        setPushPermission(res);
+        if (res === "granted") {
+          setPushEnabled(true);
+          try {
+            await updateUserSettingsAction({ pushNotificationsEnabled: true });
+          } catch (e) {
+            console.error("Failed to update push notification preference", e);
           }
-        } catch (e) {
+        } else {
+          setPushEnabled(false);
+          try {
+            await updateUserSettingsAction({ pushNotificationsEnabled: false });
+          } catch (e) {}
           setShowPushGuide(true);
         }
-      } else {
+      } catch (e) {
+        setPushEnabled(false);
         setShowPushGuide(true);
       }
+    } else {
+      setPushEnabled(false);
+      setShowPushGuide(true);
     }
   };
 
@@ -293,28 +369,7 @@ export default function SettingsPage() {
     setActiveSection(activeSection === section ? null : section);
   };
 
-  // Permissions States for Location & Push Notifications
-  const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
-  const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
 
-  useEffect(() => {
-    // Check GPS permission state
-    if (typeof navigator !== "undefined" && navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" }).then((status) => {
-        setGpsPermission(status.state);
-        status.onchange = () => setGpsPermission(status.state);
-      }).catch(() => setGpsPermission("prompt"));
-    } else {
-      setGpsPermission("prompt");
-    }
-
-    // Check Notification permission state
-    if (typeof window !== "undefined" && "Notification" in window) {
-      setPushPermission(Notification.permission);
-    } else {
-      setPushPermission("denied");
-    }
-  }, []);
 
   // Permission guide modals & device OS detection
   const [showGpsGuide, setShowGpsGuide] = useState(false);

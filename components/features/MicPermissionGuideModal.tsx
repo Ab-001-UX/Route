@@ -177,8 +177,7 @@ export default function MicPermissionGuideModal({
     }
   };
 
-  // Use the app's brand primary for both types — no hardcoded blue
-  const accent = "var(--color-brand-primary, #6366f1)";
+  const accent = "var(--color-brand-primary)";
 
   return (
     <div
@@ -189,7 +188,6 @@ export default function MicPermissionGuideModal({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        // Prevent touches on the outer wrapper from reaching the page
         touchAction: "none",
         padding: "16px",
       }}
@@ -203,31 +201,31 @@ export default function MicPermissionGuideModal({
           position: "absolute",
           inset: 0,
           background: "rgba(0, 0, 0, 0.65)",
-          backdropFilter: "blur(4px)",
-          WebkitBackdropFilter: "blur(4px)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
         }}
       />
 
-      {/* Centered Modal — touchAction: pan-y so only this scrolls */}
+      {/* Centered Modal */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           position: "relative",
           width: "100%",
           maxWidth: "480px",
-          // Explicit background that will be clearly visible on any dark or light bg
-          background: "var(--color-background-card, #1c1c2e)",
-          borderRadius: "20px",
+          background: "var(--color-background-surface)",
+          border: "1px solid var(--color-border-default)",
+          borderRadius: "24px",
+          boxShadow: "0 20px 48px rgba(0, 0, 0, 0.2)",
           zIndex: 1,
           display: "flex",
           flexDirection: "column",
-          // Fill up to 88% of the viewport height; internal sections scroll
           maxHeight: "88svh",
           touchAction: "pan-y",
           overscrollBehavior: "contain",
         }}
       >
-        {/* X close button */}
+        {/* X close button with min 44x44px touch target */}
         <button
           onClick={onDismiss}
           aria-label="Close"
@@ -235,12 +233,13 @@ export default function MicPermissionGuideModal({
             position: "absolute",
             top: "16px",
             right: "16px",
-            width: "32px",
-            height: "32px",
+            width: "44px",
+            height: "44px",
+            minHeight: "44px",
             borderRadius: "50%",
-            border: "none",
-            background: "rgba(255,255,255,0.10)",
-            color: "rgba(255,255,255,0.7)",
+            border: "1px solid var(--color-border-default)",
+            background: "var(--color-background-app)",
+            color: "var(--color-text-primary)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -249,7 +248,7 @@ export default function MicPermissionGuideModal({
             zIndex: 10,
           }}
         >
-          <X size={16} strokeWidth={2.5} />
+          <X size={20} strokeWidth={2.5} />
         </button>
 
         {/* ── Scrollable body ── */}
@@ -258,23 +257,24 @@ export default function MicPermissionGuideModal({
             overflowY: "auto",
             WebkitOverflowScrolling: "touch",
             overscrollBehavior: "contain",
-            padding: "24px 20px 24px",
+            padding: "24px 20px",
             display: "flex",
             flexDirection: "column",
-            gap: "16px",
+            gap: "18px",
             flex: 1,
             touchAction: "pan-y",
           }}
         >
-          {/* Header: icon + headline + body */}
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+          {/* Header: icon + headline + body (with right padding so title does not collide with X button) */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingRight: "44px" }}>
             <div
               style={{
                 width: "46px",
                 height: "46px",
-                borderRadius: "12px",
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "14px",
+                background: "var(--color-background-app)",
+                border: "1px solid var(--color-border-default)",
+                color: "var(--color-text-primary)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -282,20 +282,19 @@ export default function MicPermissionGuideModal({
               }}
             >
               {type === "microphone" ? (
-                <Mic size={22} color="#ffffff" />
+                <Mic size={22} color="currentColor" />
               ) : (
-                <MapPin size={22} color="#ffffff" />
+                <MapPin size={22} color="currentColor" />
               )}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <h3
                 style={{
                   margin: 0,
-                  fontSize: "17px",
+                  fontSize: "18px",
                   fontWeight: 700,
-                  // Force high-contrast white — no CSS variable that might resolve dark
-                  color: "#ffffff",
-                  lineHeight: "1.25",
+                  color: "var(--color-text-primary)",
+                  lineHeight: "1.3",
                 }}
               >
                 {config.headline}
@@ -303,9 +302,9 @@ export default function MicPermissionGuideModal({
               <p
                 style={{
                   margin: "8px 0 0",
-                  fontSize: "13px",
-                  color: "rgba(255,255,255,0.62)",
-                  lineHeight: "1.6",
+                  fontSize: "14px",
+                  color: "var(--color-text-secondary)",
+                  lineHeight: "1.55",
                 }}
               >
                 {config.body}
@@ -313,16 +312,16 @@ export default function MicPermissionGuideModal({
             </div>
           </div>
 
-          {/* If user is already in Safari, tell them they don't need to switch */}
+          {/* If user is already in Safari */}
           {inSafariTab && os === "ios" && (
             <div
               style={{
-                background: "rgba(99,102,241,0.10)",
-                border: "1px solid rgba(99,102,241,0.25)",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                fontSize: "12.5px",
-                color: "rgba(255,255,255,0.75)",
+                background: "var(--color-background-app)",
+                border: "1px solid var(--color-border-default)",
+                borderRadius: "12px",
+                padding: "12px 14px",
+                fontSize: "13px",
+                color: "var(--color-text-secondary)",
                 lineHeight: "1.5",
               }}
             >
@@ -333,9 +332,9 @@ export default function MicPermissionGuideModal({
           {/* Numbered steps */}
           <div
             style={{
-              background: "rgba(255,255,255,0.04)",
-              borderRadius: "14px",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: "var(--color-background-app)",
+              borderRadius: "16px",
+              border: "1px solid var(--color-border-default)",
               overflow: "hidden",
             }}
           >
@@ -346,23 +345,23 @@ export default function MicPermissionGuideModal({
                   display: "flex",
                   alignItems: "flex-start",
                   gap: "12px",
-                  padding: "13px 14px",
+                  padding: "14px 16px",
                   borderBottom:
                     i < steps.length - 1
-                      ? "1px solid rgba(255,255,255,0.06)"
+                      ? "1px solid var(--color-border-default)"
                       : "none",
                 }}
               >
-                {/* Number badge */}
+                {/* Number badge: high-contrast brand primary background with clear text */}
                 <span
                   aria-hidden="true"
                   style={{
-                    width: "26px",
-                    height: "26px",
+                    width: "28px",
+                    height: "28px",
                     borderRadius: "50%",
                     background: accent,
-                    color: "#fff",
-                    fontSize: "12px",
+                    color: "var(--color-background-surface)",
+                    fontSize: "13px",
                     fontWeight: 800,
                     display: "flex",
                     alignItems: "center",
@@ -375,9 +374,9 @@ export default function MicPermissionGuideModal({
                 </span>
                 <span
                   style={{
-                    fontSize: "13.5px",
-                    color: "#ffffff",
-                    lineHeight: "1.55",
+                    fontSize: "14px",
+                    color: "var(--color-text-primary)",
+                    lineHeight: "1.5",
                     flex: 1,
                   }}
                 >
@@ -393,23 +392,25 @@ export default function MicPermissionGuideModal({
             {showPrimaryBtn && (
               <button
                 onClick={handlePrimary}
+                className="primary"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "8px",
                   width: "100%",
+                  minHeight: "52px",
                   padding: "14px",
-                  borderRadius: "12px",
+                  borderRadius: "14px",
                   border: "none",
                   background: accent,
-                  color: "#fff",
+                  color: "var(--color-background-surface)",
                   fontSize: "15px",
                   fontWeight: 700,
                   cursor: "pointer",
                 }}
               >
-                <ExternalLink size={17} />
+                <ExternalLink size={18} />
                 {config.primaryLabel}
               </button>
             )}
@@ -418,23 +419,25 @@ export default function MicPermissionGuideModal({
             {showAndroidBtn && (
               <button
                 onClick={handlePrimary}
+                className="primary"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "8px",
                   width: "100%",
+                  minHeight: "52px",
                   padding: "14px",
-                  borderRadius: "12px",
+                  borderRadius: "14px",
                   border: "none",
                   background: accent,
-                  color: "#fff",
+                  color: "var(--color-background-surface)",
                   fontSize: "15px",
                   fontWeight: 700,
                   cursor: "pointer",
                 }}
               >
-                <Settings size={17} />
+                <Settings size={18} />
                 {config.primaryLabel}
               </button>
             )}
