@@ -383,9 +383,9 @@ export default function TripsPage() {
           <p>You do not have any trip history recorded on Route. Start a trip to track your transit safety.</p>
           <button 
             className={`primary ${styles.ctaBtn}`} 
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/trip/new")}
           >
-            Add a Trip
+            Log a Trip
           </button>
         </section>
       ) : (
