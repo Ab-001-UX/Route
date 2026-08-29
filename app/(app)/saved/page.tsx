@@ -67,6 +67,7 @@ function VehicleCard({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const flagCount = vehicle.flagCount ?? 0;
   const isDangerous =
@@ -189,6 +190,15 @@ function VehicleCard({
           This vehicle has no safety concerns reported.
         </p>
       )}
+
+      {/* Log a Trip CTA button */}
+      <button
+        type="button"
+        className={styles.cardLogTripBtn}
+        onClick={() => router.push(`/trip/new?plate=${encodeURIComponent(vehicle.plate)}`)}
+      >
+        Log a Trip <ArrowRight size={14} />
+      </button>
     </div>
   );
 }

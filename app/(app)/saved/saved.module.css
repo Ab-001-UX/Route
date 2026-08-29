@@ -1102,22 +1102,59 @@
   margin: 0 0 4px 0;
 }
 
+.cardLogTripBtn {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 12px; /* rounded tips */
+  background: var(--color-brand-primary);
+  color: var(--color-background-surface);
+  border: none;
+  font-size: 0.8125rem;
+  font-weight: 700; /* Same font weight as 'All' filter tab */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.cardLogTripBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cardLogTripBtn:active {
+  transform: scale(0.98);
+}
+
+:global(html[data-theme="dark"]) .cardLogTripBtn {
+  background: linear-gradient(160deg, hsl(0, 0%, 95%) 0%, hsl(40, 10%, 88%) 100%);
+  color: hsl(0, 0%, 9%);
+}
+
 .emptyCtaBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 6px 14px;
-  border-radius: 8px;
+  width: 100%;
+  max-width: 220px;
+  min-height: 42px;
+  padding: 10px 20px;
+  border-radius: 12px; /* rounded tips */
   background: var(--color-brand-primary);
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: var(--color-background-surface);
+  font-size: 0.8125rem;
+  font-weight: 700; /* Same font weight as 'All' filter tab */
   border: none;
   cursor: pointer;
-  margin-top: 8px;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-top: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .emptyCtaBtn:hover {
@@ -1125,10 +1162,10 @@
 }
 
 .emptyCtaBtn:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 :global(html[data-theme="dark"]) .emptyCtaBtn {
-  background: #ffffff;
-  color: hsl(0, 0%, 10%);
+  background: linear-gradient(160deg, hsl(0, 0%, 95%) 0%, hsl(40, 10%, 88%) 100%);
+  color: hsl(0, 0%, 9%);
 }
