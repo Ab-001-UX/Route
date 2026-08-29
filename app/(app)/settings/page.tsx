@@ -55,16 +55,14 @@ export default function SettingsPage() {
   const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
   const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
 
-  // Function to re-check actual device/browser permissions live and sync UI + DB
+  // Function to re-check actual device/browser permissions live without overriding user's manual OFF choice
   const checkLivePermissions = async () => {
     // 1. Live Check Push Notifications
     if (typeof window !== "undefined" && "Notification" in window) {
       const currentPush = Notification.permission;
       setPushPermission(currentPush);
-      if (currentPush === "granted") {
-        setLocationEnabled(true);
-        setPushEnabled(true);
-      } else {
+      // Only auto-disable if OS/browser permission is not granted
+      if (currentPush !== "granted") {
         setPushEnabled(false);
       }
     }
@@ -74,13 +72,11 @@ export default function SettingsPage() {
       try {
         const status = await navigator.permissions.query({ name: "geolocation" });
         setGpsPermission(status.state);
-        if (status.state === "granted") {
-          setLocationEnabled(true);
-        } else if (status.state === "denied") {
+        if (status.state === "denied") {
           setLocationEnabled(false);
         }
       } catch {
-        /* fallback handled on toggle */
+        /* noop */
       }
     }
   };
@@ -106,7 +102,7 @@ export default function SettingsPage() {
       window.removeEventListener("focus", handleFocus);
       document.removeEventListener("visibilitychange", handleFocus);
     };
-  }, [dbUser]);
+  }, []);
 
   const handleToggleLocation = async (enabled: boolean) => {
     if (!enabled) {
@@ -118,6 +114,9 @@ export default function SettingsPage() {
       }
       return;
     }
+
+    // Always show the overlay guide explaining location setup
+    setShowGpsGuide(true);
 
     if (typeof navigator !== "undefined" && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -133,16 +132,9 @@ export default function SettingsPage() {
         async () => {
           setGpsPermission("denied");
           setLocationEnabled(false);
-          try {
-            await updateUserSettingsAction({ locationEnabled: false });
-          } catch (e) {}
-          setShowGpsGuide(true);
         },
         { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
-    } else {
-      setLocationEnabled(false);
-      setShowGpsGuide(true);
     }
   };
 
@@ -157,6 +149,9 @@ export default function SettingsPage() {
       return;
     }
 
+    // Always show the overlay guide explaining notification setup
+    setShowPushGuide(true);
+
     if (typeof window !== "undefined" && "Notification" in window) {
       try {
         const res = await Notification.requestPermission();
@@ -170,18 +165,10 @@ export default function SettingsPage() {
           }
         } else {
           setPushEnabled(false);
-          try {
-            await updateUserSettingsAction({ pushNotificationsEnabled: false });
-          } catch (e) {}
-          setShowPushGuide(true);
         }
       } catch (e) {
         setPushEnabled(false);
-        setShowPushGuide(true);
       }
-    } else {
-      setPushEnabled(false);
-      setShowPushGuide(true);
     }
   };
 
