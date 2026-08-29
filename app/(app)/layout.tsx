@@ -145,13 +145,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
     };
   }, []);
 
-  useEffect(() => {
-    // Redirect to onboarding only if profile is missing phone number
-    if (dbUser && !dbUser.phone) {
-      router.replace("/onboarding");
-    }
-  }, [dbUser, router]);
-
   // Show a loading screen while checking onboarding state
   if (dbUser === undefined || contacts === undefined) {
     return (
@@ -190,20 +183,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
               ))}
             </nav>
           )}
-        </div>
-      </div>
-    );
-  }
-
-  // If user profile is missing required phone number, redirect to setup
-  if (dbUser && !dbUser.phone) {
-    return (
-      <div className={styles.shell}>
-        <div className={styles.viewport}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", gap: "16px", color: "var(--color-text-primary)" }}>
-            <Skeleton variant="circular" width={44} height={44} />
-            <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Redirecting to setup...</span>
-          </div>
         </div>
       </div>
     );
