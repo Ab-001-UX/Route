@@ -107,11 +107,18 @@
   border: 1.5px solid var(--color-border-default);
   background-color: var(--color-background-surface);
   padding: 0 16px 0 46px; /* 46px left padding to clear the search icon */
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--color-text-primary);
   opacity: 1;
   pointer-events: auto;
   transition: border-color 0.2s ease;
+}
+
+.searchInput::placeholder {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  opacity: 0.6;
 }
 
 :global([data-theme='dark']) .searchInput {
