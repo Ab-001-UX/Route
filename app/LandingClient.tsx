@@ -107,7 +107,7 @@ export default function LandingClient() {
             <Link href="/" className={styles.navLink}>Home</Link>
             <Link href="#how-it-works" className={styles.navLink}>How It Works</Link>
             <Link href="#features" className={styles.navLink}>Features</Link>
-            <Link href="#about" className={styles.navLink}>About Route</Link>
+            <Link href="#about" className={styles.navLink}>About</Link>
             <Link href="#faq" className={styles.navLink}>FAQ</Link>
             <Link href="/privacy" className={styles.navLink}>Privacy</Link>
           </nav>
@@ -133,7 +133,7 @@ export default function LandingClient() {
             <Link href="/" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>Home</Link>
             <Link href="#how-it-works" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>How It Works</Link>
             <Link href="#features" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>Features</Link>
-            <Link href="#about" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>About Route</Link>
+            <Link href="#about" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>About</Link>
             <Link href="#faq" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>FAQ</Link>
             <Link href="/privacy" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>Privacy</Link>
             <button onClick={() => { setMobileNavOpen(false); handleCTA(); }} className={styles.mobileNavCta}>
