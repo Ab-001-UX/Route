@@ -177,18 +177,13 @@ export default function LandingClient() {
             </div>
           </div>
 
-          {/* Right Column: Phone Mockup with Image 3 App Screenshot */}
+          {/* Right Column: Realistic Phone Mockup */}
           <div className={styles.heroRightCol}>
-            <div className={styles.phoneMockupFrame}>
-              <div className={styles.phoneDynamicIsland} />
-              <div className={styles.phoneScreenContainer}>
-                <img 
-                  src="/screenshots/hero_phone.jpg" 
-                  alt="Route Mobile App Screen" 
-                  className={styles.phoneAppImage}
-                />
-              </div>
-            </div>
+            <img 
+              src="/illustrations/hero_phone_mockup.jpg" 
+              alt="Route Mobile App Phone Mockup" 
+              className={styles.heroMockupImg}
+            />
           </div>
         </div>
       </section>
