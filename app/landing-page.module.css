@@ -1,4 +1,4 @@
-/* Premium Responsive Landing Page Styles for Route (Matching Wireframe Layout) */
+/* Premium Responsive Landing Page Styles for Route (Clean Wireframe Style) */
 
 .shell {
   display: flex;
@@ -12,18 +12,52 @@
   overflow-y: auto;
 }
 
-/* ── 1. Hero Sky Section ────────────────────────────────────────── */
+/* Common Centered Section Header Utility */
+.sectionCenteredHeader {
+  text-align: center;
+  margin: 0 auto 56px;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bentoLabel {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.bentoHeadline {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+  .bentoHeadline {
+    font-size: 2rem;
+  }
+}
+
+/* ── 1. Hero Section ────────────────────────────────────────────── */
 .heroSection {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 90vh;
   background-color: #0a0a0a;
-  background-image: radial-gradient(circle at 50% 20%, rgba(163, 230, 53, 0.08) 0%, transparent 60%), linear-gradient(180deg, #0a0a0a 0%, #141414 100%);
+  background-image: linear-gradient(180deg, #0a0a0a 0%, #141414 100%);
   color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 24px 100px;
+  padding: 0 24px 80px;
   overflow: visible;
   flex-shrink: 0;
 }
@@ -38,7 +72,7 @@
   background-image: url('/illustrations/sky_clouds_bg.png');
   background-size: cover;
   background-position: center bottom;
-  filter: grayscale(1) brightness(0.2) opacity(0.25) contrast(1.15);
+  filter: grayscale(1) brightness(0.15) opacity(0.2);
   pointer-events: none;
   z-index: 1;
 }
@@ -109,16 +143,16 @@
 }
 
 .navLink:hover {
-  color: hsl(76, 100%, 65%);
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
 .navCta {
-  background-color: hsl(76, 100%, 65%);
+  background-color: #ffffff;
   color: #0d0d0d;
   font-family: var(--font-manrope), sans-serif;
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 12px 24px;
   border-radius: 99px;
   border: none;
@@ -126,8 +160,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 16px rgba(163, 230, 53, 0.25);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
 @media (max-width: 860px) {
@@ -137,13 +171,12 @@
 }
 
 .navCta:hover {
-  transform: translateY(-2px) scale(1.02);
-  filter: brightness(1.08);
-  box-shadow: 0 8px 24px rgba(163, 230, 53, 0.4);
+  transform: translateY(-2px);
+  background-color: #f3f4f6;
 }
 
 .navCta:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0);
 }
 
 /* Hamburger toggle */
@@ -210,7 +243,7 @@
 }
 
 .mobileNavLink:hover {
-  color: hsl(76, 100%, 65%);
+  color: #ffffff;
 }
 
 .mobileNavCta {
@@ -219,22 +252,22 @@
   justify-content: center;
   gap: 8px;
   margin-top: 20px;
-  background: hsl(76, 100%, 65%);
+  background: #ffffff;
   color: #0d0d0d;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   height: 52px;
   padding: 0 28px;
   border-radius: 99px;
   border: none;
   cursor: pointer;
   width: 100%;
-  box-shadow: 0 4px 16px rgba(163, 230, 53, 0.3);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
 }
 
 .mobileNavCta:hover {
-  filter: brightness(1.08);
+  background-color: #f3f4f6;
   transform: translateY(-2px);
 }
 
@@ -270,20 +303,6 @@
     align-items: center;
     text-align: center;
   }
-}
-
-.heroBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(163, 230, 53, 0.12);
-  border: 1.5px solid rgba(163, 230, 53, 0.3);
-  border-radius: 99px;
-  padding: 6px 16px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: hsl(76, 100%, 75%);
-  margin-bottom: 24px;
 }
 
 .heroHeadline {
@@ -330,7 +349,7 @@
 }
 
 .primaryHeroBtn {
-  background-color: hsl(76, 100%, 65%);
+  background-color: #ffffff;
   color: #0d0d0d;
   font-size: 1rem;
   font-weight: 800;
@@ -343,8 +362,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 8px 24px rgba(163, 230, 53, 0.3);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
 @media (max-width: 480px) {
@@ -354,17 +373,16 @@
 }
 
 .primaryHeroBtn:hover {
-  transform: translateY(-3px) scale(1.02);
-  filter: brightness(1.08);
-  box-shadow: 0 12px 32px rgba(163, 230, 53, 0.45);
+  transform: translateY(-2px);
+  background-color: #f3f4f6;
 }
 
 .primaryHeroBtn:active {
-  transform: translateY(-1px) scale(0.98);
+  transform: translateY(0);
 }
 
 .secondaryHeroBtn {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
@@ -373,11 +391,11 @@
   border-radius: 99px;
   text-decoration: none;
   backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
 }
 
 @media (max-width: 480px) {
@@ -387,13 +405,13 @@
 }
 
 .secondaryHeroBtn:hover {
-  background-color: rgba(255, 255, 255, 0.22);
+  background-color: rgba(255, 255, 255, 0.2);
   border-color: #ffffff;
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .secondaryHeroBtn:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
 }
 
 .trustRating {
@@ -419,135 +437,52 @@
   color: #fbbf24;
 }
 
-/* Right Column: Hero Visual Graphic Preview */
+/* Right Column: Sleek iPhone Mockup displaying Image 3 App Screenshot */
 .heroRightCol {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
 }
 
-.heroCardPreview {
-  background: rgba(26, 26, 26, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 28px;
-  padding: 24px;
+.phoneMockupFrame {
+  position: relative;
   width: 100%;
-  max-width: 440px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  max-width: 330px;
+  background-color: #121212;
+  border: 10px solid #262626;
+  border-radius: 44px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  animation: floatPreview 6s ease-in-out infinite alternate;
-}
-
-@keyframes floatPreview {
-  from { transform: translateY(0); }
-  to { transform: translateY(-8px); }
-}
-
-.heroCardHeader {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 14px;
 }
 
-.heroCardDotRow {
+.phoneDynamicIsland {
+  position: absolute;
+  top: 12px;
+  width: 96px;
+  height: 22px;
+  background-color: #000000;
+  border-radius: 12px;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.phoneScreenContainer {
+  width: 100%;
+  height: auto;
+  border-radius: 34px;
+  overflow: hidden;
   display: flex;
-  gap: 6px;
 }
 
-.dotRed { width: 10px; height: 10px; border-radius: 50%; background-color: #ef4444; }
-.dotYellow { width: 10px; height: 10px; border-radius: 50%; background-color: #eab308; }
-.dotGreen { width: 10px; height: 10px; border-radius: 50%; background-color: #22c55e; }
-
-.heroCardBadge {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: hsl(76, 100%, 75%);
-}
-
-.heroCardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.heroSearchGraphic {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #ffffff;
-  border-radius: 14px;
-  padding: 12px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.heroSearchText {
-  font-family: var(--font-montserrat), sans-serif;
-  font-weight: 800;
-  font-size: 0.9375rem;
-  color: #111827;
-  letter-spacing: 0.05em;
-  flex: 1;
-}
-
-.heroSearchPill {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  background: rgba(34, 197, 94, 0.15);
-  color: #15803d;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.heroWaGraphic {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.heroWaHeader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.8125rem;
-  color: #111827;
-  margin-bottom: 6px;
-}
-
-.heroWaText {
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  color: #374151;
-  margin: 0;
-}
-
-.heroSafetyBanner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  border-radius: 14px;
-  padding: 12px 16px;
-  color: #ffffff;
-}
-
-.heroSafetyBanner strong {
+.phoneAppImage {
+  width: 100%;
+  height: auto;
   display: block;
-  font-size: 0.8125rem;
-  color: #4ade80;
-}
-
-.heroSafetyBanner span {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
+  object-fit: cover;
 }
 
 
@@ -591,7 +526,7 @@
   font-size: 1.125rem;
   letter-spacing: -0.02em;
   color: var(--color-text-secondary);
-  opacity: 0.6;
+  opacity: 0.8;
   background: var(--color-background-surface);
   border: 1px solid var(--color-border-default);
   padding: 10px 20px;
@@ -601,28 +536,123 @@
 
 .logoItem:hover {
   opacity: 1;
-  color: var(--color-brand-primary);
-  border-color: var(--color-brand-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
   transform: translateY(-2px);
 }
 
 
-/* ── 3. Features Section (4 Grid Cards) ───────────────────────── */
+/* ── 3. How Route Works Section (Image 2 Style: "User Guide For First Timer") ── */
+.howItWorksSection {
+  display: flex;
+  justify-content: center;
+  padding: 80px 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.guideCard {
+  width: 100%;
+  background-color: var(--color-background-surface);
+  border: 1.5px solid var(--color-border-default);
+  border-radius: 28px;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1fr auto 1.2fr;
+  gap: 48px;
+  align-items: center;
+  box-shadow: var(--elevation-1);
+}
+
+@media (max-width: 860px) {
+  .guideCard {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+}
+
+.guideLeftCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.guideTitle {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 2.75rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .guideTitle {
+    font-size: 2rem;
+  }
+}
+
+.guideVerticalLine {
+  width: 3px;
+  height: 100%;
+  min-height: 220px;
+  background-color: var(--color-text-primary);
+  border-radius: 99px;
+}
+
+@media (max-width: 860px) {
+  .guideVerticalLine {
+    width: 100%;
+    height: 3px;
+    min-height: 3px;
+  }
+}
+
+.guideRightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.guideStepItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guideStepNumber {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.guideStepText {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.guideStepText strong {
+  color: var(--color-text-primary);
+}
+
+
+/* ── 4. Features Section ───────────────────────────────────────── */
 .featuresSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 100px 24px;
+  padding: 80px 24px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   flex-shrink: 0;
-}
-
-.featuresHeader {
-  text-align: center;
-  margin-bottom: 56px;
-  max-width: 700px;
 }
 
 .featuresSubheadline {
@@ -655,16 +685,16 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 420px;
+  min-height: 380px;
   box-shadow: var(--elevation-1);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s ease;
   cursor: pointer;
 }
 
 .featureCard:hover {
-  transform: translateY(-6px);
-  border-color: var(--color-brand-primary);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  border-color: var(--color-text-primary);
+  box-shadow: var(--elevation-2);
 }
 
 .featureCardHeader {
@@ -678,7 +708,7 @@
 .featureHashtag {
   font-size: 0.8125rem;
   font-weight: 800;
-  color: var(--color-brand-primary);
+  color: var(--color-text-primary);
   letter-spacing: 0.05em;
 }
 
@@ -710,7 +740,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 140px;
+  min-height: 120px;
   margin-top: auto;
   width: 100%;
 }
@@ -719,7 +749,7 @@
   background-color: rgba(255, 255, 255, 0.03);
 }
 
-/* Feature 1 graphic */
+/* Feature graphics */
 .mockLookupBar {
   display: flex;
   align-items: center;
@@ -736,40 +766,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.mockWarningToast {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: #ffffff;
-  border: 1.5px solid #fee2e2;
-  border-radius: 16px;
-  padding: 12px 16px;
-  width: 100%;
-  max-width: 280px;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.08);
-  margin-top: 12px;
-  text-align: left;
-}
-
-.toastContent {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.toastTitle {
-  font-size: 0.8125rem;
-  font-weight: 800;
-  color: #991b1b !important;
-}
-
-.toastSubtext {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: #4b5563 !important;
-}
-
-/* Feature 2 graphic */
 .mockNotification {
   background-color: #ffffff;
   border: 1.5px solid #e5e7eb;
@@ -804,7 +800,6 @@
   text-align: left;
 }
 
-/* Feature 3 FIX CONTRAST BUG (WHITE CARD WITH CRISP DARK TEXT) */
 .mockFlagCard {
   background-color: #ffffff !important;
   border: 1.5px solid #fee2e2 !important;
@@ -815,7 +810,7 @@
   gap: 12px !important;
   width: 100% !important;
   max-width: 300px !important;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.08) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
   text-align: left !important;
 }
 
@@ -838,7 +833,6 @@
   color: #6b7280 !important;
 }
 
-/* Feature 4 graphic */
 .mockPrivacyBox {
   background-color: #ffffff;
   border: 1.5px solid #dcfce7;
@@ -849,7 +843,7 @@
   gap: 12px;
   width: 100%;
   max-width: 280px;
-  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
   text-align: left;
 }
 

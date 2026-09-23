@@ -7,21 +7,17 @@ import { useAuth } from "@clerk/nextjs";
 import { 
   ArrowUpRight, 
   Search, 
-  Share2, 
-  ShieldCheck, 
+  MessageCircle, 
+  ShieldAlert, 
   Star, 
   X, 
-  AlertOctagon,
   Menu,
-  MessageCircle,
-  ShieldAlert,
   Plus,
   Minus,
   Check,
   Lock,
   PhoneCall,
   Sparkles,
-  Users,
   Compass
 } from "lucide-react";
 import styles from "./landing-page.module.css";
@@ -109,6 +105,7 @@ export default function LandingClient() {
           {/* Desktop Nav Links */}
           <nav className={styles.navLinks}>
             <Link href="/" className={styles.navLink}>Home</Link>
+            <Link href="#how-it-works" className={styles.navLink}>How It Works</Link>
             <Link href="#features" className={styles.navLink}>Features</Link>
             <Link href="#about" className={styles.navLink}>About Route</Link>
             <Link href="#faq" className={styles.navLink}>FAQ</Link>
@@ -134,6 +131,7 @@ export default function LandingClient() {
         {mobileNavOpen && (
           <div className={styles.mobileDrawer}>
             <Link href="/" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>Home</Link>
+            <Link href="#how-it-works" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>How It Works</Link>
             <Link href="#features" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>Features</Link>
             <Link href="#about" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>About Route</Link>
             <Link href="#faq" className={styles.mobileNavLink} onClick={() => setMobileNavOpen(false)}>FAQ</Link>
@@ -148,11 +146,6 @@ export default function LandingClient() {
         <div className={styles.heroGrid}>
           {/* Left Column: Headline & Action */}
           <div className={styles.heroLeftCol}>
-            <div className={styles.heroBadge}>
-              <ShieldCheck size={16} color="hsl(76, 100%, 65%)" />
-              <span>#1 Passive Safety PWA for Lagos Commuters</span>
-            </div>
-
             <h1 className={styles.heroHeadline}>
               Check plates. Share your trip on WhatsApp. Stay safe.
             </h1>
@@ -166,7 +159,7 @@ export default function LandingClient() {
                 Get Started
                 <ArrowUpRight size={18} />
               </button>
-              <a href="#about" className={styles.secondaryHeroBtn}>
+              <a href="#how-it-works" className={styles.secondaryHeroBtn}>
                 How It Works
               </a>
             </div>
@@ -184,45 +177,16 @@ export default function LandingClient() {
             </div>
           </div>
 
-          {/* Right Column: Hero Visual Graphic Card */}
+          {/* Right Column: Phone Mockup with Image 3 App Screenshot */}
           <div className={styles.heroRightCol}>
-            <div className={styles.heroCardPreview}>
-              <div className={styles.heroCardHeader}>
-                <div className={styles.heroCardDotRow}>
-                  <span className={styles.dotRed} />
-                  <span className={styles.dotYellow} />
-                  <span className={styles.dotGreen} />
-                </div>
-                <span className={styles.heroCardBadge}>LIVE APP PREVIEW</span>
-              </div>
-
-              <div className={styles.heroCardBody}>
-                {/* Search Bar Graphic */}
-                <div className={styles.heroSearchGraphic}>
-                  <Search size={16} color="#9ca3af" />
-                  <span className={styles.heroSearchText}>BDG 419 AA</span>
-                  <span className={styles.heroSearchPill}>VERIFIED</span>
-                </div>
-
-                {/* WhatsApp Message Preview Graphic */}
-                <div className={styles.heroWaGraphic}>
-                  <div className={styles.heroWaHeader}>
-                    <MessageCircle size={15} color="#25D366" />
-                    <strong>WhatsApp Trip Link</strong>
-                  </div>
-                  <p className={styles.heroWaText}>
-                    "🚍 Boarding Yellow Danfo (BDG 419 AA) at Obalende. Track vehicle summary: https://route.app/trip/xyz"
-                  </p>
-                </div>
-
-                {/* Safety Status Pill */}
-                <div className={styles.heroSafetyBanner}>
-                  <ShieldCheck size={18} color="#22c55e" />
-                  <div>
-                    <strong>Clean Safety Record</strong>
-                    <span>No community safety flags registered</span>
-                  </div>
-                </div>
+            <div className={styles.phoneMockupFrame}>
+              <div className={styles.phoneDynamicIsland} />
+              <div className={styles.phoneScreenContainer}>
+                <img 
+                  src="/screenshots/hero_phone.jpg" 
+                  alt="Route Mobile App Screen" 
+                  className={styles.phoneAppImage}
+                />
               </div>
             </div>
           </div>
@@ -241,9 +205,50 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 3: FEATURES GRID (4 CARDS MATCHING WIREFRAME) */}
+      {/* SECTION 3: HOW ROUTE WORKS (IMAGE 2 STYLE: "USER GUIDE FOR FIRST TIMER") */}
+      <section id="how-it-works" className={styles.howItWorksSection}>
+        <div className={styles.guideCard}>
+          <div className={styles.guideLeftCol}>
+            <h2 className={styles.guideTitle}>User guide for first timer</h2>
+          </div>
+          
+          <div className={styles.guideVerticalLine} />
+
+          <div className={styles.guideRightCol}>
+            <div className={styles.guideStepItem}>
+              <h3 className={styles.guideStepNumber}>Step 1</h3>
+              <p className={styles.guideStepText}>
+                <strong>Search Plate</strong> — Enter any Danfo, Keke, Okada, or Taxi plate number to instantly check community safety records.
+              </p>
+            </div>
+
+            <div className={styles.guideStepItem}>
+              <h3 className={styles.guideStepNumber}>Step 2</h3>
+              <p className={styles.guideStepText}>
+                <strong>Log Trip</strong> — Input transport type, boarding spot, and destination in under 10 seconds.
+              </p>
+            </div>
+
+            <div className={styles.guideStepItem}>
+              <h3 className={styles.guideStepNumber}>Step 3</h3>
+              <p className={styles.guideStepText}>
+                <strong>Share Link</strong> — Generate a 1-tap WhatsApp summary link and send it directly to loved ones.
+              </p>
+            </div>
+
+            <div className={styles.guideStepItem}>
+              <h3 className={styles.guideStepNumber}>Step 4</h3>
+              <p className={styles.guideStepText}>
+                <strong>Stay Connected</strong> — Loved ones view live details in their browser with zero app download required.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: FEATURES GRID */}
       <section id="features" className={styles.featuresSection}>
-        <div className={styles.featuresHeader}>
+        <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>Core Features</span>
           <h2 className={styles.bentoHeadline}>Simple, powerful tools for safer commuting</h2>
           <p className={styles.featuresSubheadline}>
@@ -256,7 +261,7 @@ export default function LandingClient() {
           <div className={styles.featureCard}>
             <div className={styles.featureCardHeader}>
               <span className={styles.featureHashtag}>#PlateLookup</span>
-              <RouteLogo size={28} color="var(--color-brand-primary)" lineColor="#ffffff" />
+              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
             </div>
             
             <div className={styles.featureCardBody}>
@@ -270,13 +275,6 @@ export default function LandingClient() {
                   <Search size={14} color="#6b7280" />
                   <span>BDG 419 AA</span>
                 </div>
-                <div className={styles.mockWarningToast}>
-                  <AlertOctagon size={20} color="#ef4444" style={{ flexShrink: 0 }} />
-                  <div className={styles.toastContent}>
-                    <strong className={styles.toastTitle}>Flagged – Caution</strong>
-                    <span className={styles.toastSubtext}>Community reported safety concern</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -285,7 +283,7 @@ export default function LandingClient() {
           <div className={styles.featureCard}>
             <div className={styles.featureCardHeader}>
               <span className={styles.featureHashtag}>#WhatsAppShare</span>
-              <RouteLogo size={28} color="var(--color-brand-primary)" lineColor="#ffffff" />
+              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
             </div>
             
             <div className={styles.featureCardBody}>
@@ -302,18 +300,18 @@ export default function LandingClient() {
                     <span>Just now</span>
                   </div>
                   <p className={styles.notificationText}>
-                    "🚍 Boarding a Yellow Danfo (LND 123 XY) from Obalende to Lekki. Summary link: https://route.app/trip/xyz"
+                    "Boarding a Yellow Danfo (LND 123 XY) from Obalende to Lekki. Summary link: https://route.app/trip/xyz"
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Feature 3 — FIX CONTRAST BUG (DARK HIGH CONTRAST TEXT) */}
+          {/* Feature 3 */}
           <div className={styles.featureCard}>
             <div className={styles.featureCardHeader}>
               <span className={styles.featureHashtag}>#CommunityWatch</span>
-              <RouteLogo size={28} color="var(--color-brand-primary)" lineColor="#ffffff" />
+              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
             </div>
             
             <div className={styles.featureCardBody}>
@@ -324,7 +322,7 @@ export default function LandingClient() {
               
               <div className={styles.featureGraphic}>
                 <div className={styles.mockFlagCard}>
-                  <ShieldAlert size={22} color="#ef4444" style={{ flexShrink: 0 }} />
+                  <ShieldAlert size={22} color="#dc2626" style={{ flexShrink: 0 }} />
                   <div className={styles.mockFlagContent}>
                     <strong className={styles.mockFlagTitle}>3+ Independent Reports = Flagged Badge</strong>
                     <span className={styles.mockFlagSub}>Verified community safety alert</span>
@@ -338,7 +336,7 @@ export default function LandingClient() {
           <div className={styles.featureCard}>
             <div className={styles.featureCardHeader}>
               <span className={styles.featureHashtag}>#PrivacyFirst</span>
-              <RouteLogo size={28} color="var(--color-brand-primary)" lineColor="#ffffff" />
+              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
             </div>
             
             <div className={styles.featureCardBody}>
@@ -349,7 +347,7 @@ export default function LandingClient() {
               
               <div className={styles.featureGraphic}>
                 <div className={styles.mockPrivacyBox}>
-                  <Lock size={18} color="#22c55e" />
+                  <Lock size={18} color="#16a34a" />
                   <div>
                     <strong className={styles.mockPrivacyTitle}>100% Privacy Control</strong>
                     <span className={styles.mockPrivacySub}>No background tracking or contact sync</span>
@@ -361,8 +359,13 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 4: ABOUT ROUTE (SPLIT LAYOUT: BRIDGE IMAGE ON LEFT, TEXT ON RIGHT) */}
+      {/* SECTION 5: ABOUT ROUTE (SEPARATED WITH CENTERED HEADING & SPLIT CONTENT BELOW) */}
       <section id="about" className={styles.aboutSection}>
+        <div className={styles.sectionCenteredHeader}>
+          <span className={styles.bentoLabel}>About Route</span>
+          <h2 className={styles.bentoHeadline}>The Story Behind Route & Why It Exists</h2>
+        </div>
+
         <div className={styles.aboutContainer}>
           {/* Left Column: Bridge Image */}
           <div className={styles.aboutImageCol}>
@@ -373,7 +376,7 @@ export default function LandingClient() {
                 className={styles.aboutBridgeImg}
               />
               <div className={styles.aboutImageBadge}>
-                <Compass size={16} color="hsl(76, 100%, 65%)" />
+                <Compass size={16} color="#ffffff" />
                 <span>Lagos Transit Safety Network</span>
               </div>
             </div>
@@ -381,9 +384,6 @@ export default function LandingClient() {
 
           {/* Right Column: Story & Purpose */}
           <div className={styles.aboutTextCol}>
-            <span className={styles.bentoLabel}>About Route</span>
-            <h2 className={styles.aboutHeadline}>The Story Behind Route & Why It Exists</h2>
-            
             <p className={styles.aboutBodyText}>
               Route was born on the bustling streets of Lagos out of a real, urgent need for commuter peace of mind. Every day, millions of Lagosians board Danfo buses, Keke Marwas, Okada bikes, Uber rides, and shuttle buses—navigating unpredictable traffic, unverified vehicles, and the constant threat of "one-chance" syndicates.
             </p>
@@ -395,7 +395,7 @@ export default function LandingClient() {
             <div className={styles.aboutHighlightsList}>
               <div className={styles.aboutHighlightItem}>
                 <div className={styles.highlightCheckIcon}>
-                  <Check size={16} color="#0d0d0d" />
+                  <Check size={16} color="#ffffff" />
                 </div>
                 <div>
                   <strong>Verified Community Records</strong>
@@ -405,7 +405,7 @@ export default function LandingClient() {
 
               <div className={styles.aboutHighlightItem}>
                 <div className={styles.highlightCheckIcon}>
-                  <Check size={16} color="#0d0d0d" />
+                  <Check size={16} color="#ffffff" />
                 </div>
                 <div>
                   <strong>1-Tap WhatsApp Summary</strong>
@@ -415,7 +415,7 @@ export default function LandingClient() {
 
               <div className={styles.aboutHighlightItem}>
                 <div className={styles.highlightCheckIcon}>
-                  <Check size={16} color="#0d0d0d" />
+                  <Check size={16} color="#ffffff" />
                 </div>
                 <div>
                   <strong>Privacy & Simplicity First</strong>
@@ -427,9 +427,9 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 5: REVIEWS / TESTIMONIALS */}
+      {/* SECTION 6: REVIEWS / TESTIMONIALS */}
       <section className={styles.reviewsSection}>
-        <div className={styles.featuresHeader}>
+        <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>Commuter Feedback</span>
           <h2 className={styles.bentoHeadline}>Loved by everyday commuters across Lagos</h2>
         </div>
@@ -491,9 +491,9 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 6: FAQ ACCORDION SECTION */}
+      {/* SECTION 7: FAQ ACCORDION SECTION */}
       <section id="faq" className={styles.faqSection}>
-        <div className={styles.featuresHeader}>
+        <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>FAQ</span>
           <h2 className={styles.bentoHeadline}>Confidently move forward with smart answers</h2>
         </div>
@@ -524,11 +524,11 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 7: FINAL CTA BANNER */}
+      {/* SECTION 8: FINAL CTA BANNER */}
       <section className={styles.ctaBannerSection}>
         <div className={styles.ctaBannerCard}>
           <div className={styles.ctaBannerContent}>
-            <Sparkles size={28} color="hsl(76, 100%, 65%)" style={{ marginBottom: "12px" }} />
+            <Sparkles size={28} color="#ffffff" style={{ marginBottom: "12px" }} />
             <h2 className={styles.ctaBannerHeading}>Ready for safer commutes across Lagos?</h2>
             <p className={styles.ctaBannerSub}>
               Join thousands of Lagosians checking plates and sharing WhatsApp trip summaries every day.
@@ -541,7 +541,7 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 8: FOOTER (LARGER BRANDING & COMPLETE LINKS) */}
+      {/* SECTION 9: FOOTER (LARGER BRANDING & COMPLETE LINKS) */}
       <footer className={styles.footer}>
         <div className={styles.footerBgImage} />
         
@@ -564,6 +564,7 @@ export default function LandingClient() {
             <div className={styles.footerLinksCol}>
               <h4 className={styles.footerColTitle}>Navigation</h4>
               <Link href="/" className={styles.footerLink}>Home</Link>
+              <Link href="#how-it-works" className={styles.footerLink}>How It Works</Link>
               <Link href="#features" className={styles.footerLink}>Features</Link>
               <Link href="#about" className={styles.footerLink}>About Route</Link>
               <Link href="#faq" className={styles.footerLink}>FAQ</Link>
