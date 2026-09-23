@@ -442,7 +442,6 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  perspective: 1200px;
 }
 
 .heroPhoneStandaloneImage {
@@ -451,15 +450,8 @@
   height: auto;
   display: block;
   object-fit: contain;
-  mix-blend-mode: screen;
-  transform: rotateY(-28deg) rotateZ(-2deg);
-  transform-style: preserve-3d;
-  filter: drop-shadow(-20px 24px 50px rgba(0, 0, 0, 0.9));
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.heroPhoneStandaloneImage:hover {
-  transform: rotateY(-20deg) translateY(-8px) scale(1.02);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
 }
 
 

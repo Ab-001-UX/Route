@@ -147,11 +147,11 @@ export default function LandingClient() {
           {/* Left Column: Headline & Action */}
           <div className={styles.heroLeftCol}>
             <h1 className={styles.heroHeadline}>
-              Check plates. Share your trip on WhatsApp. Stay safe.
+              Check plates. Board safe.
             </h1>
 
             <p className={styles.heroSubtitle}>
-              Don't board blind in Lagos. Look up vehicle safety records before stepping inside any Danfo, Keke, or Taxi, and send your ride details straight to family on WhatsApp.
+              Look up Danfo, Keke, or Taxi safety records and share your trip on WhatsApp in seconds.
             </p>
 
             <div className={styles.heroButtons}>
@@ -180,7 +180,7 @@ export default function LandingClient() {
           {/* Right Column: Photorealistic Metallic Tilted Smartphone Mockup */}
           <div className={styles.heroRightCol}>
             <img 
-              src="/screenshots/hero_phone.jpg" 
+              src="/screenshots/hero_phone.png" 
               alt="Route Mobile App Photorealistic Mockup" 
               className={styles.heroPhoneStandaloneImage}
             />
