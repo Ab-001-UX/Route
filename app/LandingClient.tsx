@@ -151,7 +151,7 @@ export default function LandingClient() {
             </h1>
 
             <p className={styles.heroSubtitle}>
-              Every Lagos commute deserves peace of mind. Verify vehicle safety records before boarding any Danfo, Keke, or Taxi, and send a 1-tap trip summary link directly to loved ones on WhatsApp.
+              Don't board blind in Lagos. Look up vehicle safety records before stepping inside any Danfo, Keke, or Taxi, and send your ride details straight to family on WhatsApp.
             </p>
 
             <div className={styles.heroButtons}>
@@ -218,28 +218,28 @@ export default function LandingClient() {
             <div className={styles.guideStepItem}>
               <h3 className={styles.guideStepNumber}>Step 1</h3>
               <p className={styles.guideStepText}>
-                <strong>Search Plate</strong> — Enter any Danfo, Keke, Okada, or Taxi plate number to instantly check community safety records.
+                <strong>Search Plate</strong> — Type in the plate number at the bus stop to check previous driver flags.
               </p>
             </div>
 
             <div className={styles.guideStepItem}>
               <h3 className={styles.guideStepNumber}>Step 2</h3>
               <p className={styles.guideStepText}>
-                <strong>Log Trip</strong> — Input transport type, boarding spot, and destination in under 10 seconds.
+                <strong>Log Trip</strong> — Pick your ride type, where you're entering, and where you're heading.
               </p>
             </div>
 
             <div className={styles.guideStepItem}>
               <h3 className={styles.guideStepNumber}>Step 3</h3>
               <p className={styles.guideStepText}>
-                <strong>Share Link</strong> — Generate a 1-tap WhatsApp summary link and send it directly to loved ones.
+                <strong>Share Link</strong> — Tap once to copy a clean summary link and drop it into WhatsApp.
               </p>
             </div>
 
             <div className={styles.guideStepItem}>
               <h3 className={styles.guideStepNumber}>Step 4</h3>
               <p className={styles.guideStepText}>
-                <strong>Stay Connected</strong> — Loved ones view live details in their browser with zero app download required.
+                <strong>Family Stays Updated</strong> — Your people open the link in any browser. Zero sign-up needed on their end.
               </p>
             </div>
           </div>
@@ -250,9 +250,9 @@ export default function LandingClient() {
       <section id="features" className={styles.featuresSection}>
         <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>Core Features</span>
-          <h2 className={styles.bentoHeadline}>Simple, powerful tools for safer commuting</h2>
+          <h2 className={styles.bentoHeadline}>Built for fast-paced Lagos commuting</h2>
           <p className={styles.featuresSubheadline}>
-            Designed specifically for fast-paced Lagos transit without heavy downloads or intrusive permissions.
+            No app downloads for your contacts, no location tracking, and zero clutter.
           </p>
         </div>
 
@@ -264,7 +264,7 @@ export default function LandingClient() {
             </div>
             <h3 className={styles.flowStepTitle}>Search Vehicle Plate</h3>
             <p className={styles.flowStepDescription}>
-              Verify safety records for any Danfo, Keke, Okada, or Taxi plate number before stepping inside.
+              Look up any Danfo, Keke, Okada, or Taxi plate number to see previous community safety reports.
             </p>
           </div>
 
@@ -282,7 +282,7 @@ export default function LandingClient() {
             </div>
             <h3 className={styles.flowStepTitle}>1-Tap WhatsApp Share</h3>
             <p className={styles.flowStepDescription}>
-              Generate a clean trip summary link and send it directly to loved ones with zero sign-up required.
+              Send your vehicle details, trip route, and emergency numbers directly to family on WhatsApp.
             </p>
           </div>
 
@@ -300,7 +300,7 @@ export default function LandingClient() {
             </div>
             <h3 className={styles.flowStepTitle}>Community Safety Watch</h3>
             <p className={styles.flowStepDescription}>
-              Report dangerous or suspicious vehicles anonymously to warn fellow commuters across Lagos.
+              Report reckless drivers or unsafe vehicles anonymously so fellow commuters stay warned.
             </p>
           </div>
         </div>
@@ -310,7 +310,7 @@ export default function LandingClient() {
       <section id="about" className={styles.aboutSection}>
         <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>About Route</span>
-          <h2 className={styles.bentoHeadline}>The Story Behind Route & Why It Exists</h2>
+          <h2 className={styles.bentoHeadline}>Why we built Route for Lagos</h2>
         </div>
 
         <div className={styles.aboutContainer}>
@@ -332,11 +332,11 @@ export default function LandingClient() {
           {/* Right Column: Story & Purpose */}
           <div className={styles.aboutTextCol}>
             <p className={styles.aboutBodyText}>
-              Route was born on the bustling streets of Lagos out of a real, urgent need for commuter peace of mind. Every day, millions of Lagosians board Danfo buses, Keke Marwas, Okada bikes, Uber rides, and shuttle buses—navigating unpredictable traffic, unverified vehicles, and the constant threat of "one-chance" syndicates.
+              Route was built directly on the streets of Lagos to tackle a daily reality every commuter knows too well. From rush-hour Danfos at CMS to late-night Kekes in Ikeja, millions of us get into vehicles without knowing who's at the wheel or if the car is safe.
             </p>
 
             <p className={styles.aboutBodyText}>
-              We created Route as a lightweight, non-intrusive safety net. It allows everyday commuters to instantly check vehicle plate safety records before stepping inside, log ride details in under 10 seconds, and share a 1-tap WhatsApp summary link with loved ones—without cumbersome tracking apps or notification bloat.
+              We built Route as a straightforward, lightweight tool: search a plate at the bus stop, save your ride info, and text a summary link to your family. No battery-draining background tracking, no forced emergency contact setup, and no useless notification popups.
             </p>
 
             <div className={styles.aboutHighlightsList}>
@@ -378,7 +378,7 @@ export default function LandingClient() {
       <section className={styles.reviewsSection}>
         <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>Commuter Feedback</span>
-          <h2 className={styles.bentoHeadline}>Loved by everyday commuters across Lagos</h2>
+          <h2 className={styles.bentoHeadline}>What Lagosians are saying</h2>
         </div>
 
         <div className={styles.reviewsGrid}>
@@ -389,7 +389,7 @@ export default function LandingClient() {
               ))}
             </div>
             <p className={styles.reviewText}>
-              "Being able to search plate numbers before boarding Danfos at Yaba and send a quick WhatsApp summary to my family gives me complete peace of mind."
+              "Before getting into any Danfo at Yaba, I check the plate on Route first and drop the link in our family group chat. It keeps everyone in the loop without stressing anyone out."
             </p>
             <div className={styles.reviewAuthorRow}>
               <div className={styles.reviewAvatar}>FA</div>
@@ -407,7 +407,7 @@ export default function LandingClient() {
               ))}
             </div>
             <p className={styles.reviewText}>
-              "I take Keke Marwa late at night from Ikeja station. Route lets me log the trip in 5 seconds and send the WhatsApp link directly to our family group chat."
+              "I take Keke Marwa late at night around Ikeja bus stop. I log the plate in 5 seconds and send the WhatsApp link to my sister so she knows I'm on my way."
             </p>
             <div className={styles.reviewAuthorRow}>
               <div className={styles.reviewAvatar}>EO</div>
@@ -425,7 +425,7 @@ export default function LandingClient() {
               ))}
             </div>
             <p className={styles.reviewText}>
-              "Simple, fast, and no unnecessary pop-ups or notifications. It is the cleanest and most practical transit safety app I have used in Lagos."
+              "What I love is that my mother doesn't need to download anything. She just taps the WhatsApp link and sees the bus details right in her phone browser."
             </p>
             <div className={styles.reviewAuthorRow}>
               <div className={styles.reviewAvatar}>TK</div>
@@ -442,7 +442,7 @@ export default function LandingClient() {
       <section id="faq" className={styles.faqSection}>
         <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>FAQ</span>
-          <h2 className={styles.bentoHeadline}>Confidently move forward with smart answers</h2>
+          <h2 className={styles.bentoHeadline}>Frequently Asked Questions</h2>
         </div>
 
         <div className={styles.faqList}>
@@ -476,9 +476,9 @@ export default function LandingClient() {
         <div className={styles.ctaBannerCard}>
           <div className={styles.ctaBannerContent}>
             <Sparkles size={28} color="#ffffff" style={{ marginBottom: "12px" }} />
-            <h2 className={styles.ctaBannerHeading}>Ready for safer commutes across Lagos?</h2>
+            <h2 className={styles.ctaBannerHeading}>Commute with confidence across Lagos</h2>
             <p className={styles.ctaBannerSub}>
-              Join thousands of Lagosians checking plates and sharing WhatsApp trip summaries every day.
+              Search plates, log your ride, and keep your family updated in seconds.
             </p>
             <button onClick={handleCTA} className={styles.ctaBannerBtn}>
               Get Started Now
