@@ -177,29 +177,13 @@ export default function LandingClient() {
             </div>
           </div>
 
-          {/* Right Column: Pixel-Perfect Realistic Phone Mockup */}
+          {/* Right Column: Photorealistic Metallic Tilted Smartphone Mockup */}
           <div className={styles.heroRightCol}>
-            <div className={styles.phoneMockupFrame}>
-              {/* Hardware Side Buttons */}
-              <div className={styles.phoneBtnVolumeUp} />
-              <div className={styles.phoneBtnVolumeDown} />
-              <div className={styles.phoneBtnPower} />
-
-              {/* Display Screen */}
-              <div className={styles.phoneScreenContainer}>
-                {/* Dynamic Island Notch Overlay */}
-                <div className={styles.phoneDynamicIslandOverlay}>
-                  <div className={styles.phoneCameraLens} />
-                </div>
-
-                {/* App Screen Content */}
-                <img 
-                  src="/screenshots/hero_phone.jpg" 
-                  alt="Route Mobile App Screen" 
-                  className={styles.phoneAppImage}
-                />
-              </div>
-            </div>
+            <img 
+              src="/screenshots/hero_phone.jpg" 
+              alt="Route Mobile App Photorealistic Mockup" 
+              className={styles.heroPhoneStandaloneImage}
+            />
           </div>
         </div>
       </section>
@@ -230,11 +214,11 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 3: HOW ROUTE WORKS (IMAGE 2 STYLE: "USER GUIDE FOR FIRST TIMER") */}
+      {/* SECTION 3: HOW ROUTE WORKS */}
       <section id="how-it-works" className={styles.howItWorksSection}>
         <div className={styles.guideCard}>
           <div className={styles.guideLeftCol}>
-            <h2 className={styles.guideTitle}>User guide for first timer</h2>
+            <h2 className={styles.guideTitle}>How Route works in 4 simple steps</h2>
           </div>
           
           <div className={styles.guideVerticalLine} />

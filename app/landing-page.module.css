@@ -437,7 +437,7 @@
   color: #fbbf24;
 }
 
-/* Right Column: Pixel-Perfect Realistic Phone Mockup */
+/* Right Column: Photorealistic Tilted Smartphone Mockup */
 .heroRightCol {
   display: flex;
   justify-content: center;
@@ -445,102 +445,18 @@
   width: 100%;
 }
 
-.phoneMockupFrame {
-  position: relative;
+.heroPhoneStandaloneImage {
   width: 100%;
-  max-width: 320px;
-  background-color: #121212;
-  border: 10px solid #1a1a1c;
-  border-radius: 46px;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.65), 
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 380px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.7));
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.phoneMockupFrame:hover {
-  transform: translateY(-6px);
-}
-
-/* Side Buttons */
-.phoneBtnVolumeUp {
-  position: absolute;
-  left: -13px;
-  top: 95px;
-  width: 4px;
-  height: 44px;
-  background: #2a2a2c;
-  border-radius: 4px 0 0 4px;
-}
-
-.phoneBtnVolumeDown {
-  position: absolute;
-  left: -13px;
-  top: 152px;
-  width: 4px;
-  height: 44px;
-  background: #2a2a2c;
-  border-radius: 4px 0 0 4px;
-}
-
-.phoneBtnPower {
-  position: absolute;
-  right: -13px;
-  top: 110px;
-  width: 4px;
-  height: 60px;
-  background: #2a2a2c;
-  border-radius: 0 4px 4px 0;
-}
-
-/* Screen Display Container */
-.phoneScreenContainer {
-  position: relative;
-  width: 100%;
-  background-color: #0e0e10;
-  border-radius: 36px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Dynamic Island Overlay */
-.phoneDynamicIslandOverlay {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90px;
-  height: 24px;
-  background-color: #000000;
-  border-radius: 99px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-}
-
-.phoneCameraLens {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #1a2238 0%, #060913 70%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.phoneAppImage {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  border-radius: 36px;
-  background-color: #0e0e10;
+.heroPhoneStandaloneImage:hover {
+  transform: translateY(-8px) scale(1.02);
 }
 
 
