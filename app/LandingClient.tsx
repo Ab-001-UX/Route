@@ -183,6 +183,7 @@ export default function LandingClient() {
               src="/screenshots/hero_phone.png" 
               alt="Route Mobile App Photorealistic Mockup" 
               className={styles.heroPhoneStandaloneImage}
+              draggable={false}
             />
           </div>
         </div>
@@ -450,7 +451,7 @@ export default function LandingClient() {
       {/* SECTION 7: FAQ ACCORDION SECTION */}
       <section id="faq" className={styles.faqSection}>
         <div className={styles.sectionCenteredHeader}>
-          <span className={styles.faqSubLabel}>TRUSTED BY</span>
+          <span className={styles.faqSubLabel}>FAQ</span>
           <h2 className={styles.faqHeadline}>
             Frequently<br />Asked Questions
           </h2>

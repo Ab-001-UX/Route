@@ -442,6 +442,10 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none;
+  touch-action: none;
 }
 
 .heroPhoneStandaloneImage {
@@ -451,7 +455,21 @@
   display: block;
   object-fit: contain;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
-  pointer-events: none;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none;
+  cursor: default !important;
+  touch-action: none;
+  transition: none !important;
+  transform: none !important;
+}
+
+.heroPhoneStandaloneImage:hover,
+.heroPhoneStandaloneImage:active,
+.heroPhoneStandaloneImage:focus {
+  pointer-events: none !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 
@@ -970,7 +988,7 @@
   font-weight: 800;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #374151;
+  color: var(--color-text-secondary);
   text-align: center;
   margin-bottom: 12px;
 }
@@ -978,10 +996,10 @@
 .faqHeadline {
   font-family: var(--font-montserrat), sans-serif;
   font-size: 2.75rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.02em;
-  color: #111827;
+  color: var(--color-text-primary);
   text-align: center;
   margin: 0 0 44px 0;
 }
@@ -1000,26 +1018,26 @@
 }
 
 .faqCard {
-  background-color: #f1f4f9;
+  background-color: var(--color-background-surface);
   border-radius: 9999px;
   padding: 16px 20px 16px 28px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--color-border-default);
 }
 
 .faqCard:hover {
-  background-color: #e8ecf4;
+  background-color: var(--color-background-app);
   transform: translateY(-1px);
 }
 
 .faqCardOpen {
-  background-color: #ffffff;
+  background-color: var(--color-background-surface);
   border-radius: 24px;
   padding: 24px 28px;
-  border: 1.5px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid var(--color-border-default);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
 }
 
 .faqQuestionRow {
@@ -1034,7 +1052,7 @@
   font-family: var(--font-montserrat), sans-serif;
   font-size: 1.0625rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text-primary);
   margin: 0;
   text-align: left;
   line-height: 1.35;
