@@ -193,15 +193,29 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 2: SUPPORTED TRANSIT CATEGORIES */}
+      {/* SECTION 2: SUPPORTED TRANSIT CONTINUOUS TICKER LOOP */}
       <section className={styles.logosSection}>
-        <span className={styles.logosTitle}>Supported Commercial Transit Categories</span>
-        <div className={styles.logosRow}>
-          <div className={styles.logoItem}><span>Danfo Buses</span></div>
-          <div className={styles.logoItem}><span>Keke Marwa</span></div>
-          <div className={styles.logoItem}><span>Okada Bikes</span></div>
-          <div className={styles.logoItem}><span>Uber / Taxi</span></div>
-          <div className={styles.logoItem}><span>Shuttle Buses</span></div>
+        <div className={styles.marqueeContainer}>
+          <div className={styles.marqueeTrack}>
+            <div className={styles.marqueeContent}>
+              <span>DANFO BUSES</span> <span className={styles.marqueeDot}>|</span>
+              <span>KEKE MARWA</span> <span className={styles.marqueeDot}>|</span>
+              <span>OKADA BIKES</span> <span className={styles.marqueeDot}>|</span>
+              <span>UBER & TAXI</span> <span className={styles.marqueeDot}>|</span>
+              <span>SHUTTLE BUSES</span> <span className={styles.marqueeDot}>|</span>
+              <span>LAGOS TRANSIT NETWORK</span> <span className={styles.marqueeDot}>|</span>
+              <span>ALL 20 LAGOS LGAS</span> <span className={styles.marqueeDot}>|</span>
+            </div>
+            <div className={styles.marqueeContent} aria-hidden="true">
+              <span>DANFO BUSES</span> <span className={styles.marqueeDot}>|</span>
+              <span>KEKE MARWA</span> <span className={styles.marqueeDot}>|</span>
+              <span>OKADA BIKES</span> <span className={styles.marqueeDot}>|</span>
+              <span>UBER & TAXI</span> <span className={styles.marqueeDot}>|</span>
+              <span>SHUTTLE BUSES</span> <span className={styles.marqueeDot}>|</span>
+              <span>LAGOS TRANSIT NETWORK</span> <span className={styles.marqueeDot}>|</span>
+              <span>ALL 20 LAGOS LGAS</span> <span className={styles.marqueeDot}>|</span>
+            </div>
+          </div>
         </div>
       </section>
 
