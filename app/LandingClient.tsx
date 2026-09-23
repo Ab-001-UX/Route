@@ -246,7 +246,7 @@ export default function LandingClient() {
         </div>
       </section>
 
-      {/* SECTION 4: FEATURES GRID */}
+      {/* SECTION 4: CORE FEATURES (MATCHING USER IMAGE: 3 HORIZONTAL STEPS WITH CONNECTING WAVY LINE & SQUIRCLE ICONS) */}
       <section id="features" className={styles.featuresSection}>
         <div className={styles.sectionCenteredHeader}>
           <span className={styles.bentoLabel}>Core Features</span>
@@ -256,105 +256,52 @@ export default function LandingClient() {
           </p>
         </div>
 
-        <div className={styles.featuresGrid}>
-          {/* Feature 1 */}
-          <div className={styles.featureCard}>
-            <div className={styles.featureCardHeader}>
-              <span className={styles.featureHashtag}>#PlateLookup</span>
-              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
+        <div className={styles.flowContainer}>
+          {/* Step 1 */}
+          <div className={styles.flowStep}>
+            <div className={styles.flowIconBox}>
+              <Search size={32} color="var(--color-text-primary)" />
             </div>
-            
-            <div className={styles.featureCardBody}>
-              <h3 className={styles.featureHeadline}>Search vehicle history before boarding.</h3>
-              <p className={styles.featureDescription}>
-                Instantly check if a plate has been flagged by fellow commuters for safety issues or reckless driving before you step inside.
-              </p>
-              
-              <div className={styles.featureGraphic}>
-                <div className={styles.mockLookupBar}>
-                  <Search size={14} color="#6b7280" />
-                  <span>BDG 419 AA</span>
-                </div>
-              </div>
-            </div>
+            <h3 className={styles.flowStepTitle}>Search Vehicle Plate</h3>
+            <p className={styles.flowStepDescription}>
+              Verify safety records for any Danfo, Keke, Okada, or Taxi plate number before stepping inside.
+            </p>
           </div>
 
-          {/* Feature 2 */}
-          <div className={styles.featureCard}>
-            <div className={styles.featureCardHeader}>
-              <span className={styles.featureHashtag}>#WhatsAppShare</span>
-              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
-            </div>
-            
-            <div className={styles.featureCardBody}>
-              <h3 className={styles.featureHeadline}>1-Tap trip sharing on WhatsApp.</h3>
-              <p className={styles.featureDescription}>
-                Log your plate and route details in under 10 seconds. Generate a clean summary link and send it directly to family or group chats.
-              </p>
-              
-              <div className={styles.featureGraphic}>
-                <div className={styles.mockNotification}>
-                  <div className={styles.notificationHeader}>
-                    <MessageCircle size={15} color="#25D366" />
-                    <strong>WhatsApp Message</strong>
-                    <span>Just now</span>
-                  </div>
-                  <p className={styles.notificationText}>
-                    "Boarding a Yellow Danfo (LND 123 XY) from Obalende to Lekki. Summary link: https://route.app/trip/xyz"
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Curved Connector Line 1 */}
+          <div className={styles.waveConnectorBox}>
+            <svg className={styles.waveConnectorSvg} viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 5 20 Q 40 5, 80 20 T 155 20" stroke="var(--color-border-default)" strokeWidth="2.5" strokeDasharray="6 6" />
+            </svg>
           </div>
 
-          {/* Feature 3 */}
-          <div className={styles.featureCard}>
-            <div className={styles.featureCardHeader}>
-              <span className={styles.featureHashtag}>#CommunityWatch</span>
-              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
+          {/* Step 2 */}
+          <div className={styles.flowStep}>
+            <div className={styles.flowIconBox}>
+              <MessageCircle size={32} color="var(--color-text-primary)" />
             </div>
-            
-            <div className={styles.featureCardBody}>
-              <h3 className={styles.featureHeadline}>Report & warn fellow Lagosians anonymously.</h3>
-              <p className={styles.featureDescription}>
-                Spotted a dangerous or suspicious vehicle? Submit an anonymous report to warn commuters across Lagos without exposing personal info.
-              </p>
-              
-              <div className={styles.featureGraphic}>
-                <div className={styles.mockFlagCard}>
-                  <ShieldAlert size={22} color="#dc2626" style={{ flexShrink: 0 }} />
-                  <div className={styles.mockFlagContent}>
-                    <strong className={styles.mockFlagTitle}>3+ Independent Reports = Flagged Badge</strong>
-                    <span className={styles.mockFlagSub}>Verified community safety alert</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h3 className={styles.flowStepTitle}>1-Tap WhatsApp Share</h3>
+            <p className={styles.flowStepDescription}>
+              Generate a clean trip summary link and send it directly to loved ones with zero sign-up required.
+            </p>
           </div>
 
-          {/* Feature 4 */}
-          <div className={styles.featureCard}>
-            <div className={styles.featureCardHeader}>
-              <span className={styles.featureHashtag}>#PrivacyFirst</span>
-              <RouteLogo size={28} color="#0d0d0d" lineColor="#ffffff" />
+          {/* Curved Connector Line 2 */}
+          <div className={styles.waveConnectorBox}>
+            <svg className={styles.waveConnectorSvg} viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 5 20 Q 40 35, 80 20 T 155 20" stroke="var(--color-border-default)" strokeWidth="2.5" strokeDasharray="6 6" />
+            </svg>
+          </div>
+
+          {/* Step 3 */}
+          <div className={styles.flowStep}>
+            <div className={styles.flowIconBox}>
+              <ShieldAlert size={32} color="var(--color-text-primary)" />
             </div>
-            
-            <div className={styles.featureCardBody}>
-              <h3 className={styles.featureHeadline}>Zero background location tracking.</h3>
-              <p className={styles.featureDescription}>
-                Route operates without battery-draining background GPS services or mandatory 3-contact lists. Pure, passive safety control in your hands.
-              </p>
-              
-              <div className={styles.featureGraphic}>
-                <div className={styles.mockPrivacyBox}>
-                  <Lock size={18} color="#16a34a" />
-                  <div>
-                    <strong className={styles.mockPrivacyTitle}>100% Privacy Control</strong>
-                    <span className={styles.mockPrivacySub}>No background tracking or contact sync</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h3 className={styles.flowStepTitle}>Community Safety Watch</h3>
+            <p className={styles.flowStepDescription}>
+              Report dangerous or suspicious vehicles anonymously to warn fellow commuters across Lagos.
+            </p>
           </div>
         </div>
       </section>
