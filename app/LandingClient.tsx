@@ -466,8 +466,10 @@ export default function LandingClient() {
       {/* SECTION 7: FAQ ACCORDION SECTION */}
       <section id="faq" className={styles.faqSection}>
         <div className={styles.sectionCenteredHeader}>
-          <span className={styles.bentoLabel}>FAQ</span>
-          <h2 className={styles.bentoHeadline}>Frequently Asked Questions</h2>
+          <span className={styles.faqSubLabel}>TRUSTED BY</span>
+          <h2 className={styles.faqHeadline}>
+            Frequently<br />Asked Questions
+          </h2>
         </div>
 
         <div className={styles.faqList}>
@@ -481,9 +483,9 @@ export default function LandingClient() {
               >
                 <div className={styles.faqQuestionRow}>
                   <h3 className={styles.faqQuestion}>{item.question}</h3>
-                  <button className={styles.faqToggleBtn} aria-label="Toggle answer">
-                    {isOpen ? <Minus size={18} /> : <Plus size={18} />}
-                  </button>
+                  <div className={styles.faqCircleToggle} aria-label="Toggle answer">
+                    {isOpen ? <X size={16} strokeWidth={2.5} /> : <Plus size={16} strokeWidth={2.5} />}
+                  </div>
                 </div>
                 {isOpen && (
                   <div className={styles.faqAnswer}>

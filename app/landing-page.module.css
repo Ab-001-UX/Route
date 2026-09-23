@@ -1046,79 +1046,138 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80px 24px 100px;
+  padding: 100px 24px 120px;
   width: 100%;
-  max-width: 900px;
+  max-width: 720px;
   margin: 0 auto;
+}
+
+.faqSubLabel {
+  display: block;
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.faqHeadline {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #111827;
+  text-align: center;
+  margin: 0 0 44px 0;
+}
+
+@media (max-width: 640px) {
+  .faqHeadline {
+    font-size: 2rem;
+  }
 }
 
 .faqList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   width: 100%;
 }
 
 .faqCard {
-  background-color: var(--color-background-surface);
-  border: 1.5px solid var(--color-border-default);
-  border-radius: 20px;
-  padding: 22px 28px;
+  background-color: #f1f4f9;
+  border-radius: 9999px;
+  padding: 16px 20px 16px 28px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .faqCard:hover {
-  border-color: var(--color-brand-primary);
+  background-color: #e8ecf4;
+  transform: translateY(-1px);
 }
 
 .faqCardOpen {
-  border-color: var(--color-brand-primary);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 24px 28px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
 }
 
 .faqQuestionRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  width: 100%;
 }
 
 .faqQuestion {
   font-family: var(--font-montserrat), sans-serif;
   font-size: 1.0625rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #111827;
   margin: 0;
   text-align: left;
+  line-height: 1.35;
 }
 
-.faqToggleBtn {
-  background: none;
-  border: none;
-  color: var(--color-brand-primary);
-  cursor: pointer;
+.faqCircleToggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: #111827;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.faqCardOpen .faqCircleToggle {
+  background-color: #f1f4f9;
+  box-shadow: none;
+}
+
+.faqCard:hover .faqCircleToggle {
+  transform: scale(1.06);
 }
 
 .faqAnswer {
   margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--color-border-default);
+  padding-top: 4px;
   font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--color-text-secondary);
+  line-height: 1.65;
+  color: #4b5563;
   text-align: left;
-  animation: fadeIn 0.2s ease;
+  animation: faqFadeIn 0.25s ease-out;
 }
 
 .faqAnswer p {
   margin: 0;
 }
+
+@keyframes faqFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 
 /* ── 7. CTA Banner Section ──────────────────────────────────────── */
