@@ -1,193 +1,36 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useUser, useClerk, SignOutButton } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { 
   ChevronLeft, 
   ChevronRight, 
   ChevronDown,
-  Bell, 
   Sun, 
-  Globe, 
   Shield, 
-  Users, 
-  Lock, 
-  Award, 
   LogOut, 
   User, 
-  Plus, 
-  Trash2, 
-  RefreshCw, 
-  Copy, 
-  Check, 
-  ShieldAlert,
-  Loader2,
-  X,
-  CheckCircle,
-  AlertCircle,
-  Mic
+  Loader2
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./settings.module.css";
 import { useSettings } from "@/components/providers/ThemeProvider";
-import { normalizeNigerianPhoneNumber } from "@/lib/validators";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
-import MicPermissionGuideModal from "@/components/features/MicPermissionGuideModal";
 import { safeLocalStorage } from "@/lib/storage";
 
 export default function SettingsPage() {
   const { user } = useUser();
   const dbUser = useQuery(api.users.getCurrentUser);
-  const contacts = useQuery(api.contacts.getContacts) || [];
-  const addContact = useAction(api.rateLimitedActions.rateLimitedAddContact);
-  const removeContact = useMutation(api.contacts.removeContact);
-  const resendInvite = useAction(api.rateLimitedActions.rateLimitedResendInvite);
   const updateUserSettingsAction = useAction(api.rateLimitedActions.rateLimitedUpdateUserSettings);
   const updateProfile = useMutation(api.users.updateUser);
-
-  // App-level permission toggle states & iOS guide modal
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const [pushEnabled, setPushEnabled] = useState(false);
-
-  // Live Permission States
-  const [gpsPermission, setGpsPermission] = useState<"granted" | "prompt" | "denied" | "loading">("loading");
-  const [pushPermission, setPushPermission] = useState<"granted" | "default" | "denied" | "loading">("loading");
-
-  // Function to re-check actual device/browser permissions live without overriding user's manual OFF choice
-  const checkLivePermissions = async () => {
-    // 1. Live Check Push Notifications
-    if (typeof window !== "undefined" && "Notification" in window) {
-      const currentPush = Notification.permission;
-      setPushPermission(currentPush);
-      // Only auto-disable if OS/browser permission is not granted
-      if (currentPush !== "granted") {
-        setPushEnabled(false);
-      }
-    }
-
-    // 2. Live Check Location (GPS)
-    if (typeof navigator !== "undefined" && navigator.permissions) {
-      try {
-        const status = await navigator.permissions.query({ name: "geolocation" });
-        setGpsPermission(status.state);
-        if (status.state === "denied") {
-          setLocationEnabled(false);
-        }
-      } catch {
-        /* noop */
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (dbUser) {
-      setLocationEnabled(dbUser.locationEnabled ?? false);
-      setPushEnabled(dbUser.pushNotificationsEnabled ?? false);
-    }
-  }, [dbUser]);
-
-  useEffect(() => {
-    checkLivePermissions();
-
-    const handleFocus = () => {
-      checkLivePermissions();
-    };
-
-    window.addEventListener("focus", handleFocus);
-    document.addEventListener("visibilitychange", handleFocus);
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-      document.removeEventListener("visibilitychange", handleFocus);
-    };
-  }, []);
-
-  const handleToggleLocation = async (enabled: boolean) => {
-    if (!enabled) {
-      setLocationEnabled(false);
-      try {
-        await updateUserSettingsAction({ locationEnabled: false });
-      } catch (e) {
-        console.error("Failed to update location preference", e);
-      }
-      return;
-    }
-
-    // Always show the overlay guide explaining location setup
-    setShowGpsGuide(true);
-
-    if (typeof navigator !== "undefined" && "geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async () => {
-          setGpsPermission("granted");
-          setLocationEnabled(true);
-          try {
-            await updateUserSettingsAction({ locationEnabled: true });
-          } catch (e) {
-            console.error("Failed to update location preference", e);
-          }
-        },
-        async () => {
-          setGpsPermission("denied");
-          setLocationEnabled(false);
-        },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-      );
-    }
-  };
-
-  const handleTogglePush = async (enabled: boolean) => {
-    if (!enabled) {
-      setPushEnabled(false);
-      try {
-        await updateUserSettingsAction({ pushNotificationsEnabled: false });
-      } catch (e) {
-        console.error("Failed to update push notification preference", e);
-      }
-      return;
-    }
-
-    // Always show the overlay guide explaining notification setup
-    setShowPushGuide(true);
-
-    if (typeof window !== "undefined" && "Notification" in window) {
-      try {
-        const res = await Notification.requestPermission();
-        setPushPermission(res);
-        if (res === "granted") {
-          setPushEnabled(true);
-          try {
-            await updateUserSettingsAction({ pushNotificationsEnabled: true });
-          } catch (e) {
-            console.error("Failed to update push notification preference", e);
-          }
-        } else {
-          setPushEnabled(false);
-        }
-      } catch (e) {
-        setPushEnabled(false);
-      }
-    }
-  };
 
   const { theme, setTheme, fontSize, setFontSize, privacyMode, setPrivacyMode } = useSettings();
   const { signOut } = useClerk();
   const router = useRouter();
 
-  // Accordion active rows states
   const [activeSection, setActiveSection] = useState<string | null>(null);
-
-  // Auto-open section if 'open' query param is passed
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("open") === "contacts") {
-        setActiveSection("contacts");
-      }
-    }
-  }, []);
 
   // Profile Edit States
   const [editName, setEditName] = useState("");
@@ -218,7 +61,7 @@ export default function SettingsPage() {
     try {
       await updateProfile({
         displayName: editName.trim(),
-        phone: editPhone,
+        phone: editPhone || undefined,
       });
       setProfileSuccess("Profile updated successfully!");
     } catch (err: any) {
@@ -232,276 +75,8 @@ export default function SettingsPage() {
     }
   };
 
-  // Form states
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [name, setName] = useState("");
-  const [relationship, setRelationship] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-  const [contactToDelete, setContactToDelete] = useState<any>(null);
-
-  // Clipboard share states
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [lastGeneratedUrl, setLastGeneratedUrl] = useState<string | null>(null);
-
-  // SOS Emergency States & Handlers
-  const [sosLoading, setSosLoading] = useState(false);
-  const [sosSuccess, setSosSuccess] = useState("");
-  const [sosError, setSosError] = useState("");
-  const [locationCopied, setLocationCopied] = useState(false);
-
-  const handleTriggerQuickSOS = () => {
-    setSosError("");
-    setSosSuccess("");
-    const activeContacts = contacts.filter((c) => c.status === "active");
-    if (activeContacts.length === 0) {
-      setSosError("You need at least one Active emergency contact to trigger SOS.");
-      return;
-    }
-
-    if (!confirm("Are you sure you want to trigger a Quick SOS? This will immediately alert your emergency contacts.")) {
-      return;
-    }
-
-    setSosLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        try {
-          const res = await fetch("/api/trips", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plate: "SOS-PANIC",
-              transportType: "SOS",
-              boardingLocation: "Emergency SOS Panic Trigger",
-              lat: latitude,
-              lng: longitude,
-              durationMinutes: 15,
-              safetyContactId: activeContacts[0]._id,
-              alertContactIds: activeContacts.map((c) => c._id),
-              description: "Emergency SOS Panic alert triggered directly from Settings screen.",
-            }),
-          });
-
-          const data = await res.json();
-          if (res.ok && data.success) {
-            setSosSuccess("SOS Alert triggered! Contacts have been notified.");
-          } else {
-            setSosError(data.message || "Failed to trigger SOS alert.");
-          }
-        } catch (err: any) {
-          setSosError("Failed to trigger SOS alert. Check your network.");
-        } finally {
-          setSosLoading(false);
-        }
-      },
-      async (error) => {
-        try {
-          const res = await fetch("/api/trips", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plate: "SOS-PANIC",
-              transportType: "SOS",
-              boardingLocation: "Emergency SOS Panic Trigger (No GPS)",
-              lat: 6.5244,
-              lng: 3.3792,
-              durationMinutes: 15,
-              safetyContactId: activeContacts[0]._id,
-              alertContactIds: activeContacts.map((c) => c._id),
-              description: "Emergency SOS Panic alert triggered directly from Settings screen. GPS access denied.",
-            }),
-          });
-          const data = await res.json();
-          if (res.ok && data.success) {
-            setSosSuccess("SOS Alert triggered (using default city location)!");
-          } else {
-            setSosError(data.message || "Failed to trigger SOS alert.");
-          }
-        } catch (err: any) {
-          setSosError("Failed to trigger SOS alert.");
-        } finally {
-          setSosLoading(false);
-        }
-      },
-      { timeout: 8000 }
-    );
-  };
-
-  const handleShareLocation = () => {
-    setSosError("");
-    setSosSuccess("");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const mapLink = `https://maps.google.com/?q=${latitude},${longitude}`;
-        const messageText = `Emergency Safety Alert from Route: I am sharing my live location coordinates: ${mapLink}`;
-        
-        navigator.clipboard.writeText(messageText);
-        setLocationCopied(true);
-        setSosSuccess("Location link copied to clipboard!");
-        setTimeout(() => setLocationCopied(false), 3000);
-      },
-      (error) => {
-        setSosError("Could not access location. Please check your browser permissions.");
-      }
-    );
-  };
-
   const toggleSection = (section: string) => {
     setActiveSection(activeSection === section ? null : section);
-  };
-
-
-
-  // Permission guide modals & device OS detection
-  const [showGpsGuide, setShowGpsGuide] = useState(false);
-  const [showPushGuide, setShowPushGuide] = useState(false);
-  const [deviceOS, setDeviceOS] = useState<"ios" | "android" | "other">("other");
-
-  useEffect(() => {
-    if (typeof navigator !== "undefined") {
-      const ua = navigator.userAgent || "";
-      if (/iPhone|iPad|iPod/.test(ua)) {
-        setDeviceOS("ios");
-      } else if (/Android/.test(ua)) {
-        setDeviceOS("android");
-      } else {
-        setDeviceOS("other");
-      }
-    }
-  }, []);
-
-  // Active resend link box state for specific contact in Settings
-  const [activeResend, setActiveResend] = useState<{ contactId: string; name: string; url: string; copied: boolean } | null>(null);
-
-  const constructInviteMessage = (contactName: string, myName: string, url: string) => {
-    return `Hi ${contactName}, I've added you as my trusted emergency safety contact on Route so you can receive live tracking updates whenever I take a trip. Please tap the link below to confirm your phone number and activate safety notifications for my rides:\n\n${url}`;
-  };
-
-  const handleResend = async (c: any) => {
-    try {
-      const result = await resendInvite({ contactId: c._id });
-      const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
-      setActiveResend({
-        contactId: c._id,
-        name: c.name,
-        url: inviteUrl,
-        copied: false,
-      });
-    } catch (err) {
-      console.error("Failed to regenerate invite link:", err);
-    }
-  };
-
-  const handleCopyResendMessage = async (contactName: string, url: string) => {
-    const message = constructInviteMessage(contactName, dbUser?.displayName || user?.fullName || "Your friend", url);
-    try {
-      await navigator.clipboard.writeText(message);
-      if (activeResend) {
-        setActiveResend({ ...activeResend, copied: true });
-        setTimeout(() => {
-          setActiveResend((prev) => (prev ? { ...prev, copied: false } : null));
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Failed to copy invite message:", err);
-    }
-  };
-
-  const handleEnableGps = () => {
-    if (typeof navigator !== "undefined") {
-      navigator.geolocation.getCurrentPosition(
-        () => setGpsPermission("granted"),
-        () => {
-          window.open("https://route-nine-dusky.vercel.app", "_blank");
-          setShowGpsGuide(true);
-        }
-      );
-    } else {
-      window.open("https://route-nine-dusky.vercel.app", "_blank");
-      setShowGpsGuide(true);
-    }
-  };
-
-  const handleEnablePush = async () => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      try {
-        const result = await Notification.requestPermission();
-        setPushPermission(result);
-        if (result !== "granted") {
-          setShowPushGuide(true);
-        }
-      } catch {
-        setShowPushGuide(true);
-      }
-    } else {
-      setShowPushGuide(true);
-    }
-  };
-
-
-  const handleAddContact = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const normalized = normalizeNigerianPhoneNumber(phone);
-      if (!/^\+234[789]\d{9}$/.test(normalized)) {
-        setError("Invalid phone number. Please enter a valid 10-digit number starting with 7, 8, or 9 (e.g., 803 123 4567).");
-        setLoading(false);
-        return;
-      }
-
-      const result = await addContact({
-        name,
-        relationship,
-        phone: normalized,
-        email: email || undefined,
-      });
-
-      // Construct invite link
-      const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
-      setActiveResend({
-        contactId: result.contactId || result.token,
-        name,
-        url: inviteUrl,
-        copied: false,
-      });
-      
-      // Clear inputs
-      setName("");
-      setRelationship("");
-      setPhone("");
-      setEmail("");
-      setShowAddForm(false);
-    } catch (err: any) {
-      setError(err.message || "Failed to add contact.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRemove = (id: any) => {
-    setContactToDelete(id);
-    setShowDeleteWarning(true);
-  };
-
-  const proceedDeleteContact = async () => {
-    if (!contactToDelete) return;
-    try {
-      await removeContact({ contactId: contactToDelete });
-    } catch (err) {
-      console.error("Failed to remove contact:", err);
-    } finally {
-      setShowDeleteWarning(false);
-      setContactToDelete(null);
-    }
   };
 
   return (
@@ -514,7 +89,7 @@ export default function SettingsPage() {
         <h1>Settings</h1>
       </header>
 
-      {/* Smart PWA Install Banner */}
+      {/* PWA Install Banner */}
       <PwaInstallBanner />
 
       {/* User info banner */}
@@ -524,7 +99,7 @@ export default function SettingsPage() {
         </div>
         <div className={styles.userMeta}>
           <h2>{dbUser?.displayName || user?.fullName || "Commuter Profile"}</h2>
-          <p>{dbUser?.phone || user?.primaryPhoneNumber?.phoneNumber || "Phone verified"}</p>
+          <p>{dbUser?.phone || user?.primaryPhoneNumber?.phoneNumber || "Verified Profile"}</p>
         </div>
       </div>
 
@@ -532,7 +107,7 @@ export default function SettingsPage() {
       <div className={styles.groupSection}>
         <h3 className={styles.groupTitle}>General</h3>
         <div className={styles.cardGroup}>
-          {/* Profile Settings Accordion Row */}
+          {/* Profile Settings */}
           <div className={styles.rowItem} onClick={() => toggleSection("profile")}>
             <div className={styles.rowLeft}>
               <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)" }}>
@@ -563,23 +138,14 @@ export default function SettingsPage() {
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label>WhatsApp Phone Number</label>
-                  <div className={styles.phoneInput}>
-                    <span className={styles.phonePrefix}>+234</span>
-                    <input 
-                      type="tel" 
-                      placeholder="8012345678"
-                      value={editPhone.startsWith("+234") ? editPhone.slice(4) : editPhone.startsWith("234") ? editPhone.slice(3) : editPhone}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/\D/g, "");
-                        if (val.startsWith("234")) val = val.slice(3);
-                        if (val.startsWith("0")) val = val.slice(1);
-                        setEditPhone("+234" + val);
-                      }}
-                      required 
-                      disabled={profileSaving}
-                    />
-                  </div>
+                  <label>WhatsApp Phone Number (Optional)</label>
+                  <input 
+                    type="tel" 
+                    placeholder="8012345678"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    disabled={profileSaving}
+                  />
                 </div>
 
                 <button 
@@ -613,7 +179,6 @@ export default function SettingsPage() {
           {activeSection === "appearance" && (
             <div className={styles.expandableContent}>
               <div className={styles.optionBox}>
-                {/* Theme Selector */}
                 <div className={styles.optionBlock}>
                   <label>App Theme</label>
                   <div className={styles.buttonGroup}>
@@ -632,7 +197,6 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                {/* Font Size Selector */}
                 <div className={styles.optionBlock}>
                   <label>Text Scaling</label>
                   <div className={styles.buttonGroup}>
@@ -664,9 +228,8 @@ export default function SettingsPage() {
 
       {/* CATEGORY 2: SECURITY */}
       <div className={styles.groupSection}>
-        <h3 className={styles.groupTitle}>Security & Safety</h3>
+        <h3 className={styles.groupTitle}>Privacy & Security</h3>
         <div className={styles.cardGroup}>
-          {/* Local Privacy Mode */}
           <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
             <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
               <div className={styles.iconWrapper} style={{ color: "hsl(45, 93%, 47%)", marginTop: "2px" }}>
@@ -675,7 +238,7 @@ export default function SettingsPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
                 <span className={styles.rowLabel}>Local Privacy Mode</span>
                 <span style={{ fontSize: "12px", color: "var(--color-text-secondary)", lineHeight: "1.4", maxWidth: "220px" }}>
-                  Masks plate numbers and hides location on your screen so bystanders can't see them. Emergency contacts still get full details.
+                  Masks plate numbers on your screen so bystanders can't read them over your shoulder.
                 </span>
               </div>
             </div>
@@ -690,342 +253,6 @@ export default function SettingsPage() {
               </label>
             </div>
           </div>
-
-          {/* Location Services Row — Interactive Toggle Switch */}
-          <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
-            <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
-              <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)", marginTop: "2px" }}>
-                <Globe size={20} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span className={styles.rowLabel}>Location Services (GPS)</span>
-                <span style={{ fontSize: "0.875rem", lineHeight: "1.35", color: "var(--color-text-secondary)", marginTop: "2px" }}>
-                  Allow Route to track live trip coordinates during active rides.
-                </span>
-              </div>
-            </div>
-            <div className={styles.rowRight} style={{ marginTop: "4px" }}>
-              <label className={styles.switch}>
-                <input 
-                  type="checkbox" 
-                  checked={locationEnabled} 
-                  onChange={(e) => handleToggleLocation(e.target.checked)}
-                />
-                <span className={styles.slider}></span>
-              </label>
-            </div>
-          </div>
-
-          {/* Push Notifications Row — Interactive Toggle Switch */}
-          <div className={styles.rowItem} style={{ alignItems: "flex-start" }}>
-            <div className={styles.rowLeft} style={{ alignItems: "flex-start" }}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(25, 95%, 53%)", marginTop: "2px" }}>
-                <Bell size={20} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span className={styles.rowLabel}>Push Notifications</span>
-                <span style={{ fontSize: "0.875rem", lineHeight: "1.35", color: "var(--color-text-secondary)", marginTop: "2px" }}>
-                  Receive safety check prompts and check-in timer alerts.
-                </span>
-              </div>
-            </div>
-            <div className={styles.rowRight} style={{ marginTop: "4px" }}>
-              <label className={styles.switch}>
-                <input 
-                  type="checkbox" 
-                  checked={pushEnabled} 
-                  onChange={(e) => handleTogglePush(e.target.checked)}
-                />
-                <span className={styles.slider}></span>
-              </label>
-            </div>
-          </div>
-
-          {/* Trusted Contacts Manager Accordion Row */}
-          <div className={styles.rowItem} onClick={() => toggleSection("contacts")}>
-            <div className={styles.rowLeft}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(0, 72%, 51%)" }}>
-                <Users size={20} />
-              </div>
-              <span className={styles.rowLabel}>Trusted Contacts ({contacts.length}/5)</span>
-            </div>
-            <div className={styles.rowRight}>
-              {activeSection === "contacts" ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </div>
-          </div>
-          {activeSection === "contacts" && (
-            <div className={styles.expandableContent}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <h4 style={{ margin: 0 }}>Trusted Emergency Contacts</h4>
-                {contacts.length < 5 && !showAddForm && (
-                  <button 
-                    onClick={() => setShowAddForm(true)} 
-                    className="secondary"
-                    style={{ minHeight: "28px", padding: "0 10px", fontSize: "12px", borderRadius: "8px" }}
-                  >
-                    <Plus size={14} style={{ marginRight: "4px" }} /> Add
-                  </button>
-                )}
-              </div>
-
-              {/* Add form inside Settings */}
-              {showAddForm && (
-                <form onSubmit={handleAddContact} className={styles.contactForm}>
-                  {error && <div className={styles.errorText} style={{ color: "var(--color-safety-status-dangerous)", fontSize: "12px" }}>{error}</div>}
-                  <div className={styles.formGroup}>
-                    <label>Full Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. John Doe"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required 
-                      disabled={loading}
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Relationship</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Sister, Driver"
-                      value={relationship}
-                      onChange={(e) => setRelationship(e.target.value)}
-                      required 
-                      disabled={loading}
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Phone Number</label>
-                    <div className={styles.phoneInput}>
-                      <span className={styles.phonePrefix}>+234</span>
-                      <input 
-                        type="tel" 
-                        placeholder="8012345678"
-                        value={phone.startsWith("+234") ? phone.slice(4) : phone.startsWith("234") ? phone.slice(3) : phone}
-                        onChange={(e) => {
-                          let val = e.target.value.replace(/\D/g, "");
-                          if (val.startsWith("234")) val = val.slice(3);
-                          if (val.startsWith("0")) val = val.slice(1);
-                          setPhone("+234" + val);
-                        }}
-                        required 
-                        disabled={loading}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Email (Optional)</label>
-                    <input 
-                      type="email" 
-                      placeholder="contact@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={loading}
-                    />
-                  </div>
-                  <div className={styles.formActions}>
-                    <button type="submit" className="primary" disabled={loading}>
-                      {loading ? "Saving..." : "Generate Invite"}
-                    </button>
-                    <button type="button" className="secondary" onClick={() => setShowAddForm(false)}>
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {/* Contacts list inline */}
-              <div className={styles.contactsList}>
-                {contacts.length === 0 ? (
-                  <p style={{ margin: "0", fontSize: "13px", color: "var(--color-text-secondary)" }}>
-                    You have no active emergency contacts configured. You need at least 2 to log trips.
-                  </p>
-                ) : (
-                  contacts.map((c) => {
-                    const isResendActive = activeResend && activeResend.contactId === c._id;
-                    return (
-                      <div key={c._id} style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-                        <div className={styles.contactCard}>
-                          <div className={styles.contactInfo}>
-                            <h5>{c.name}</h5>
-                            <p>{c.relationship} • {c.phone}</p>
-                            <div className={styles.contactMeta}>
-                              <span className={`${styles.statusBadge} ${styles[c.status]}`}>
-                                {c.status}
-                              </span>
-                              <span style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>
-                                RR: {c.responseRate}%
-                              </span>
-                            </div>
-
-                            {/* Full rectangle Resend Link button under contact info */}
-                            <button
-                              onClick={() => handleResend(c)}
-                              className="secondary"
-                              style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", borderRadius: "8px", marginTop: "8px" }}
-                            >
-                              Resend Link
-                            </button>
-                          </div>
-
-                          <div className={styles.contactActions}>
-                            <button onClick={() => handleRemove(c._id)} className={styles.deleteBtn} title="Remove contact">
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Dedicated Resend Link Box for this specific contact */}
-                        {isResendActive && (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "12px", backgroundColor: "var(--color-background-surface)", border: "1.5px solid var(--color-border-default)", borderRadius: "12px", width: "100%", boxSizing: "border-box" }}>
-                            <p style={{ margin: 0, fontSize: "12px", fontWeight: 600, color: "var(--color-text-primary)" }}>
-                              Send Activation Link to {c.name}:
-                            </p>
-                            <textarea
-                              readOnly
-                              rows={3}
-                              value={constructInviteMessage(c.name, dbUser?.displayName || user?.fullName || "Your friend", activeResend.url)}
-                              style={{ width: "100%", fontSize: "12px", padding: "8px", borderRadius: "8px", backgroundColor: "var(--color-background-app)", border: "1px solid var(--color-border-default)", color: "var(--color-text-primary)", resize: "none", boxSizing: "border-box" }}
-                            />
-                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
-                              <button
-                                onClick={() => handleCopyResendMessage(c.name, activeResend.url)}
-                                className="primary"
-                                style={{ width: "100%", minHeight: "38px", fontSize: "12px" }}
-                              >
-                                {activeResend.copied ? "Copied Message!" : "Copy Invite Message"}
-                              </button>
-                              <button
-                                onClick={() => setActiveResend(null)}
-                                className="secondary"
-                                style={{ width: "100%", minHeight: "38px", fontSize: "12px" }}
-                              >
-                                Dismiss
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Emergency SOS Panic Accordion Row */}
-          <div className={styles.rowItem} onClick={() => toggleSection("sos-panel")}>
-            <div className={styles.rowLeft}>
-              <div className={styles.iconWrapper} style={{ color: "hsl(0, 72%, 51%)" }}>
-                <ShieldAlert size={20} />
-              </div>
-              <span className={styles.rowLabel}>Emergency SOS Panel</span>
-            </div>
-            <div className={styles.rowRight}>
-              {activeSection === "sos-panel" ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </div>
-          </div>
-          {activeSection === "sos-panel" && (
-            <div className={styles.expandableContent}>
-              <h4>SOS Panic Alerts</h4>
-              <p style={{ margin: "0 0 12px 0", fontSize: "13px", color: "var(--color-text-secondary)", lineHeight: "1.4" }}>
-                Triggering the SOS alert immediately broadcasts your live location and vehicle status to all your trusted safety contacts. Please use this strictly in an active emergency.
-              </p>
-
-              {sosSuccess && (
-                <div className={styles.emergencySuccessBanner}>
-                  <CheckCircle size={14} style={{ color: "#10b981", flexShrink: 0, marginTop: "2px" }} />
-                  <span style={{ flex: 1 }}>{sosSuccess}</span>
-                  <button
-                    type="button"
-                    className={styles.bannerCloseBtn}
-                    onClick={() => setSosSuccess("")}
-                    aria-label="Close"
-                    title="Close"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              )}
-              {sosError && (
-                <div className={styles.emergencyErrorBanner}>
-                  <AlertCircle size={14} style={{ color: "#ef4444", flexShrink: 0, marginTop: "2px" }} />
-                  <span style={{ flex: 1 }}>{sosError}</span>
-                  <button
-                    type="button"
-                    className={styles.bannerCloseBtn}
-                    onClick={() => setSosError("")}
-                    aria-label="Close"
-                    title="Close"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              )}
-
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button
-                  onClick={handleTriggerQuickSOS}
-                  disabled={sosLoading}
-                  className="primary"
-                  style={{
-                    flex: 1.2,
-                    background: "#dc2626",
-                    color: "#ffffff",
-                    border: "none",
-                    padding: "10px 14px",
-                    borderRadius: "10px",
-                    fontSize: "13px",
-                    fontWeight: "750",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px"
-                  }}
-                >
-                  {sosLoading ? <Loader2 className={styles.spin} size={16} /> : <span>🚨 Trigger SOS</span>}
-                </button>
-                <button
-                  onClick={handleShareLocation}
-                  className="secondary"
-                  style={{
-                    flex: 1,
-                    padding: "10px 14px",
-                    borderRadius: "10px",
-                    fontSize: "13px",
-                    fontWeight: "700",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px"
-                  }}
-                >
-                  {locationCopied ? <Check size={16} /> : <span>🔗 Share GPS Link</span>}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Data Security Info Row */}
-          <div className={styles.rowItem} onClick={() => toggleSection("security-data")}>
-            <div className={styles.rowLeft}>
-              <div className={styles.iconWrapper} style={{ color: "var(--color-brand-primary)" }}>
-                <Lock size={20} />
-              </div>
-              <span className={styles.rowLabel}>Data Encryption</span>
-            </div>
-            <div className={styles.rowRight}>
-              {activeSection === "security-data" ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </div>
-          </div>
-          {activeSection === "security-data" && (
-            <div className={styles.expandableContent}>
-              <h4>AES-256-GCM End-To-End Security</h4>
-              <p style={{ margin: "0", fontSize: "13px", color: "var(--color-text-secondary)", lineHeight: "1.4" }}>
-                Route automatically encrypts all GPS tracking coordinates, safety tokens, and push notification endpoints using AES-256-GCM prior to database write. Decryption occurs strictly on authorized verification check-ins.
-              </p>
-            </div>
-          )}
         </div>
       </div>
 
@@ -1033,7 +260,6 @@ export default function SettingsPage() {
       <div className={styles.groupSection}>
         <h3 className={styles.groupTitle}>Legal</h3>
         <div className={styles.cardGroup}>
-          {/* Privacy Policy */}
           <div className={styles.rowItem} onClick={() => router.push("/privacy")}>
             <div className={styles.rowLeft}>
               <div className={styles.iconWrapper} style={{ color: "var(--color-text-secondary)" }}>
@@ -1060,7 +286,7 @@ export default function SettingsPage() {
         </button>
       </div>
 
-      {/* Log Out Confirmation Modal with Stacked CTAs */}
+      {/* Log Out Confirmation Modal */}
       {showLogoutModal && (
         <div className={styles.overlay}>
           <div className={styles.backdrop} onClick={() => setShowLogoutModal(false)} />
@@ -1096,92 +322,6 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-
-      {/* Confirm deletion warnings */}
-      {showDeleteWarning && (
-        <div className={styles.overlay}>
-          <div 
-            className={styles.backdrop} 
-            onClick={() => {
-              setShowDeleteWarning(false);
-              setContactToDelete(null);
-            }} 
-          />
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <ShieldAlert size={36} className={styles.warningIcon} />
-              <h3>Confirm Deletion</h3>
-            </div>
-            <p className={styles.modalText}>
-              {contacts.length <= 2 ? (
-                "Warning: Removing this contact will leave you with fewer than the required 2 active emergency contacts. You won't be able to log any new trips until you add another contact."
-              ) : (
-                "Are you sure you want to remove this contact? Their access will be immediately and permanently revoked."
-              )}
-            </p>
-            <div className={styles.modalActions}>
-              <button
-                className="primary"
-                onClick={proceedDeleteContact}
-              >
-                Delete Anyways
-              </button>
-              <button 
-                className="secondary" 
-                onClick={() => {
-                  setShowDeleteWarning(false);
-                  setContactToDelete(null);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* GPS / Location Permission Guide Modal — shared component */}
-      {showGpsGuide && (
-        <MicPermissionGuideModal
-          type="location"
-          onDismiss={() => setShowGpsGuide(false)}
-          dismissLabel="Not now"
-        />
-      )}
-
-      {/* Push Notification Guide Modal */}
-      {showPushGuide && (
-        <div className={styles.overlay}>
-          <div className={styles.backdrop} onClick={() => setShowPushGuide(false)} />
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <Bell size={32} className={styles.warningIcon} style={{ color: "hsl(25, 95%, 53%)" }} />
-              <h3>Enable Push Notifications</h3>
-            </div>
-            <div className={styles.modalText} style={{ textAlign: "left", fontSize: "13px", lineHeight: "1.6" }}>
-              <p style={{ margin: "0 0 12px 0" }}>
-                Push notifications alert you instantly when a safety check-in is due or if an emergency contact responds.
-              </p>
-
-              <div style={{ backgroundColor: "var(--color-background-app)", padding: "12px", borderRadius: "10px", border: "1px solid var(--color-border-default)", marginBottom: "12px" }}>
-                <strong>Enable directly inside app:</strong>
-                <p style={{ margin: "6px 0 0 0", fontSize: "12px", color: "var(--color-text-secondary)" }}>
-                  Push notifications can only be granted directly inside this installed app. Tap the button below to prompt permissions.
-                </p>
-              </div>
-            </div>
-            <div className={styles.modalActions}>
-              <button className="primary" onClick={() => { setShowPushGuide(false); handleEnablePush(); }}>
-                Request Notification Permission
-              </button>
-              <button className="secondary" onClick={() => setShowPushGuide(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
     </main>
   );
 }

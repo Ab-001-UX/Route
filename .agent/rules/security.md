@@ -140,24 +140,15 @@ Route handles private user records: trips, contacts, location snapshots, safety 
 
 ---
 
-### 2C — Public API Endpoints
+### 2C — Public Trip Summary View (`/trip/[id]`)
 
-Route has two public-facing endpoints that do not require Clerk authentication:
-- `/contact-activation/[token]` — invite link landing page
-- `app/api/safety-check/[token]` — contact YES/NO response
+Route has a public view that does not require Clerk authentication:
+- `/trip/[id]` — Public trip summary page for loved ones receiving a WhatsApp trip link.
 
-**Token generation:**
-- All tokens must be cryptographically signed using HMAC-SHA256 with a server-side secret key stored in `TOKEN_SIGNING_SECRET` environment variable.
-- Never generate tokens using `Math.random()` or any non-cryptographic method.
-- Use Node.js native `crypto.createHmac('sha256', process.env.TOKEN_SIGNING_SECRET)` for all token generation.
-- Token generation logic lives in `lib/tokens.ts` only. Never inline token logic.
-
-**Token expiry:**
-- Contact activation tokens expire after 7 days. Store `expiresAt` timestamp in Convex alongside the token hash.
-- Safety check response tokens expire after 48 hours.
-- On every token validation: check the hash matches AND `expiresAt` is in the future. Reject expired tokens with a generic 404.
-
-**Token usage:**
+**Public Trip Summary View Rules:**
+- Displays only non-sensitive vehicle and trip route details: plate number, transport type, vehicle description, boarding location, destination, time boarded, community safety indicator badge, and Lagos emergency helpline numbers.
+- Does not expose user's private account details, email, or phone number.
+- Allows commuters to easily share their trip information via WhatsApp with anyone, requiring zero account registration for the recipient.
 - Safety check response tokens are single-use. Invalidate immediately in Convex after first use.
 - Contact activation tokens can be reused for resending but only activate one contact record.
 

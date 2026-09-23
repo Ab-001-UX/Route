@@ -84,16 +84,12 @@ These rules are non-negotiable. Accessibility is a safety requirement for this p
 - Required fields must be indicated clearly — not just with an asterisk that has no explanation.
 - The plate confirmation step (YES / NO after OCR) must be operable without a camera — manual input must always be reachable.
 
----
+## WhatsApp Trip Summary Page
 
-## Contact Activation Page
-
-- This page is used by non-technical people who may be elderly or unfamiliar with PWAs.
-- Instructions must use plain language — no technical terms.
-- The home screen add instructions for iOS must use actual screenshots or clear animated visuals.
-- Every step must be numbered and shown one at a time — not a wall of text.
-- The "Enable notifications" button must not appear until the home screen step is confirmed — never show a confusing double-permission flow.
-- Text on this page must be at least 16px. Prefer 18px for instruction text.
+- This page is used by non-technical people and loved ones who receive a trip link on WhatsApp.
+- Instructions and vehicle details must use plain, accessible language — no technical terms.
+- Vehicle details, plate numbers, and emergency helpline numbers must be prominently displayed with high contrast.
+- Text on this summary card must be at least 16px. Prefer 18px for primary trip details.
 
 ---
 
@@ -115,4 +111,4 @@ These rules are non-negotiable. Accessibility is a safety requirement for this p
 - Never place touch targets smaller than 44x44px
 - Never add animations without a `prefers-reduced-motion` fallback
 - Never leave form inputs without visible labels
-- Never make the contact activation page technically demanding
+- Never make public trip summary pages technically demanding

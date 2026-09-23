@@ -62,16 +62,7 @@ export const getVehicleByPlate = query({
       }
     }
 
-    for (const tripId of tripIds) {
-      const survey = await ctx.db
-        .query("postRideSurveys")
-        .withIndex("by_tripId", (q) => q.eq("tripId", tripId))
-        .first();
 
-      if (survey && survey.response === "felt-off") {
-        uniqueFlaggers.add(survey.userId.toString());
-      }
-    }
 
     const uniqueCount = uniqueFlaggers.size;
 
@@ -195,16 +186,7 @@ export const getHomeFeed = query({
         }
       }
 
-      // Collect from felt-off surveys
-      for (const tripId of tripIds) {
-        const survey = await ctx.db
-          .query("postRideSurveys")
-          .withIndex("by_tripId", (q) => q.eq("tripId", tripId))
-          .first();
-        if (survey && survey.response === "felt-off") {
-          uniqueFlaggers.add(survey.userId.toString());
-        }
-      }
+
 
       const uniqueCount = uniqueFlaggers.size;
 
@@ -426,16 +408,6 @@ export const getSavedVehicles = query({
     const userPlatesFlagged = new Set<string>();
 
     for (const trip of userTrips) {
-      const survey = await ctx.db
-        .query("postRideSurveys")
-        .withIndex("by_tripId", (q) => q.eq("tripId", trip._id))
-        .first();
-
-      if (survey && survey.response === "felt-off") {
-        userPlatesFlagged.add(trip.plate);
-        continue;
-      }
-
       const incident = await ctx.db
         .query("incidents")
         .withIndex("by_plate", (q) => q.eq("plate", trip.plate))
@@ -463,21 +435,13 @@ export const getSavedVehicles = query({
         
         const ownTrip = userTrips.find(t => t.plate === item.plate);
         if (ownTrip) {
-          const survey = await ctx.db
-            .query("postRideSurveys")
-            .withIndex("by_tripId", (q) => q.eq("tripId", ownTrip._id))
+          const incident = await ctx.db
+            .query("incidents")
+            .withIndex("by_plate", (q) => q.eq("plate", item.plate))
+            .filter((q) => q.eq(q.field("tripId"), ownTrip._id))
             .first();
-          if (survey && survey.incidentType) {
-            primaryConcern = survey.incidentType;
-          } else {
-            const incident = await ctx.db
-              .query("incidents")
-              .withIndex("by_plate", (q) => q.eq("plate", item.plate))
-              .filter((q) => q.eq(q.field("tripId"), ownTrip._id))
-              .first();
-            if (incident) {
-              primaryConcern = incident.incidentType;
-            }
+          if (incident) {
+            primaryConcern = incident.incidentType;
           }
         }
 
@@ -516,16 +480,7 @@ export const getSavedVehicles = query({
           }
         }
 
-        for (const trip of tripsForPlate) {
-          const survey = await ctx.db
-            .query("postRideSurveys")
-            .withIndex("by_tripId", (q) => q.eq("tripId", trip._id))
-            .first();
 
-          if (survey && survey.response === "felt-off") {
-            uniqueFlaggers.add(survey.userId.toString());
-          }
-        }
 
         const uniqueCount = uniqueFlaggers.size;
         const rawFlagCount = vehicle ? vehicle.flagCount : 0;
@@ -604,25 +559,10 @@ export const getSavedVehicles = query({
 });
 
 /**
- * Helper to notify users who saved/pinned a specific plate.
+ * Helper stub for notifying savers (no-op without push notifications).
  */
-export async function notifySavers(ctx: any, plate: string, incidentType: string = "Safety concern") {
-  const normalized = plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
-  const savers = await ctx.db
-    .query("savedVehicles")
-    .withIndex("by_plate", (q: any) => q.eq("plate", normalized))
-    .collect();
-
-  for (const saver of savers) {
-    await ctx.db.insert("notifications", {
-      userId: saver.userId,
-      plate: normalized,
-      title: "Saved Vehicle Flagged",
-      message: `Vehicle ${normalized} in your saved list was flagged for "${incidentType}".`,
-      isRead: false,
-      createdAt: Date.now(),
-    });
-  }
+export async function notifySavers(_ctx: any, _plate: string, _incidentType: string = "Safety concern") {
+  // No-op in simplified architecture
 }
 
 /**
@@ -632,7 +572,6 @@ export async function notifySavers(ctx: any, plate: string, incidentType: string
 export const flagVehicleByPlate = mutation({
   args: { plate: v.string() },
   handler: async (ctx, args) => {
-    // Note: Clerk userId is NOT stored to preserve anonymity per 2E Privacy Rules
     const normalized = args.plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
 
     const vehicle = await ctx.db
@@ -664,8 +603,6 @@ export const flagVehicleByPlate = mutation({
       });
     }
 
-    await notifySavers(ctx, normalized, "Safety concern");
-
     return { success: true };
   },
 });
@@ -673,7 +610,6 @@ export const flagVehicleByPlate = mutation({
 /**
  * MUTATION: Detailed flag report for a vehicle plate.
  * Creates an incident record with full report data and updates vehicle safety level.
- * Per-user rate limit (3 flags per week) is enforced by the calling action.
  */
 export const flagVehicleWithReport = mutation({
   args: {
@@ -685,10 +621,8 @@ export const flagVehicleWithReport = mutation({
     description: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // Anonymity preserved per Section 2E — no userId stored on incident
     const normalized = args.plate.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase().trim();
 
-    // Sanitise text fields
     const sanitizeText = (val: string, max: number) =>
       val.replace(/<[^>]*>/g, "").replace(/[\r\n]+/g, " ").trim().slice(0, max);
 
@@ -698,7 +632,6 @@ export const flagVehicleWithReport = mutation({
     const incidentType = sanitizeText(args.incidentType, 100);
     const description = args.description ? sanitizeText(args.description, 500) : undefined;
 
-    // Insert the detailed incident record
     await ctx.db.insert("incidents", {
       plate: normalized,
       incidentType,
@@ -711,7 +644,6 @@ export const flagVehicleWithReport = mutation({
       createdAt: Date.now(),
     });
 
-    // Update or create vehicle record
     const vehicle = await ctx.db
       .query("vehicles")
       .withIndex("by_plate", (q) => q.eq("plate", normalized))
@@ -740,8 +672,6 @@ export const flagVehicleWithReport = mutation({
         lastFlaggedAt: Date.now(),
       });
     }
-
-    await notifySavers(ctx, normalized, incidentType);
 
     return { success: true };
   },

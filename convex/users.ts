@@ -1,8 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
-import { phoneSchema, displayNameSchema, themeSchema, fontSizeSchema, privacyModeSchema } from "../lib/validators";
-
+import { phoneSchema, displayNameSchema, themeSchema, fontSizeSchema } from "../lib/validators";
 
 /**
  * Returns the currently authenticated user's database record.
@@ -14,7 +13,7 @@ export const getCurrentUser = query({
     if (!identity) {
       return null;
     }
-    
+
     return await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
@@ -24,11 +23,11 @@ export const getCurrentUser = query({
 
 /**
  * Creates a user record in the database upon successful Clerk login.
- * If the record already exists, returns the existing ID.
  */
 export const createUser = mutation({
   args: {
-    phone: v.string(),
+    phone: v.optional(v.string()),
+    displayName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -36,7 +35,6 @@ export const createUser = mutation({
       throw new ConvexError("Unauthenticated request");
     }
 
-    // Check if user already exists
     const existing = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
@@ -46,16 +44,18 @@ export const createUser = mutation({
       return existing._id;
     }
 
-    // Validate phone number
-    const parsedPhone = phoneSchema.safeParse(args.phone);
-    if (!parsedPhone.success) {
-      throw new ConvexError(parsedPhone.error.issues[0].message);
+    let cleanPhone = undefined;
+    if (args.phone) {
+      const parsedPhone = phoneSchema.safeParse(args.phone);
+      if (parsedPhone.success) {
+        cleanPhone = parsedPhone.data;
+      }
     }
 
     return await ctx.db.insert("users", {
       clerkId: identity.subject,
-      displayName: identity.name || undefined,
-      phone: parsedPhone.data,
+      displayName: args.displayName || identity.name || undefined,
+      phone: cleanPhone,
       contributorStatus: false,
       tripCountToday: 0,
       createdAt: Date.now(),
@@ -64,8 +64,7 @@ export const createUser = mutation({
 });
 
 /**
- * Ensures user record exists in Convex upon auth login (e.g. Google OAuth).
- * Creates or updates identity details automatically.
+ * Ensures user record exists in Convex upon auth login.
  */
 export const ensureUser = mutation({
   args: {},
@@ -90,7 +89,7 @@ export const ensureUser = mutation({
     return await ctx.db.insert("users", {
       clerkId: identity.subject,
       displayName: identity.name || undefined,
-      phone: identity.phoneNumber || "",
+      phone: identity.phoneNumber || undefined,
       contributorStatus: false,
       tripCountToday: 0,
       createdAt: Date.now(),
@@ -99,7 +98,7 @@ export const ensureUser = mutation({
 });
 
 /**
- * Updates the user's profile details (e.g. displayName during onboarding).
+ * Updates the user's profile details.
  */
 export const updateUser = mutation({
   args: {
@@ -140,21 +139,17 @@ export const updateUser = mutation({
     }
 
     await ctx.db.patch(user._id, patches);
-
     return user._id;
   },
 });
 
 /**
- * Updates the user's settings (theme, font size, privacy mode).
+ * Updates the user's settings (theme, font size).
  */
 export const updateUserSettings = mutation({
   args: {
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
-    privacyMode: v.optional(v.boolean()),
-    locationEnabled: v.optional(v.boolean()),
-    pushNotificationsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -174,9 +169,6 @@ export const updateUserSettings = mutation({
     const updates: {
       theme?: string;
       fontSize?: string;
-      privacyMode?: boolean;
-      locationEnabled?: boolean;
-      pushNotificationsEnabled?: boolean;
     } = {};
 
     if (args.theme !== undefined) {
@@ -193,22 +185,6 @@ export const updateUserSettings = mutation({
         throw new ConvexError(parsedFontSize.error.issues[0].message);
       }
       updates.fontSize = parsedFontSize.data;
-    }
-
-    if (args.privacyMode !== undefined) {
-      const parsedPrivacyMode = privacyModeSchema.safeParse(args.privacyMode);
-      if (!parsedPrivacyMode.success) {
-        throw new ConvexError(parsedPrivacyMode.error.issues[0].message);
-      }
-      updates.privacyMode = parsedPrivacyMode.data;
-    }
-
-    if (args.locationEnabled !== undefined) {
-      updates.locationEnabled = args.locationEnabled;
-    }
-
-    if (args.pushNotificationsEnabled !== undefined) {
-      updates.pushNotificationsEnabled = args.pushNotificationsEnabled;
     }
 
     await ctx.db.patch(user._id, updates);
@@ -239,7 +215,6 @@ export const becomeContributor = mutation({
       throw new ConvexError("User record not found");
     }
 
-    // Insert record in contributions table
     await ctx.db.insert("contributions", {
       userId: user._id,
       amount: args.amount,
@@ -248,7 +223,6 @@ export const becomeContributor = mutation({
       createdAt: Date.now(),
     });
 
-    // If monthly tier unlocked or voluntary contribution >= 1000, upgrade status
     if (args.type === "monthly-tier" || args.amount >= 1000) {
       await ctx.db.patch(user._id, {
         contributorStatus: true,
@@ -260,7 +234,7 @@ export const becomeContributor = mutation({
 });
 
 /**
- * Developer mutation to purge all database records for fresh onboarding testing.
+ * Developer mutation to purge database tables.
  */
 export const purgeDatabase = mutation({
   args: {},
@@ -275,62 +249,34 @@ export const purgeDatabase = mutation({
       throw new ConvexError("Unauthorized access to admin resource.");
     }
 
-    // 1. Delete users
     const users = await ctx.db.query("users").collect();
     for (const u of users) {
       await ctx.db.delete(u._id);
     }
-    // 2. Delete contacts
-    const contacts = await ctx.db.query("contacts").collect();
-    for (const c of contacts) {
-      await ctx.db.delete(c._id);
-    }
-    // 3. Delete trips
     const trips = await ctx.db.query("trips").collect();
     for (const t of trips) {
       await ctx.db.delete(t._id);
     }
-    // 4. Delete locationSnapshots
-    const snapshots = await ctx.db.query("locationSnapshots").collect();
-    for (const s of snapshots) {
-      await ctx.db.delete(s._id);
-    }
-    // 5. Delete safetyChecks
-    const checks = await ctx.db.query("safetyChecks").collect();
-    for (const ch of checks) {
-      await ctx.db.delete(ch._id);
-    }
-    // 6. Delete vehicles
     const vehicles = await ctx.db.query("vehicles").collect();
     for (const v of vehicles) {
       await ctx.db.delete(v._id);
     }
-    // 7. Delete incidents
     const incidents = await ctx.db.query("incidents").collect();
     for (const inc of incidents) {
       await ctx.db.delete(inc._id);
     }
-    // 8. Delete postRideSurveys
-    const surveys = await ctx.db.query("postRideSurveys").collect();
-    for (const s of surveys) {
-      await ctx.db.delete(s._id);
-    }
-    // 9. Delete savedVehicles
     const saved = await ctx.db.query("savedVehicles").collect();
     for (const sv of saved) {
       await ctx.db.delete(sv._id);
     }
-    // 10. Delete contributions
     const contributions = await ctx.db.query("contributions").collect();
     for (const con of contributions) {
       await ctx.db.delete(con._id);
     }
-    // 11. Delete adminLogs
     const adminLogs = await ctx.db.query("adminLogs").collect();
     for (const al of adminLogs) {
       await ctx.db.delete(al._id);
     }
-    // 12. Delete dataAccessLogs
     const dataAccessLogs = await ctx.db.query("dataAccessLogs").collect();
     for (const dal of dataAccessLogs) {
       await ctx.db.delete(dal._id);

@@ -196,8 +196,8 @@ export default function WelcomeClient() {
           {/* Landing Copy & Actions */}
           <div className={styles.contentContainer}>
             <div className={styles.introText}>
-              <h1>Your safety in the hands <br /> of those you trust.</h1>
-              <p>Automatically notify your loved ones and trusted contacts when you board.</p>
+              <h1>Check plates. Share on WhatsApp. <br /> Commute safely.</h1>
+              <p>Search vehicle safety records before boarding and send a quick trip summary to your loved ones.</p>
             </div>
 
             {/* Feature lists explaining what app does */}
@@ -207,8 +207,8 @@ export default function WelcomeClient() {
                   <Camera size={18} />
                 </div>
                 <div className={styles.featureText}>
-                  <strong>Log License Plates</strong>
-                  <span>Snap a photo or manually input the plate number of the vehicle you are boarding.</span>
+                  <strong>Search & Verify Plates</strong>
+                  <span>Search any Lagos vehicle plate to check community flag history before stepping inside.</span>
                 </div>
               </div>
 
@@ -217,8 +217,8 @@ export default function WelcomeClient() {
                   <Bell size={18} />
                 </div>
                 <div className={styles.featureText}>
-                  <strong>Notify Trusted Contacts</strong>
-                  <span>Your emergency contacts are instantly alerted of your currently logged trip.</span>
+                  <strong>1-Tap WhatsApp Share</strong>
+                  <span>Log your vehicle and route summary in seconds and send a shareable link on WhatsApp.</span>
                 </div>
               </div>
 
@@ -227,8 +227,8 @@ export default function WelcomeClient() {
                   <ShieldCheck size={18} />
                 </div>
                 <div className={styles.featureText}>
-                  <strong>Automatic Safety Checks</strong>
-                  <span>Your contacts are automatically asked after a set time if you have reached safely.</span>
+                  <strong>Community Flagging</strong>
+                  <span>Anonymously report unsafe or reckless vehicles to keep commuters across Lagos informed.</span>
                 </div>
               </div>
             </div>

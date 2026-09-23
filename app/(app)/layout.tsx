@@ -23,7 +23,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const { signOut } = useClerk();
   
   const dbUser = useQuery(api.users.getCurrentUser);
-  const contacts = useQuery(api.contacts.getContacts);
   const ensureUser = useMutation(api.users.ensureUser);
 
   // Auto-sync Convex user record if signed in via OAuth (e.g. Google)
@@ -103,7 +102,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
     checkSessionTimeout();
 
-    // Event listeners to capture when the user leaves/minimizes the app
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
         safeLocalStorage.setItem("route-last-active", Date.now().toString());
@@ -116,7 +114,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
       safeLocalStorage.setItem("route-last-active", Date.now().toString());
     };
 
-    // Update active timestamp on user interaction
     const updateActivity = () => {
       safeLocalStorage.setItem("route-last-active", Date.now().toString());
     };
@@ -146,7 +143,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, []);
 
   // Show a loading screen while checking onboarding state
-  if (dbUser === undefined || contacts === undefined) {
+  if (dbUser === undefined) {
     return (
       <div className={styles.shell}>
         <div className={styles.viewport}>

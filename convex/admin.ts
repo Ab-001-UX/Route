@@ -217,47 +217,31 @@ export const detectAbusePatterns = query({
     const adminId = await validateAdmin(ctx);
     await logAdminAction(ctx, adminId, "detect_abuse_patterns", "abuse");
 
-    const surveys = await ctx.db.query("postRideSurveys").collect();
+    const incidents = await ctx.db.query("incidents").collect();
     
-    // Group surveys by userId to identify users who submit high volumes of safety concerns
-    const userConcernCounts: Record<string, { total: number; feltOff: number; plates: Set<string> }> = {};
+    // Group incidents by plate to identify vehicles with high numbers of flags
+    const plateConcernCounts: Record<string, { total: number; types: Set<string> }> = {};
 
-    for (const s of surveys) {
-      const uidStr = s.userId.toString();
-      if (!userConcernCounts[uidStr]) {
-        userConcernCounts[uidStr] = { total: 0, feltOff: 0, plates: new Set() };
+    for (const inc of incidents) {
+      if (!plateConcernCounts[inc.plate]) {
+        plateConcernCounts[inc.plate] = { total: 0, types: new Set() };
       }
-      userConcernCounts[uidStr].total++;
-      if (s.response === "felt-off") {
-        userConcernCounts[uidStr].feltOff++;
-      }
-      
-      const trip = await ctx.db.get(s.tripId);
-      if (trip) {
-        userConcernCounts[uidStr].plates.add(trip.plate);
-      }
+      plateConcernCounts[inc.plate].total++;
+      plateConcernCounts[inc.plate].types.add(inc.incidentType);
     }
 
-    const suspiciousUsers = [];
-    for (const [uid, stats] of Object.entries(userConcernCounts)) {
-      const ratio = stats.total > 0 ? stats.feltOff / stats.total : 0;
-      
-      // Flags user if they submitted 3+ safety concerns AND the felt-off ratio is over 75%
-      if (stats.feltOff >= 3 && ratio > 0.75) {
-        const user = await ctx.db.get(ctx.db.normalizeId("users", uid));
-        suspiciousUsers.push({
-          userId: uid,
-          phone: user?.phone || "N/A",
-          displayName: user?.displayName || "N/A",
-          totalTrips: stats.total,
-          flaggedTrips: stats.feltOff,
-          flagRatio: Math.round(ratio * 100),
-          uniquePlatesCount: stats.plates.size,
+    const suspiciousVehicles = [];
+    for (const [plate, stats] of Object.entries(plateConcernCounts)) {
+      if (stats.total >= 3) {
+        suspiciousVehicles.push({
+          plate,
+          totalReports: stats.total,
+          uniqueTypesCount: stats.types.size,
         });
       }
     }
 
-    return suspiciousUsers;
+    return suspiciousVehicles;
   },
 });
 
@@ -349,7 +333,6 @@ export const getExportDataset = query({
         anonymizedPlateHash: `plate_${t.plate.substring(0, 3)}***`, // anonymized plate hint
         transportType: t.transportType,
         boardingLocation: t.boardingLocation.split("(")[0].trim(), // clean location strings
-        status: t.status,
         incidentCount: relatedIncidents.length,
         incidentSummary: relatedIncidents.join(" | ") || "None",
         createdAt: new Date(t.createdAt).toISOString(),

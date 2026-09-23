@@ -1,239 +1,169 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { use, useState } from "react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, Loader2, Compass, CheckCircle2, ShieldAlert, Clock } from "lucide-react";
-import styles from "./detail.module.css";
-import { useSettings } from "@/components/providers/ThemeProvider";
+import Link from "next/link";
+import { 
+  ShieldCheck, 
+  ShieldAlert, 
+  MapPin, 
+  Navigation, 
+  PhoneCall, 
+  Copy, 
+  Check, 
+  Loader2, 
+  Share2
+} from "lucide-react";
+import styles from "./public-trip.module.css";
+import RouteLogo from "@/components/ui/RouteLogo";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function TripDetailPage({ params }: PageProps) {
+export default function PublicTripPage({ params }: PageProps) {
   const { id } = use(params);
-  const router = useRouter();
-  const { privacyMode } = useSettings();
+  const [copied, setCopied] = useState(false);
 
-  // Fetch Trip Details
-  const trip = useQuery(api.trips.getTrip, { tripId: id as any });
-  const endTripMutation = useMutation(api.trips.endTrip);
+  // Fetch Public Trip Summary
+  const trip = useQuery(api.trips.getTripPublic, { tripId: id as any });
 
-  // States
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [lastTracked, setLastTracked] = useState<string>("");
-  const [trackingLoading, setTrackingLoading] = useState<boolean>(false);
-  const [endLoading, setEndLoading] = useState(false);
-
-  // Countdown Timer Effect
-  useEffect(() => {
-    if (!trip || trip.status !== "active") return;
-
-    const calculateTimeLeft = () => {
-      const diff = trip.timerExpiry - Date.now();
-      return Math.max(0, Math.floor(diff / 1000));
-    };
-
-    setTimeLeft(calculateTimeLeft());
-
-    const timer = setInterval(() => {
-      const remaining = calculateTimeLeft();
-      setTimeLeft(remaining);
-      if (remaining === 0) {
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [trip?.timerExpiry, trip?.status]);
-
-  // Periodic Background Location Tracking (Every 2 Minutes)
-  useEffect(() => {
-    if (!trip || trip.status !== "active") return;
-
-    // Track immediately on load
-    logLocation();
-
-    const tracker = setInterval(() => {
-      logLocation();
-    }, 120000); // 120000 ms = 2 minutes
-
-    return () => clearInterval(tracker);
-  }, [trip?.status]);
-
-  const logLocation = () => {
-    if (!navigator.geolocation) return;
-
-    setTrackingLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const res = await fetch("/api/trips/location", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              tripId: id,
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            }),
-          });
-          if (res.ok) {
-            const now = new Date();
-            setLastTracked(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-          }
-        } catch (err) {
-          console.error("Failed to log background location snapshot:", err);
-        } finally {
-          setTrackingLoading(false);
-        }
-      },
-      (err) => {
-        console.warn("Background GPS capture failed:", err);
-        setTrackingLoading(false);
-      },
-      { enableHighAccuracy: true }
-    );
-  };
-
-  const handleEndTrip = async () => {
-    setEndLoading(true);
+  const handleCopyLink = async () => {
     try {
-      await endTripMutation({ tripId: id as any });
-      // Force refresh or redirect to home to trigger post-ride survey (Day 5 feature)
-      router.push("/home");
-    } catch (err) {
-      console.error("Failed to complete trip:", err);
-    } finally {
-      setEndLoading(false);
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
     }
-  };
-
-  const formatTime = (seconds: number) => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hrs > 0 ? `${hrs}:` : ""}${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  const maskPlate = (plate: string) => {
-    if (!plate) return "";
-    return plate.length > 3 ? `${plate.substring(0, 3)}-***` : "HIDDEN";
   };
 
   if (trip === undefined) {
     return (
-      <main className={styles.container} style={{ justifyContent: "center", alignItems: "center" }}>
-        <Loader2 className={styles.spin} size={36} color="var(--color-brand-primary)" />
-        <p>Loading trip details...</p>
+      <main className={styles.container}>
+        <div className={styles.loadingBox}>
+          <Loader2 className={styles.spin} size={36} color="var(--color-brand-primary)" />
+          <p>Loading trip summary...</p>
+        </div>
       </main>
     );
   }
 
   if (trip === null) {
     return (
-      <main className={styles.container} style={{ justifyContent: "center", alignItems: "center" }}>
-        <p>Trip not found or you are not authorized to view it.</p>
-        <button className="primary" onClick={() => router.push("/home")}>
-          Return Home
-        </button>
+      <main className={styles.container}>
+        <div className={styles.card} style={{ textAlign: "center", padding: "32px 20px" }}>
+          <h2>Trip Not Found</h2>
+          <p>This trip link may have expired or is invalid.</p>
+          <Link href="/welcome" className="primary" style={{ marginTop: "16px", textDecoration: "none" }}>
+            Open Route App
+          </Link>
+        </div>
       </main>
     );
   }
 
+  const isFlagged = trip.flagCount > 0 || trip.dangerousStatus;
+
   return (
     <main className={styles.container}>
-      <header className={styles.header}>
-        <button className="backBtn" onClick={() => router.push("/home")} aria-label="Go back">
-          <ChevronLeft size={20} />
+      <header className={styles.navHeader}>
+        <div className={styles.logoRow}>
+          <RouteLogo size={32} color="#ffffff" lineColor="#000000" />
+          <span className={styles.logoTitle}>Route</span>
+        </div>
+        <button onClick={handleCopyLink} className={styles.shareHeaderBtn}>
+          {copied ? <Check size={16} /> : <Share2 size={16} />}
         </button>
-        <h2>Trip Details</h2>
       </header>
 
+      {/* TRIP SUMMARY CARD */}
       <div className={styles.card}>
-        <div className={styles.statusHeader}>
-          <span className={styles.plateTitle}>
-            {privacyMode ? maskPlate(trip.plate) : trip.plate}
+        <div className={styles.cardTop}>
+          <span className={styles.commuterTitle}>
+            {trip.userName} boarded a vehicle
           </span>
-          <span
-            className={`${styles.statusBadge} ${
-              trip.status === "active"
-                ? styles.statusActive
-                : trip.status === "safe"
-                ? styles.statusSafe
-                : trip.status === "pending-review"
-                ? styles.statusPending
-                : styles.statusIncident
-            }`}
-          >
-            {trip.status}
+          <span className={styles.timestamp}>
+            {new Date(trip.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
           </span>
         </div>
 
-        <div className={styles.detailsGrid}>
-          <div className={styles.detailRow}>
-            <span className={styles.label}>Vehicle Type</span>
-            <span className={styles.value}>{trip.transportType}</span>
-          </div>
-          <div className={styles.detailRow}>
-            <span className={styles.label}>Boarding Point</span>
-            <span className={styles.value}>
-              {privacyMode ? "HIDDEN (Privacy Mode)" : trip.boardingLocation}
-            </span>
-          </div>
-          <div className={styles.detailRow}>
-            <span className={styles.label}>Started At</span>
-            <span className={styles.value}>
-              {new Date(trip.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-            </span>
-          </div>
+        {/* VEHICLE PLATE & TYPE */}
+        <div className={styles.plateContainer}>
+          <div className={styles.plateBadge}>{trip.plate}</div>
+          <div className={styles.transportType}>{trip.transportType}</div>
         </div>
-      </div>
 
-      {trip.status === "active" && (
-        <div className={styles.timerContainer}>
-          <Clock size={24} color="var(--color-brand-primary)" style={{ opacity: 0.8 }} />
-          <span className={styles.timerVal}>{formatTime(timeLeft)}</span>
-          <span className={styles.timerLabel}>Time remaining until safety check-in</span>
+        {/* ROUTE DETAILS */}
+        <div className={styles.routeBox}>
+          <div className={styles.routeItem}>
+            <MapPin size={18} color="var(--color-brand-primary)" />
+            <div>
+              <span className={styles.routeLabel}>Boarded at:</span>
+              <strong className={styles.routeVal}>{trip.boardingLocation}</strong>
+            </div>
+          </div>
+
+          {trip.destination && (
+            <div className={styles.routeItem}>
+              <Navigation size={18} color="#22c55e" />
+              <div>
+                <span className={styles.routeLabel}>Destination:</span>
+                <strong className={styles.routeVal}>{trip.destination}</strong>
+              </div>
+            </div>
+          )}
         </div>
-      )}
 
-      {trip.status === "active" && (
-        <div className={styles.trackingStatus}>
-          <Compass size={14} className={trackingLoading ? styles.spin : ""} />
-          <span>
-            {lastTracked ? `Location tracked at ${lastTracked}` : "Activating background GPS snapshots..."}
-          </span>
-        </div>
-      )}
+        {/* VEHICLE DETAILS */}
+        {trip.description && (
+          <div className={styles.descriptionBox}>
+            <span className={styles.routeLabel}>Vehicle details:</span>
+            <p className={styles.descText}>{trip.description}</p>
+          </div>
+        )}
 
-      {trip.status === "active" && (
-        <button onClick={handleEndTrip} className="primary" disabled={endLoading}>
-          {endLoading ? (
+        {/* COMMUNITY SAFETY RECORD */}
+        <div className={`${styles.safetyBadgeBox} ${isFlagged ? styles.safetyBoxFlagged : styles.safetyBoxClean}`}>
+          {isFlagged ? (
             <>
-              <Loader2 className={styles.spin} size={18} /> Completing Trip...
+              <ShieldAlert size={20} color="#ef4444" />
+              <div>
+                <strong>Community Flagged Vehicle</strong>
+                <span>This vehicle has {trip.flagCount} previous report(s) registered on Route.</span>
+              </div>
             </>
           ) : (
             <>
-              <CheckCircle2 size={18} /> I've Arrived Safely
+              <ShieldCheck size={20} color="#22c55e" />
+              <div>
+                <strong>Clean Vehicle Safety Record</strong>
+                <span>No safety concerns or flags reported for this vehicle.</span>
+              </div>
             </>
           )}
-        </button>
-      )}
-
-      {trip.status !== "active" && (
-        <div className={styles.card} style={{ alignItems: "center", textAlign: "center", gap: "var(--spacing-sm)" }}>
-          <CheckCircle2 size={40} className={styles.successIcon} color="var(--color-safety-status-safe)" />
-          <h3>Trip Concluded</h3>
-          <p>This trip was marked as {trip.status}.</p>
-          <button className="secondary" style={{ width: "100%" }} onClick={() => router.push("/home")}>
-            Return Home
-          </button>
         </div>
-      )}
+      </div>
+
+      {/* EMERGENCY HELPLINES CARD */}
+      <div className={styles.card} style={{ marginTop: "16px" }}>
+        <h3 className={styles.sectionHeader}>Emergency Helplines (Lagos)</h3>
+        <p className={styles.sectionSub}>Quick dial emergency contacts if you need immediate assistance:</p>
+        
+        <div className={styles.helplineGrid}>
+          <a href="tel:767" className={styles.helplineBtn}>
+            <PhoneCall size={18} /> LASEMA Emergency (767)
+          </a>
+          <a href="tel:112" className={styles.helplineBtn}>
+            <PhoneCall size={18} /> Police Toll-Free (112)
+          </a>
+        </div>
+      </div>
+
+      <footer className={styles.footerNote}>
+        <span>Route • Lagos Commuter Safety Network</span>
+      </footer>
     </main>
   );
 }

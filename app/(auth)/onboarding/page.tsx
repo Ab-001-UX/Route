@@ -1,208 +1,71 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useMutation, useQuery, useAction, useConvexAuth } from "convex/react";
+import { useMutation, useQuery, useConvexAuth } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
-import { Users, Check, ArrowRight, ChevronLeft, Trash2, Plus, Phone, User, Loader2 } from "lucide-react";
+import { User, Check, ArrowRight, Loader2 } from "lucide-react";
 import styles from "./onboarding.module.css";
-import { normalizeNigerianPhoneNumber } from "@/lib/validators";
 import { safeLocalStorage } from "@/lib/storage";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [phone, setPhone] = useState("");
-  const [hasAutoAdvanced, setHasAutoAdvanced] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Contact state
-  const [contactName, setContactName] = useState("");
-  const [contactRelation, setContactRelation] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactError, setContactError] = useState("");
-  const [contactLoading, setContactLoading] = useState(false);
-  const [finishLoading, setFinishLoading] = useState(false);
-
-  // Convex Hooks
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
   const currentUser = useQuery(api.users.getCurrentUser);
   const createUser = useMutation(api.users.createUser);
   const updateUser = useMutation(api.users.updateUser);
-  const addContact = useAction(api.rateLimitedActions.rateLimitedAddContact);
-  const removeContact = useMutation(api.contacts.removeContact);
-  const contacts = useQuery(api.contacts.getContacts) || [];
 
-  // Returning user guard — if they have fully completed onboarding, skip onboarding.
-  // Otherwise, automatically advance to Step 2 if they already have a phone number.
+  // If user already exists and has displayName set, skip to home
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
       router.replace("/home");
     }
   }, [currentUser, router]);
 
-  // Reset/Initialize inactivity timer on mount to prevent premature logouts
   useEffect(() => {
     safeLocalStorage.setItem("route-last-active", Date.now().toString());
   }, []);
 
-  const formatPhoneNumber = (num: string): string => {
-    return normalizeNigerianPhoneNumber(num);
-  };
-
-  const goBack = () => {
-    setErrorMsg("");
-    setContactError("");
-    if (step > 1) setStep(step - 1);
-  };
-
-  const handleCreateUser = async (e: React.FormEvent) => {
+  const handleFinishOnboarding = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
     setLoading(true);
 
     if (!isAuthenticated) {
-      setErrorMsg("Syncing authentication with server. Please wait a moment and try again.");
-      setLoading(false);
-      return;
-    }
-
-    const formattedPhone = formatPhoneNumber(phone);
-    if (formattedPhone.length < 14) {
-      setErrorMsg("Please enter a valid Nigerian phone number.");
+      setErrorMsg("Syncing authentication with server. Please wait a moment.");
       setLoading(false);
       return;
     }
 
     try {
-      await createUser({ phone: formattedPhone });
-      setStep(2);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to initialize account.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateName = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!displayName.trim()) {
-      setErrorMsg("Please enter a display name.");
-      return;
-    }
-    setErrorMsg("");
-    setLoading(true);
-    try {
-      await updateUser({ displayName: displayName.trim() });
-      setStep(3);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to update display name.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // State to track active invitation link for specific contact during onboarding
-  const [activeInvite, setActiveInvite] = useState<{ contactId: string; name: string; url: string; copied: boolean } | null>(null);
-
-  const constructInviteMessage = (contactName: string, myName: string, url: string) => {
-    const sender = myName.trim() || "Your friend";
-    return `Hi ${contactName}, I've added you as my trusted emergency safety contact on Route so you can receive live tracking updates whenever I take a trip. Please tap the link below to confirm your phone number and activate safety notifications for my rides:\n\n${url}`;
-  };
-
-  const handleAddContact = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setContactError("");
-    setContactLoading(true);
-
-    const formattedContactPhone = formatPhoneNumber(contactPhone);
-    if (formattedContactPhone.length < 14) {
-      setContactError("Please enter a valid Nigerian phone number for your contact.");
-      setContactLoading(false);
-      return;
-    }
-
-    try {
-      const result = await addContact({
-        name: contactName,
-        relationship: contactRelation,
-        phone: formattedContactPhone,
-        email: contactEmail || undefined,
-      });
-
-      const inviteUrl = `${window.location.origin}/contact-activation/${result.token}`;
-      setActiveInvite({
-        contactId: result.contactId || result.token,
-        name: contactName,
-        url: inviteUrl,
-        copied: false,
-      });
-
-      setContactName("");
-      setContactRelation("");
-      setContactPhone("");
-      setContactEmail("");
-    } catch (err: any) {
-      setContactError(err.message || "Failed to add contact.");
-    } finally {
-      setContactLoading(false);
-    }
-  };
-
-  const handleCopyInviteMessage = async (contactName: string, url: string) => {
-    const message = constructInviteMessage(contactName, displayName, url);
-    try {
-      await navigator.clipboard.writeText(message);
-      if (activeInvite) {
-        setActiveInvite({ ...activeInvite, copied: true });
-        setTimeout(() => {
-          setActiveInvite((prev) => (prev ? { ...prev, copied: false } : null));
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Failed to copy invite message:", err);
-    }
-  };
-
-  const handleRemoveContact = async (id: any) => {
-    try {
-      await removeContact({ contactId: id });
-      if (activeInvite?.contactId === id) {
-        setActiveInvite(null);
-      }
-    } catch (err) {
-      console.error("Failed to remove contact:", err);
-    }
-  };
-
-  const handleFinish = async () => {
-    if (contacts.length < 2) {
-      setContactError("You must add at least 2 emergency contacts to continue.");
-      return;
-    }
-    setFinishLoading(true);
-    try {
-      if (displayName.trim()) {
-        await updateUser({ displayName: displayName.trim() });
+      if (currentUser) {
+        if (displayName.trim()) {
+          await updateUser({ displayName: displayName.trim() });
+        }
+      } else {
+        await createUser({
+          displayName: displayName.trim() || undefined,
+        });
       }
       safeLocalStorage.setItem("route-last-active", Date.now().toString());
-      router.push("/home");
+      router.replace("/home");
     } catch (err: any) {
-      setContactError(err.message || "Failed to save profile.");
+      setErrorMsg(err.message || "Failed to complete setup.");
     } finally {
-      setFinishLoading(false);
+      setLoading(false);
     }
   };
 
   if (currentUser === undefined) {
     return (
-      <main className={styles.onboardingShell}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", gap: "16px", color: "var(--color-text-primary)" }}>
+      <main className={styles.container}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: "16px", color: "var(--color-text-primary)" }}>
           <Loader2 className={styles.spin} size={36} color="var(--color-brand-primary)" />
-          <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Checking profile status...</span>
+          <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Setting up your profile...</span>
         </div>
       </main>
     );
@@ -211,256 +74,48 @@ export default function OnboardingPage() {
   return (
     <main className={styles.container}>
       <header className={styles.onboardingHeader}>
-        {/* 1. Segmented Progress Bar (3 bars at top) */}
-        <div className={styles.segmentedProgressBar}>
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`${styles.segment} ${s <= step ? styles.segmentActive : ""}`}
-            />
-          ))}
-        </div>
-
-        {/* 2. Controls Row: Back button on the LEFT, Step indicator on the RIGHT (Same line) */}
         <div className={styles.stepControlsRow}>
-          {step > 1 ? (
-            <button
-              type="button"
-              onClick={goBack}
-              className={styles.backBtn}
-              aria-label="Go back"
-            >
-              <ChevronLeft size={22} />
-            </button>
-          ) : (
-            <div style={{ width: "32px" }} />
-          )}
-          <span className={styles.stepIndicator}>Step {step} of 3</span>
+          <div style={{ width: "32px" }} />
+          <span className={styles.stepIndicator}>Profile Setup</span>
         </div>
       </header>
 
-      {/* STEP 1: WHATSAPP NUMBER */}
-      {step === 1 && (
-        <section className={styles.stepContent}>
-          <div className={styles.iconContainer}>
-            <Phone size={48} className={styles.accentIcon} />
+      <section className={styles.stepContent}>
+        <div className={styles.iconContainer}>
+          <User size={48} className={styles.accentIcon} />
+        </div>
+        <h1>Welcome to Route!</h1>
+        <p>What should we call you? Enter your name or display handle to personalize your experience.</p>
+
+        {errorMsg && (
+          <div className={styles.errorBanner}>
+            <span>{errorMsg}</span>
+            <button type="button" onClick={() => setErrorMsg("")} className={styles.dismissErrorBtn}>×</button>
           </div>
-          <h1>Enter your WhatsApp number</h1>
-          <p>Please provide your active WhatsApp number.</p>
+        )}
 
-          {errorMsg && (
-            <div className={styles.errorBanner}>
-              <span>{errorMsg}</span>
-              <button type="button" onClick={() => setErrorMsg("")} className={styles.dismissErrorBtn}>×</button>
-            </div>
-          )}
-
-          <form onSubmit={handleCreateUser} className={styles.form}>
-            <div className={styles.phoneInputContainer}>
-              <span className={styles.phonePrefix}>+234</span>
-              <input
-                type="tel"
-                placeholder="8012345678"
-                value={phone.startsWith("+234") ? phone.slice(4) : phone.startsWith("234") ? phone.slice(3) : phone}
-                onChange={(e) => {
-                  let val = e.target.value.replace(/\D/g, "");
-                  if (val.startsWith("234")) val = val.slice(3);
-                  if (val.startsWith("0")) val = val.slice(1);
-                  setPhone("+234" + val);
-                }}
-                disabled={loading}
-                required
-              />
-            </div>
-            <button 
-              type="submit" 
-              className="primary" 
-              disabled={loading || isAuthLoading || !isAuthenticated}
-            >
-              {isAuthLoading ? (
-                <>Syncing Auth <Loader2 className={styles.spin} size={18} /></>
-              ) : loading ? (
-                <Loader2 className={styles.spin} size={18} />
-              ) : (
-                <>Continue <ArrowRight size={18} /></>
-              )}
-            </button>
-          </form>
-        </section>
-      )}
-
-      {/* STEP 2: DISPLAY NAME */}
-      {step === 2 && (
-        <section className={styles.stepContent}>
-          <div className={styles.iconContainer}>
-            <User size={48} className={styles.accentIcon} />
-          </div>
-          <h1>What should we call you?</h1>
-          <p>Your display name helps emergency contacts recognise you instantly.</p>
-
-          <form onSubmit={handleUpdateName} className={styles.form}>
-            <input
-              type="text"
-              placeholder="Your display name"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              className={styles.input}
-              required
-            />
-            <button type="submit" className="primary">
-              Continue <ArrowRight size={18} />
-            </button>
-          </form>
-        </section>
-      )}
-
-      {/* STEP 3: TRUSTED CONTACTS & FINISH */}
-      {step === 3 && (
-        <section className={styles.stepContent}>
-          <div className={styles.contactsHeader}>
-            <Users size={32} className={styles.accentIconSmall} />
-            <h2>Add Emergency Contacts</h2>
-            <p>You must add between 2 to 5 emergency contacts. The system will alert them when you board a vehicle.</p>
-          </div>
-
-          {contactError && (
-            <div className={styles.errorBanner}>
-              <span>{contactError}</span>
-              <button type="button" onClick={() => setContactError("")} className={styles.dismissErrorBtn}>×</button>
-            </div>
-          )}
-
-          <form onSubmit={handleAddContact} className={styles.contactForm}>
-            <input
-              type="text"
-              placeholder="Full name"
-              value={contactName}
-              onChange={(e) => setContactName(e.target.value)}
-              required
-              disabled={contactLoading || contacts.length >= 5}
-              className={styles.smallInput}
-            />
-            <input
-              type="text"
-              placeholder="Relationship (e.g. Sister)"
-              value={contactRelation}
-              onChange={(e) => setContactRelation(e.target.value)}
-              required
-              disabled={contactLoading || contacts.length >= 5}
-              className={styles.smallInput}
-            />
-            <div className={styles.phoneInputContainer}>
-              <span className={styles.phonePrefix}>+234</span>
-              <input
-                type="tel"
-                placeholder="8012345678"
-                value={contactPhone.startsWith("+234") ? contactPhone.slice(4) : contactPhone.startsWith("234") ? contactPhone.slice(3) : contactPhone}
-                onChange={(e) => {
-                  let val = e.target.value.replace(/\D/g, "");
-                  if (val.startsWith("234")) val = val.slice(3);
-                  if (val.startsWith("0")) val = val.slice(1);
-                  setContactPhone("+234" + val);
-                }}
-                required
-                disabled={contactLoading || contacts.length >= 5}
-              />
-            </div>
-            <input
-              type="email"
-              placeholder="Email (optional)"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              disabled={contactLoading || contacts.length >= 5}
-              className={styles.smallInput}
-            />
-            <button
-              type="submit"
-              className="primary"
-              disabled={contactLoading || contacts.length >= 5}
-            >
-              {contactLoading
-                ? <Loader2 className={styles.spin} size={18} />
-                : <><Plus size={16} /> Add Contact</>}
-            </button>
-          </form>
-
-          {/* Added contacts list */}
-          {contacts.length > 0 && (
-            <div className={styles.contactsList}>
-              <h3>Your Contacts ({contacts.length}/5)</h3>
-              <div className={styles.contactsGrid}>
-                {contacts.map((c) => {
-                  const isLinkActive = activeInvite && activeInvite.contactId === c._id;
-                  return (
-                    <div key={c._id} style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-                      <div className={styles.contactCard}>
-                        <div className={styles.contactDetails}>
-                          <h4>{c.name}</h4>
-                          <p>{c.relationship} • {c.phone}</p>
-                        </div>
-                        <button
-                          onClick={() => handleRemoveContact(c._id)}
-                          className={styles.deleteBtn}
-                          aria-label="Remove contact"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-
-                      {/* Dedicated Contact Activation Link Card */}
-                      {isLinkActive && (
-                        <div className={styles.inviteCard}>
-                          <p style={{ margin: "0", fontSize: "0.75rem", fontWeight: "600", color: "var(--color-text-primary)" }}>
-                            Send Invitation Link to {c.name}:
-                          </p>
-                          <textarea
-                            readOnly
-                            rows={3}
-                            value={constructInviteMessage(c.name, displayName, activeInvite.url)}
-                            className={styles.inviteMessageText}
-                          />
-                          <div className={styles.stackedActions}>
-                            <button
-                              type="button"
-                              onClick={() => handleCopyInviteMessage(c.name, activeInvite.url)}
-                              className="primary"
-                            >
-                              {activeInvite.copied ? (
-                                <><Check size={16} /> Copied Message!</>
-                              ) : (
-                                "Copy Invite Message"
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setActiveInvite(null)}
-                              className="secondary"
-                            >
-                              Dismiss
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Finish Setup — lives inside the page, below contacts */}
-          <button
-            onClick={handleFinish}
-            className="primary"
-            disabled={contacts.length < 2 || finishLoading}
-            style={{ marginTop: "var(--spacing-lg)" }}
+        <form onSubmit={handleFinishOnboarding} className={styles.form}>
+          <input
+            type="text"
+            placeholder="Your name or handle (e.g. Amara)"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className={styles.input}
+            disabled={loading}
+          />
+          <button 
+            type="submit" 
+            className="primary" 
+            disabled={loading || isAuthLoading}
           >
-            {finishLoading
-              ? <Loader2 className={styles.spin} size={18} />
-              : <>Finish Setup <Check size={18} /></>}
+            {loading ? (
+              <Loader2 className={styles.spin} size={18} />
+            ) : (
+              <>Start Commuting <ArrowRight size={18} /></>
+            )}
           </button>
-        </section>
-      )}
+        </form>
+      </section>
     </main>
   );
 }

@@ -40,41 +40,33 @@ The government angle is not "we built an app." It is: Route generates the struct
 
 - Sign up via email and password (Clerk)
 - Optional: add display name
-- Mandatory: user must register 2–5 emergency contacts before accessing the app
-- Minimum 2 contacts must be designated as safety responders
-- Location permission requested during onboarding
-- Push notification permission requested during onboarding
-- User cannot proceed past onboarding without completing contact setup
+- No mandatory contacts setup
+- No required location or push notification permission gates
+- User lands directly on the home screen after quick profile setup
 
 **Flow:**
-Enter email/password → Phone entry → Display name → Add contacts (minimum 2, maximum 5) → Grant location permission → Grant notification permission → Land on home screen
+Enter email/password → Optional display name → Home screen
 
 ---
 
-### F2 — Contact System
+### F2 — WhatsApp Trip Share Link Generation
 
-- Each contact stores: name, relationship label, phone number, optional email
-- App generates a unique invite link per contact
-- User sends the link manually from their own WhatsApp — not from inside the app
-- Contact opens link in their phone browser, taps to enable push notifications once
-- Contact requires no app download, no account, no technical knowledge
-- Contact statuses: **Pending** (link not activated) | **Active** (notifications enabled) | **Unresponsive** (5+ missed check-ins) | **Removed** (access fully revoked)
-- Removing a contact immediately and permanently revokes all their access — past and future
-- If a contact misses 5 consecutive safety check-ins, user is notified and prompted to keep or replace them
-- Contact reliability score tracked per contact: response rate, missed check-ins, average response time
-- User can resend any contact's invite link at any time from the profile screen
-- Contacts can be edited (name, relationship) or removed at any time from profile
+- When a trip summary is logged, Route generates a unique public summary link (`/trip/[id]`)
+- Commuter gets a **1-Tap "Share on WhatsApp"** button
+- Tapping opens WhatsApp pre-populated with a clean, friendly message:
+  *"I'm boarding a [Transport Type] ([Plate Number]) from [Boarding Location] to [Destination]. View vehicle summary: [URL]"*
+- Loved ones opening the link view a clean web summary card showing vehicle info, boarding/destination details, community safety status badge, and Lagos emergency helpline numbers
+- Requires no app download or account for loved ones opening the link
 
 ---
 
 ### F3 — Plate Search
 
 - Primary action on the home screen
-- User types a plate number and searches
-- **If plate exists in database:** return flag count, safety indicator colour, and incident history
-- **If plate has never been registered:** offer two options — log it as a trip, or return home
+- User types a plate number or speaks it via voice
+- **If plate exists in database:** return flag count, safety indicator colour badge, and incident history
+- **If plate has never been registered:** offer two options — log a trip summary or return home
 - Search is scoped to Lagos vehicles only
-- Search result displays transport type and vehicle description if logged by previous users
 
 ---
 
@@ -84,170 +76,60 @@ Enter email/password → Phone entry → Display name → Add contacts (minimum 
 - A speaker icon triggers live speech-to-text using the Web Speech API, transcribing in real time as the user speaks the plate number.
 - On completion, show a confirmation screen: "Confirm this is the right plate" with Yes / Edit options.
 - Edit opens a text field pre-filled with the transcript so the user can manually correct it.
-- Detect Web Speech API support on page load. If unsupported or unreliable (such as in iOS standalone PWA mode), hide the voice/mic option entirely and default to manual text entry only. Never show a mic button that does not work.
-- If speech recognition fails, errors, or times out mid-capture, fall back to manual text entry with any partial transcript pre-filled.
+- Detect Web Speech API support on page load. If unsupported (e.g. unsupported browser), hide the mic icon and default to manual entry.
 
 **Manual text input:**
-- User types the plate number directly.
-- Manual entry is always available as a parallel, independent option, not gated behind voice failing or being unsupported.
-- This is the guaranteed fallback for every user regardless of device or environment.
+- User types the plate number directly. Guaranteed fallback for all users.
 
-**Vehicle description fields (shown after plate is confirmed — all dropdowns, all skippable except plate):**
+**Vehicle description fields (optional dropdowns):**
+- Colour: Red / Yellow / White / Black / Blue / Silver / Brown / Green / Other
+- Windows: Tinted / Not tinted (Uber/Taxi only)
+- Condition: Clean / Damaged or dented
 
-These fields exist so a contact or witness can identify the vehicle fast on the street. Keep the UI as quick dropdowns only, no text inputs.
+---
 
-| Field | Applies to | Options |
+### F5 — Trip Summary Logging
+
+- Commuter logs a trip summary in under 10 seconds
+- **Fields:**
+  - Plate number (from F4 or manual)
+  - Transport type: Danfo | Keke | Bike (Okada) | Uber/Taxi | Shuttle | Other
+  - Boarding location (text input with auto-suggest / recent spots)
+  - Destination (text input)
+  - Vehicle description (optional dropdowns)
+- **On Submit:**
+  - Saves trip summary
+  - Immediately displays 1-Tap "Share on WhatsApp" modal/action
+
+---
+
+### F6 — Vehicle Safety Status
+
+Every vehicle record carries a community safety indicator badge based on report credibility:
+
+| Status | Flag Count | Meaning |
 |---|---|---|
-| Colour | All vehicles | Red / Yellow / White / Black / Blue / Silver / Brown / Green / Other |
-| Windows | Uber and personal taxi only — hidden for Danfo, Keke, Okada, Shuttle | Tinted / Not tinted |
-| Condition | All vehicles | Clean / Damaged or dented |
-
-- All fields are optional — user can skip any or all of them
-- Tinted/not tinted field must not appear for Danfo, Keke, Okada, or Shuttle under any circumstance
-- If user skips all fields, only plate and transport type carry forward — that is still sufficient
-
-**After confirmation:**
-- Plate number and any selected description fields carry through directly to trip logging
+| Safe | 0 flags | No reports registered |
+| Mild | 1–2 flags | Single report / low count |
+| Concern | 3+ flags | Multiple independent reports |
+| Dangerous | 5+ flags or serious incident | High risk flagged by community |
 
 ---
 
-### F5 — Trip Logging
+### F7 — Community Incident Reporting & Trust Mechanics
 
-- User logs a trip in under 10 seconds
-- **Required fields:**
-  - Plate number (from F4)
-  - Transport type: Danfo | Keke | Bike (Okada) | Uber | Shuttle | Other
-  - Boarding location (auto-filled from GPS, or user can type)
-  - Check-in timer: user sets this via dropdown — **15 mins | 30 mins | 1 hour | 2 hours | 3 hours**. Default pre-selected value is **1 hour**. User can change it before submitting.
-- **Contact selection:**
-  - User selects which Active contacts receive the immediate push notification alert
-  - User selects one contact who will receive the safety check when the timer expires
-- **On submit:**
-  - Immediate push notification fires to all selected alert contacts with: plate number, vehicle description, transport type, boarding location, and user's live GPS coordinates
-  - Safety check timer starts
-- **Gate:** User cannot log a new trip while a previous trip's post-ride questions remain unanswered
-- **Daily trip limit:** 3 free trips per day. Contributors (₦1,000/month) get unlimited daily trips
+- Commuter can anonymously report/flag a vehicle for: Harassment | Suspicious behaviour | Unsafe driving | Attempted robbery | Route deviation | Other.
+- **Report Credibility Mechanic:** Vehicle flag count is surfaced to the public community once reported by 3 or more independent users.
+- **Monthly Reporting Limit:** Maximum 3 vehicle flags per user per month.
+- All reporting is strictly anonymous — reporter identity is never exposed.
 
 ---
 
-### F6 — Safety Check Timer
+### F8 — Saved Vehicles & Trip History
 
-- Timer starts the moment a trip is logged
-- Timer duration is set by the user at trip logging — default 1 hour
-- Timer options available via dropdown: 15 mins | 30 mins | 1 hour | 2 hours | 3 hours
-- On expiry: the selected safety check contact receives a push notification
-- Notification content: "Did [name] arrive safely? Please call or beep them before responding. This is a real safety tool — do not dismiss this."
-- Notification carries: vehicle plate, description, boarding location, last known GPS coordinates
-- Contact responds via the notification link with one of three options: **YES** | **NO** | **Stuck in traffic** (no app required)
-- **If no response:** system retries up to 3 times with increasing intervals. After 3 failures, contact is marked unresponsive for this trip and user is notified inside the app
-
----
-
-### F7 — Safety Check Responses
-
-**If the contact responds YES:**
-- Trip status moves to Safe
-- Post-ride survey prompt fires for the user (see F9)
-
-**If the contact responds "Stuck in traffic":**
-- Trip status remains Active — no escalation, no incident created
-- A new safety check is scheduled for 45 minutes later to the same contact
-- This re-check can repeat — if the contact responds "Stuck in traffic" again, another 45-minute check is scheduled
-- This option exists specifically to prevent false escalations caused by Lagos traffic delays
-
-**If the contact responds NO:**
-- Contact immediately receives a link containing: plate number, vehicle description, user's last known GPS location, Lagos emergency contact numbers (LASEMA 767, Police 112, others)
-- App starts a 24-hour follow-up window
-- After 24 hours: app sends the same contact a follow-up — "Have you been able to reach [name]?"
-- **Escalation condition:** If contact confirms no AND user has not answered their post-ride questions within 24 hours → vehicle is escalated to **Dangerous** status
-- Dangerous vehicles are surfaced prominently on the home screen feed for all Lagos users
-
----
-
-### F8 — Trip Safety Status
-
-Every trip carries one of these statuses at all times:
-
-| Status | Meaning |
-|---|---|
-| Active | Trip is in progress, timer running |
-| Safe | Contact confirmed arrival |
-| Pending Review | Contact said no or timer expired without response |
-| Incident Triggered | Escalation conditions met |
-| Resolved | Admin or user closed the incident |
-
-Status is visible in the user's trip history at all times.
-
----
-
-### F9 — Post-Ride Survey & Trust-and-Safety Mechanics
-
-- Fires after every trip — regardless of whether the contact said yes or no.
-- One-tap response: **Smooth** or **Something felt off**.
-- **If Smooth:** trip closes, no follow-up.
-- **If Something felt off:** user selects incident type from: Harassment | Suspicious behaviour | Unsafe driving | Attempted robbery | Route deviation | Other.
-- **Report Credibility Mechanic:** To prevent the flagging feature from being used for personal disputes, jokes, or spite rather than genuine safety issues, a vehicle flag is only considered credible and surfaced/displayed to other users once it has been reported by 3 or more independent users.
-- **Monthly Reporting Rate Limit:** A single user can flag a maximum of 3 plates per month.
-- Vehicle is anonymously flagged in the community database.
-- Flag count updates and is surfaced only once the credibility threshold is met.
-- All flagging is anonymous — reporter identity is never stored or displayed.
-- **Gate:** User cannot log a new trip until previous post-ride questions are answered.
-- User can delay once with "Remind me later" — on the second prompt, it is required before a new trip is logged.
-
----
-
-### F10 — Live Trip Tracking (Lightweight)
-
-- GPS coordinates stored periodically during an active trip — not continuous streaming
-- Last known location is always available to safety contacts through the trip notification link
-- No map visible to the user during the trip — this is background location capture only
-- If a user logs into a new device during an active trip: the active trip remains visible and accessible
-
----
-
-### F11 — Incident System
-
-Incidents are created by any of these triggers:
-- Contact responds NO to a safety check
-- Safety check is missed by all selected contacts after retries
-- Post-ride survey reports something felt off
-
-**Incident states:**
-
-| State | Meaning |
-|---|---|
-| Pending Review | Incident created, not yet verified |
-| Verified Concern | Pattern detected or admin confirms credibility |
-| Resolved | Closed by admin or user |
-
-- Incidents are not immediately public — only the flag count and incident category are visible to other users
-- No accusation details, no reporter identity, no individual trip data shown publicly
-- Admin can review, escalate, or resolve incidents from the admin dashboard
-
----
-
-### F12 — Contact Notifications
-
-- Primary channel: Firebase Cloud Messaging (FCM) push notifications
-- Fallback channel: email, if the contact provided an email address during invite activation
-- If push notification delivery fails: user is notified inside the app
-- All notification copy must be human-readable, specific, and action-oriented — not generic system messages
-- Notification types: trip alert (immediate) | safety check (timer-based) | follow-up (24hr) | reliability warning (5 missed check-ins)
-
----
-
-### F13 — Saved Vehicles
-
-- User can save any vehicle directly from search results
-- Saved vehicles list is accessible offline with no data connection required
-- **Vehicles flagged by the user themselves:** display plate number and offense type only
-- **Vehicles flagged by other users:** display full details — incident history, flag count, last known location at time of flag, safety indicator colour
-- User can remove any saved vehicle at any time
-- **Trip Warning Gate:** If a user attempts to log a trip or scans a plate number that exists in their saved list (especially dangerous or flagged vehicles), the app will display a prominent warning banner reminding them that they saved this vehicle as one they should not board.
-
----
-
-### F14 — Home Screen Feed
+- User can save vehicles to their personal watchlist.
+- View past logged trip summaries.
+- **Trip Warning Gate:** If a user searches or logs a plate that exists in their saved list as flagged/dangerous, prominent warning banner is displayed.
 
 - Displays flagged vehicles currently active in Lagos
 - Categorised by offense type

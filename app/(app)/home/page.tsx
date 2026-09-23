@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./home.module.css";
-import PostRideSurvey from "@/components/features/PostRideSurvey";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
 import MicPermissionGuideModal from "@/components/features/MicPermissionGuideModal";
 import Skeleton from "@/components/ui/Skeleton";
@@ -99,21 +98,14 @@ export default function HomePage() {
   const dbUser = useQuery(api.users.getCurrentUser);
   const router = useRouter();
   const convex = useConvex();
-  const contacts = useQuery(api.contacts.getContacts) || [];
-  const hasFewerThanTwoContacts = contacts.length < 2;
 
   // Live feed and saved lists queries
   const feedList = useQuery(api.vehicles.getHomeFeed);
   const savedList = useQuery(api.vehicles.getSavedVehicles);
   const trips = useQuery(api.trips.getTrips);
-  const notifications = useQuery(api.notifications.getNotifications) || [];
-  const markAllRead = useMutation(api.notifications.markAllNotificationsRead);
-  const clearNotification = useMutation(api.notifications.clearNotification);
 
-  const [showNotifications, setShowNotifications] = useState(false);
-  const hasUnread = notifications.some((n) => !n.isRead);
   const activeTrip = trips?.find(
-    (t) => t.status === "active" || t.status === "pending-review" || t.status === "incident-triggered"
+    (t) => t.status === "active"
   );
   const savedCount = savedList?.length ?? 0;
   const feedCount = feedList?.length ?? 0;
@@ -135,9 +127,6 @@ export default function HomePage() {
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" }[]>([]);
   const [expandedGuideTitle, setExpandedGuideTitle] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const [sosLoading, setSosLoading] = useState(false);
-  const [sosSuccess, setSosSuccess] = useState("");
-  const [sosError, setSosError] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [showResultsMenu, setShowResultsMenu] = useState(false);
 
@@ -440,94 +429,6 @@ export default function HomePage() {
     });
   };
 
-  const handleTriggerQuickSOS = () => {
-    setSosError("");
-    setSosSuccess("");
-    const activeContacts = contacts.filter((c) => c.status === "active");
-    if (activeContacts.length === 0) {
-      setSosError("You need at least one Active emergency contact to trigger SOS.");
-      addToast("Add active emergency contacts first!", "error");
-      return;
-    }
-
-    if (!confirm("Are you sure you want to trigger a Quick SOS? This will immediately alert your emergency contacts.")) {
-      return;
-    }
-
-    setSosLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        try {
-          const res = await fetch("/api/trips", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plate: "SOS-PANIC",
-              transportType: "SOS",
-              boardingLocation: "Emergency SOS Panic Trigger",
-              destination: "Emergency Rescue Location",
-              lat: latitude,
-              lng: longitude,
-              durationMinutes: 15,
-              safetyContactId: activeContacts[0]._id,
-              alertContactIds: activeContacts.map((c) => c._id),
-              description: "Emergency SOS Panic alert triggered directly from Home dashboard.",
-            }),
-          });
-
-          const data = await res.json();
-          if (res.ok && data.success) {
-            setSosSuccess("SOS Alert triggered! Contacts have been notified.");
-            addToast("SOS Alert triggered successfully!", "success");
-          } else {
-            setSosError(data.message || "Failed to trigger SOS alert.");
-            addToast(data.message || "Failed to trigger SOS alert.", "error");
-          }
-        } catch (err: any) {
-          setSosError("Failed to trigger SOS alert. Check your network.");
-          addToast("Failed to trigger SOS alert. Check your network.", "error");
-        } finally {
-          setSosLoading(false);
-        }
-      },
-      async (error) => {
-        try {
-          const res = await fetch("/api/trips", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plate: "SOS-PANIC",
-              transportType: "SOS",
-              boardingLocation: "Emergency SOS Panic Trigger (No GPS)",
-              destination: "Emergency Rescue Location",
-              lat: 6.5244,
-              lng: 3.3792,
-              durationMinutes: 15,
-              safetyContactId: activeContacts[0]._id,
-              alertContactIds: activeContacts.map((c) => c._id),
-              description: "Emergency SOS Panic alert triggered directly from Home dashboard. GPS access denied.",
-            }),
-          });
-          const data = await res.json();
-          if (res.ok && data.success) {
-            setSosSuccess("SOS Alert triggered (using default city location)!");
-            addToast("SOS Alert triggered successfully!", "success");
-          } else {
-            setSosError(data.message || "Failed to trigger SOS alert.");
-            addToast(data.message || "Failed to trigger SOS alert.", "error");
-          }
-        } catch (err: any) {
-          setSosError("Failed to trigger SOS alert.");
-          addToast("Failed to trigger SOS alert.", "error");
-        } finally {
-          setSosLoading(false);
-        }
-      },
-      { timeout: 8000 }
-    );
-  };
-
   // 1. Direct Search Handler (Dual-Layer: API Route + Direct Convex Query Fallback)
   const handleSearchSubmit = async (e?: React.FormEvent, plateToSearch?: string) => {
     if (e) e.preventDefault();
@@ -640,7 +541,6 @@ export default function HomePage() {
 
   return (
     <main className={styles.container}>
-      <PostRideSurvey />
       {/* HEADER SECTION */}
       {uiState === "search" && (
         <header className={styles.header}>
@@ -654,76 +554,6 @@ export default function HomePage() {
               <span className={styles.greetingText}>Hello,</span>
               <h2 className={styles.name}>{dbUser?.displayName || "Commuter"}</h2>
             </div>
-          </div>
-          <div className={styles.bellContainer}>
-            <button 
-              className={styles.bellBtn} 
-              onClick={() => {
-                setShowNotifications(!showNotifications);
-                if (hasUnread) {
-                  markAllRead().catch((e) => console.error("Failed to mark notifications read", e));
-                }
-              }}
-              aria-label="Notifications" 
-              title="Notifications"
-            >
-              <Bell size={20} />
-              {hasUnread && <span className={styles.bellBadge}></span>}
-            </button>
-
-            {showNotifications && (
-              <>
-                <div 
-                  className={styles.notificationsBackdrop} 
-                  onClick={() => setShowNotifications(false)}
-                />
-                <div className={styles.notificationsPopover}>
-                  <div className={styles.notificationsHeader}>
-                    <h3>Notifications</h3>
-                    <button 
-                      type="button" 
-                      className={styles.closeNotificationsBtn}
-                      onClick={() => setShowNotifications(false)}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                  <div className={styles.notificationsList}>
-                    {notifications.length === 0 ? (
-                      <p className={styles.emptyNotifications}>No notifications yet.</p>
-                    ) : (
-                      notifications.map((notif) => (
-                        <div 
-                          key={notif._id} 
-                          className={`${styles.notificationItem} ${!notif.isRead ? styles.notificationUnread : ""}`}
-                        >
-                          <div className={styles.notificationContent}>
-                            <strong className={styles.notificationTitle}>{notif.title}</strong>
-                            <p className={styles.notificationMessage}>{notif.message}</p>
-                            <span className={styles.notificationTime}>
-                              {new Date(notif.createdAt).toLocaleDateString("en-NG", {
-                                day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
-                              })}
-                            </span>
-                          </div>
-                          <button 
-                            type="button" 
-                            className={styles.clearNotifBtn}
-                            onClick={() => {
-                              clearNotification({ id: notif._id }).catch((e) => console.error(e));
-                            }}
-                            title="Delete notification"
-                            aria-label="Delete notification"
-                          >
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
           </div>
         </header>
       )}
@@ -1337,46 +1167,7 @@ export default function HomePage() {
               <a href="tel:767" className={styles.emergencyDialBtn} onClick={() => trackEvent("Emergency Call Initiated", { channel: "767" })}>
                 Call 767 (Hotline)
               </a>
-              <button 
-                type="button" 
-                className={styles.emergencySosBtn}
-                onClick={handleTriggerQuickSOS}
-                disabled={sosLoading}
-              >
-                {sosLoading ? "Triggering..." : "Send Silent SOS"}
-              </button>
             </div>
-
-            {sosSuccess && (
-              <div className={styles.emergencySuccessBanner}>
-                <CheckCircle size={14} style={{ color: "#10b981", flexShrink: 0, marginTop: "2px" }} />
-                <span style={{ flex: 1 }}>{sosSuccess}</span>
-                <button
-                  type="button"
-                  className={styles.bannerCloseBtn}
-                  onClick={() => setSosSuccess("")}
-                  aria-label="Close"
-                  title="Close"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            )}
-            {sosError && (
-              <div className={styles.emergencyErrorBanner}>
-                <AlertCircle size={14} style={{ color: "#ef4444", flexShrink: 0, marginTop: "2px" }} />
-                <span style={{ flex: 1 }}>{sosError}</span>
-                <button
-                  type="button"
-                  className={styles.bannerCloseBtn}
-                  onClick={() => setSosError("")}
-                  aria-label="Close"
-                  title="Close"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            )}
           </section>
         </>
       )}
@@ -1564,8 +1355,6 @@ export default function HomePage() {
                 type="button"
                 className={styles.resultBannerLogTripSingle}
                 onClick={() => router.push(`/trip/new?plate=${encodeURIComponent(searchedPlate)}`)}
-                disabled={hasFewerThanTwoContacts}
-                title={hasFewerThanTwoContacts ? "Add 2 contacts to log a trip" : "Log a trip with this vehicle"}
               >
                 Log Trip <ArrowRight size={15} />
               </button>
@@ -1648,18 +1437,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          {hasFewerThanTwoContacts && (
-            <div className={styles.disabledWarningBanner}>
-              <AlertCircle size={16} />
-              <span>Add new contact to log trip.</span>
-            </div>
-          )}
-
           <div className={styles.ocrActions}>
             <button
               className="primary"
               onClick={() => handleProceedToTrip(searchQuery)}
-              disabled={hasFewerThanTwoContacts}
             >
               Proceed to Trip <ArrowRight size={18} />
             </button>
@@ -1830,19 +1611,11 @@ export default function HomePage() {
             </div>
           )}
 
-          {hasFewerThanTwoContacts && (
-            <div className={styles.disabledWarningBanner}>
-              <AlertCircle size={16} />
-              <span>Add new contact to log trip.</span>
-            </div>
-          )}
-
           {/* Stacked CTAs */}
           <div className={styles.resultsActionsStacked}>
             <button
               className={styles.primaryBtnStacked}
               onClick={() => handleProceedToTrip(searchedPlate)}
-              disabled={hasFewerThanTwoContacts}
             >
               Log a Trip
             </button>

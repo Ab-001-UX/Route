@@ -7,57 +7,7 @@ import { api } from "./_generated/api";
 import { checkRateLimit } from "../lib/upstash";
 
 /**
- * Convex Action: Rate-limits and executes the addContact mutation.
- * Limit: 30 per user per hour (3600 seconds)
- */
-export const rateLimitedAddContact = action({
-  args: {
-    name: v.string(),
-    relationship: v.string(),
-    phone: v.string(),
-    email: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError("Unauthenticated request");
-    }
-
-    const rateLimit = await checkRateLimit(identity.subject, "add_contact", 30, 3600);
-    if (!rateLimit.success) {
-      throw new ConvexError("Rate limit exceeded: Please wait a few minutes before adding more contacts.");
-    }
-
-    return await ctx.runMutation(api.contacts.addContact, args);
-  },
-});
-
-/**
- * Convex Action: Rate-limits and executes the resendInvite mutation.
- * Limit: 20 per user per hour (3600 seconds)
- */
-export const rateLimitedResendInvite = action({
-  args: {
-    contactId: v.id("contacts"),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError("Unauthenticated request");
-    }
-
-    const rateLimit = await checkRateLimit(identity.subject, "resend_invite", 20, 3600);
-    if (!rateLimit.success) {
-      throw new ConvexError("Rate limit exceeded: Please wait a few minutes before regenerating invite links.");
-    }
-
-    return await ctx.runMutation(api.contacts.resendInvite, args);
-  },
-});
-
-/**
  * Convex Action: Rate-limits and executes the saveVehicle mutation.
- * Limit: 50 per user per hour (3600 seconds)
  */
 export const rateLimitedSaveVehicle = action({
   args: { plate: v.string() },
@@ -78,7 +28,6 @@ export const rateLimitedSaveVehicle = action({
 
 /**
  * Convex Action: Rate-limits and executes the unsaveVehicle mutation.
- * Limit: 50 per user per hour (3600 seconds)
  */
 export const rateLimitedUnsaveVehicle = action({
   args: { plate: v.string() },
@@ -99,7 +48,6 @@ export const rateLimitedUnsaveVehicle = action({
 
 /**
  * Convex Action: Rate-limits and executes the togglePinVehicle mutation.
- * Limit: 50 per user per hour (3600 seconds)
  */
 export const rateLimitedTogglePinVehicle = action({
   args: { plate: v.string() },
@@ -119,41 +67,12 @@ export const rateLimitedTogglePinVehicle = action({
 });
 
 /**
- * Convex Action: Rate-limits and executes the submitPostRideSurvey mutation.
- * Limit: 5 per trip
- */
-export const rateLimitedSubmitPostRideSurvey = action({
-  args: {
-    tripId: v.id("trips"),
-    response: v.union(v.literal("smooth"), v.literal("felt-off")),
-    incidentType: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError("Unauthenticated request");
-    }
-
-    const rateLimit = await checkRateLimit(identity.subject, `survey_${args.tripId}`, 5, 86400);
-    if (!rateLimit.success) {
-      throw new ConvexError("Rate limit exceeded: You have already submitted feedback for this trip multiple times.");
-    }
-
-    return await ctx.runMutation(api.trips.submitPostRideSurvey, args);
-  },
-});
-
-/**
  * Convex Action: Rate-limits and executes the updateUserSettings mutation.
- * Limit: 60 per user per hour (3600 seconds)
  */
 export const rateLimitedUpdateUserSettings = action({
   args: {
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
-    privacyMode: v.optional(v.boolean()),
-    locationEnabled: v.optional(v.boolean()),
-    pushNotificationsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -172,7 +91,6 @@ export const rateLimitedUpdateUserSettings = action({
 
 /**
  * Convex Action: Rate-limits and executes the flagVehicleByPlate mutation.
- * Limit: 5 per user per day (86400 seconds)
  */
 export const rateLimitedFlagVehicleByPlate = action({
   args: { plate: v.string() },
@@ -182,7 +100,6 @@ export const rateLimitedFlagVehicleByPlate = action({
       throw new ConvexError("Unauthenticated request");
     }
 
-    // Global monthly limit: max 4 reports/flags per month
     const monthlyLimit = await checkRateLimit(identity.subject, "flag_vehicle_monthly", 4, 2592000);
     if (!monthlyLimit.success) {
       throw new ConvexError("Monthly reporting limit reached. To maintain integrity, reports are strictly limited to ensure sincerity and prevent spam.");
@@ -199,7 +116,6 @@ export const rateLimitedFlagVehicleByPlate = action({
 
 /**
  * Convex Action: Rate-limits and executes the flagVehicleWithReport mutation.
- * Limit: 4 detailed flag reports per user per month.
  */
 export const rateLimitedFlagVehicleWithReport = action({
   args: {
@@ -216,7 +132,6 @@ export const rateLimitedFlagVehicleWithReport = action({
       throw new ConvexError("Unauthenticated request");
     }
 
-    // Global monthly limit: max 4 reports/flags per month
     const monthlyLimit = await checkRateLimit(identity.subject, "flag_vehicle_monthly", 4, 2592000);
     if (!monthlyLimit.success) {
       throw new ConvexError("Monthly reporting limit reached. To maintain integrity, reports are strictly limited to ensure sincerity and prevent spam.");
