@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ChevronLeft, MessageCircle, Copy, Check, Sparkles, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, MessageCircle, Copy, Check, Sparkles, AlertCircle, Loader2 } from "lucide-react";
 import styles from "./new.module.css";
 import { trackEvent } from "@/lib/analytics";
 
@@ -139,10 +139,10 @@ export default function NewTripPage() {
     <main className={styles.container}>
       <header className={styles.header}>
         <button className="backBtn" onClick={() => router.back()} aria-label="Go back">
-          <ChevronLeft size={20} />
+          <ArrowLeft size={22} />
         </button>
-        <h2>Log Trip Summary</h2>
-        <div style={{ width: 40 }} />
+        <h2>Log Trip</h2>
+        <div style={{ width: 44 }} />
       </header>
 
       <section className={styles.content}>

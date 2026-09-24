@@ -267,13 +267,6 @@ export default function SafetyCheckClient({ token, isIOS }: SafetyCheckClientPro
             <h1 className={styles.pageTitle}>
               {isTimerExpired ? "Arrived Safely?" : "Trip in Progress"}
             </h1>
-            <p className={styles.pageSubtitle}>
-              {isTimerExpired ? (
-                <>Checking if <strong style={{ color: "#ffffff" }}>{trip.userName}</strong> reached their destination.</>
-              ) : (
-                <>Details of <strong style={{ color: "#ffffff" }}>{trip.userName}</strong>'s current transit.</>
-              )}
-            </p>
           </header>
 
           <section className={styles.safetyCard}>

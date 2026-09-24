@@ -8,6 +8,7 @@ import {
   Pin,
   Search,
   AlertTriangle,
+  ArrowLeft,
   ChevronLeft,
   X,
   CheckCircle,
@@ -349,7 +350,7 @@ export default function SavedPage() {
             onClick={() => router.push("/home")}
             aria-label="Go back to home"
           >
-            <ChevronLeft size={20} />
+            <ArrowLeft size={22} />
           </button>
           <h1 className={styles.title}>My Bookmarks</h1>
           <div style={{ width: 44 }} />

@@ -18,6 +18,7 @@ import {
   CalendarDays, 
   ChevronDown, 
   ChevronUp,
+  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   X,
@@ -225,10 +226,10 @@ export default function TripsPage() {
         <header className={styles.pageHeader}>
           <div className={styles.headerTop}>
             <button className="backBtn" onClick={() => router.push("/home")} aria-label="Go back to home">
-              <ChevronLeft size={20} />
+              <ArrowLeft size={22} />
             </button>
             <h1 className={styles.title}>My Trips</h1>
-            <div className={styles.backBtnSpacer} />
+            <div style={{ width: 44 }} />
           </div>
         </header>
         <section className={styles.tripList}>
@@ -254,10 +255,10 @@ export default function TripsPage() {
       <header className={styles.pageHeader}>
         <div className={styles.headerTop}>
           <button className="backBtn" onClick={() => router.push("/home")} aria-label="Go back to home">
-            <ChevronLeft size={20} />
+            <ArrowLeft size={22} />
           </button>
           <h1 className={styles.title}>My Trips</h1>
-          <div className={styles.backBtnSpacer} />
+          <div style={{ width: 44 }} />
         </div>
       </header>
 

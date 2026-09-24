@@ -5,6 +5,7 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { 
+  ArrowLeft,
   ChevronLeft, 
   ChevronRight, 
   ChevronDown,
@@ -84,9 +85,10 @@ export default function SettingsPage() {
       {/* Settings Header */}
       <header className={styles.settingsHeader}>
         <button className={`${styles.backBtn} backBtn`} onClick={() => router.push("/home")} aria-label="Go back to home">
-          <ChevronLeft size={20} />
+          <ArrowLeft size={22} />
         </button>
         <h1>Settings</h1>
+        <div style={{ width: 44 }} />
       </header>
 
       {/* PWA Install Banner */}
