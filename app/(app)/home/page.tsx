@@ -102,7 +102,8 @@ export default function HomePage() {
   // Live feed and saved lists queries
   const feedList = useQuery(api.vehicles.getHomeFeed);
   const savedList = useQuery(api.vehicles.getSavedVehicles);
-  const trips = useQuery(api.trips.getTrips);
+  const rawTrips = useQuery(api.trips.getTrips);
+  const trips = rawTrips as any[] | undefined;
 
   const activeTrip = trips?.find(
     (t) => t.status === "active"
@@ -552,7 +553,13 @@ export default function HomePage() {
             />
             <div className={styles.userInfo}>
               <span className={styles.greetingText}>Hello,</span>
-              <h2 className={styles.name}>{dbUser?.displayName || "Commuter"}</h2>
+              <h2 className={styles.name}>
+                {dbUser?.displayName?.trim() ||
+                  user?.firstName?.trim() ||
+                  user?.fullName?.trim() ||
+                  (user?.primaryEmailAddress?.emailAddress ? user.primaryEmailAddress.emailAddress.split("@")[0] : null) ||
+                  "Commuter"}
+              </h2>
             </div>
           </div>
         </header>

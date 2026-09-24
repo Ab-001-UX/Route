@@ -100,7 +100,13 @@ export default function SettingsPage() {
           <User size={28} />
         </div>
         <div className={styles.userMeta}>
-          <h2>{dbUser?.displayName || user?.fullName || "Commuter Profile"}</h2>
+          <h2>
+            {dbUser?.displayName?.trim() ||
+              user?.firstName?.trim() ||
+              user?.fullName?.trim() ||
+              (user?.primaryEmailAddress?.emailAddress ? user.primaryEmailAddress.emailAddress.split("@")[0] : null) ||
+              "Commuter Profile"}
+          </h2>
           <p>{dbUser?.phone || user?.primaryPhoneNumber?.phoneNumber || "Verified Profile"}</p>
         </div>
       </div>
