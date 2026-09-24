@@ -16,15 +16,20 @@ export default function OnboardingPage() {
 
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
   const currentUser = useQuery(api.users.getCurrentUser);
-  const createUser = useMutation(api.users.createUser);
-  const updateUser = useMutation(api.users.updateUser);
+  const completeOnboarding = useMutation(api.users.completeOnboarding);
 
-  // If user already exists and has displayName set, skip to home
+  // If user already completed onboarding, skip to home
   useEffect(() => {
-    if (currentUser !== undefined && currentUser !== null) {
+    if (currentUser !== undefined && currentUser !== null && currentUser.onboardingCompleted === true) {
       router.replace("/home");
     }
   }, [currentUser, router]);
+
+  useEffect(() => {
+    if (currentUser?.displayName && !displayName) {
+      setDisplayName(currentUser.displayName);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     safeLocalStorage.setItem("route-last-active", Date.now().toString());
@@ -42,15 +47,9 @@ export default function OnboardingPage() {
     }
 
     try {
-      if (currentUser) {
-        if (displayName.trim()) {
-          await updateUser({ displayName: displayName.trim() });
-        }
-      } else {
-        await createUser({
-          displayName: displayName.trim() || undefined,
-        });
-      }
+      await completeOnboarding({
+        displayName: displayName.trim() || undefined,
+      });
       safeLocalStorage.setItem("route-last-active", Date.now().toString());
       router.replace("/home");
     } catch (err: any) {

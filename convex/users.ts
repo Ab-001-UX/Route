@@ -58,6 +58,7 @@ export const createUser = mutation({
       phone: cleanPhone,
       contributorStatus: false,
       tripCountToday: 0,
+      onboardingCompleted: true,
       createdAt: Date.now(),
     });
   },
@@ -92,8 +93,72 @@ export const ensureUser = mutation({
       phone: identity.phoneNumber || undefined,
       contributorStatus: false,
       tripCountToday: 0,
+      onboardingCompleted: false,
       createdAt: Date.now(),
     });
+  },
+});
+
+/**
+ * Marks onboarding as completed for the current user and saves profile details.
+ */
+export const completeOnboarding = mutation({
+  args: {
+    displayName: v.optional(v.string()),
+    phone: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthenticated request");
+    }
+
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    let cleanPhone = undefined;
+    if (args.phone) {
+      const parsedPhone = phoneSchema.safeParse(args.phone);
+      if (parsedPhone.success) {
+        cleanPhone = parsedPhone.data;
+      }
+    }
+
+    let cleanName = undefined;
+    if (args.displayName !== undefined && args.displayName.trim() !== "") {
+      const parsedName = displayNameSchema.safeParse(args.displayName);
+      if (parsedName.success) {
+        cleanName = parsedName.data;
+      }
+    }
+
+    if (!existing) {
+      return await ctx.db.insert("users", {
+        clerkId: identity.subject,
+        displayName: cleanName || identity.name || undefined,
+        phone: cleanPhone || identity.phoneNumber || undefined,
+        contributorStatus: false,
+        tripCountToday: 0,
+        onboardingCompleted: true,
+        createdAt: Date.now(),
+      });
+    }
+
+    const patches: { displayName?: string; phone?: string; onboardingCompleted: boolean } = {
+      onboardingCompleted: true,
+    };
+
+    if (cleanName !== undefined) {
+      patches.displayName = cleanName;
+    }
+    if (cleanPhone !== undefined) {
+      patches.phone = cleanPhone;
+    }
+
+    await ctx.db.patch(existing._id, patches);
+    return existing._id;
   },
 });
 

@@ -142,8 +142,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
     };
   }, []);
 
-  // Show a loading screen while checking onboarding state
-  if (dbUser === undefined) {
+  // Redirect users who have not completed onboarding
+  useEffect(() => {
+    if (dbUser !== undefined && dbUser !== null && !dbUser.onboardingCompleted) {
+      router.replace("/onboarding");
+    }
+  }, [dbUser, router]);
+
+  // Show a loading screen while checking onboarding state or redirecting
+  if (dbUser === undefined || dbUser === null || !dbUser.onboardingCompleted) {
     return (
       <div className={styles.shell}>
         <div className={styles.viewport}>

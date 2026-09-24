@@ -10,6 +10,7 @@ export default defineSchema({
     tripCountToday: v.number(),
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
+    onboardingCompleted: v.optional(v.boolean()),
     createdAt: v.number(),
   })
     .index("by_clerkId", ["clerkId"]),
