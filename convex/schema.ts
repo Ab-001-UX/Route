@@ -10,6 +10,7 @@ export default defineSchema({
     tripCountToday: v.number(),
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
+    privacyMode: v.optional(v.boolean()),
     onboardingCompleted: v.optional(v.boolean()),
     createdAt: v.number(),
   })

@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
-import { phoneSchema, displayNameSchema, themeSchema, fontSizeSchema } from "../lib/validators";
+import { phoneSchema, displayNameSchema, themeSchema, fontSizeSchema, privacyModeSchema } from "../lib/validators";
 
 /**
  * Returns the currently authenticated user's database record.
@@ -215,6 +215,7 @@ export const updateUserSettings = mutation({
   args: {
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
+    privacyMode: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -234,6 +235,7 @@ export const updateUserSettings = mutation({
     const updates: {
       theme?: string;
       fontSize?: string;
+      privacyMode?: boolean;
     } = {};
 
     if (args.theme !== undefined) {
@@ -250,6 +252,14 @@ export const updateUserSettings = mutation({
         throw new ConvexError(parsedFontSize.error.issues[0].message);
       }
       updates.fontSize = parsedFontSize.data;
+    }
+
+    if (args.privacyMode !== undefined) {
+      const parsedPrivacy = privacyModeSchema.safeParse(args.privacyMode);
+      if (!parsedPrivacy.success) {
+        throw new ConvexError(parsedPrivacy.error.issues[0].message);
+      }
+      updates.privacyMode = parsedPrivacy.data;
     }
 
     await ctx.db.patch(user._id, updates);

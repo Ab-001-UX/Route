@@ -73,6 +73,7 @@ export const rateLimitedUpdateUserSettings = action({
   args: {
     theme: v.optional(v.string()),
     fontSize: v.optional(v.string()),
+    privacyMode: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
