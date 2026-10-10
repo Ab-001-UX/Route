@@ -53,7 +53,12 @@ export default function OnboardingPage() {
       safeLocalStorage.setItem("route-last-active", Date.now().toString());
       router.replace("/home");
     } catch (err: any) {
-      setErrorMsg(err.message || "Failed to complete setup.");
+      const message = err?.data || err?.message;
+      if (typeof message === "string" && !message.includes("[CONVEX") && !message.includes("Server Error")) {
+        setErrorMsg(message);
+      } else {
+        setErrorMsg("Unable to complete profile setup. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

@@ -116,7 +116,7 @@ export const completeOnboarding = mutation({
     const existing = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
-      .unique();
+      .first();
 
     let cleanPhone = undefined;
     if (args.phone) {
