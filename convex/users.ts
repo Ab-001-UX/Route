@@ -106,24 +106,6 @@ export const ensureUser = mutation({
   },
 });
 
-/**
- * Migration helper to ensure all existing users who already configured their account
- * have onboardingCompleted: true.
- */
-export const backfillOnboarding = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    let updated = 0;
-    for (const user of users) {
-      if (user.onboardingCompleted !== true && user.displayName) {
-        await ctx.db.patch(user._id, { onboardingCompleted: true });
-        updated++;
-      }
-    }
-    return { total: users.length, updated };
-  },
-});
 
 /**
  * Marks onboarding as completed for the current user and saves profile details.
