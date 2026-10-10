@@ -78,11 +78,18 @@ export const ensureUser = mutation({
     const existing = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
-      .unique();
+      .first();
 
     if (existing) {
+      const patches: { displayName?: string; onboardingCompleted?: boolean } = {};
       if (!existing.displayName && identity.name) {
-        await ctx.db.patch(existing._id, { displayName: identity.name });
+        patches.displayName = identity.name;
+      }
+      if (existing.onboardingCompleted !== true && (existing.displayName || identity.name)) {
+        patches.onboardingCompleted = true;
+      }
+      if (Object.keys(patches).length > 0) {
+        await ctx.db.patch(existing._id, patches);
       }
       return existing._id;
     }
@@ -96,6 +103,25 @@ export const ensureUser = mutation({
       onboardingCompleted: false,
       createdAt: Date.now(),
     });
+  },
+});
+
+/**
+ * Migration helper to ensure all existing users who already configured their account
+ * have onboardingCompleted: true.
+ */
+export const backfillOnboarding = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    let updated = 0;
+    for (const user of users) {
+      if (user.onboardingCompleted !== true && user.displayName) {
+        await ctx.db.patch(user._id, { onboardingCompleted: true });
+        updated++;
+      }
+    }
+    return { total: users.length, updated };
   },
 });
 

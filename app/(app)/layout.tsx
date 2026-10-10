@@ -142,15 +142,18 @@ export default function AppLayout({ children }: AppLayoutProps) {
     };
   }, []);
 
-  // Redirect users who have not completed onboarding
+  // Check if onboarding is completed or user already has an established profile displayName
+  const isOnboarded = dbUser?.onboardingCompleted === true || (dbUser?.displayName !== undefined && dbUser?.displayName !== "");
+
+  // Redirect brand new users who have not completed onboarding
   useEffect(() => {
-    if (dbUser !== undefined && dbUser !== null && !dbUser.onboardingCompleted) {
+    if (dbUser !== undefined && dbUser !== null && !isOnboarded) {
       router.replace("/onboarding");
     }
-  }, [dbUser, router]);
+  }, [dbUser, isOnboarded, router]);
 
   // Show a loading screen while checking onboarding state or redirecting
-  if (dbUser === undefined || dbUser === null || !dbUser.onboardingCompleted) {
+  if (dbUser === undefined || dbUser === null || !isOnboarded) {
     return (
       <div className={styles.shell}>
         <div className={styles.viewport}>

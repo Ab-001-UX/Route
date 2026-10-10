@@ -18,9 +18,9 @@ export default function OnboardingPage() {
   const currentUser = useQuery(api.users.getCurrentUser);
   const completeOnboarding = useMutation(api.users.completeOnboarding);
 
-  // If user already completed onboarding, skip to home
+  // If user already completed onboarding or has an established display name, skip to home
   useEffect(() => {
-    if (currentUser !== undefined && currentUser !== null && currentUser.onboardingCompleted === true) {
+    if (currentUser !== undefined && currentUser !== null && (currentUser.onboardingCompleted === true || (currentUser.displayName !== undefined && currentUser.displayName !== ""))) {
       router.replace("/home");
     }
   }, [currentUser, router]);
