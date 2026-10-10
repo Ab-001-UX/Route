@@ -102,8 +102,7 @@ export default function HomePage() {
   // Live feed and saved lists queries
   const feedList = useQuery(api.vehicles.getHomeFeed);
   const savedList = useQuery(api.vehicles.getSavedVehicles);
-  const rawTrips = useQuery(api.trips.getTrips);
-  const trips = rawTrips as any[] | undefined;
+  const trips = useQuery(api.trips.getTrips);
 
   const activeTrip = trips?.find(
     (t) => t.status === "active"

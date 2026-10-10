@@ -441,7 +441,7 @@ export default function TripsPage() {
                         </span>
                         <span
                           className={`${styles.statusBadge} ${
-                            trip.status === "active"
+                            (trip.status || "active") === "active"
                               ? styles.statusActive
                               : trip.status === "safe"
                               ? styles.statusSafe
@@ -450,7 +450,7 @@ export default function TripsPage() {
                               : styles.statusIncident
                           }`}
                         >
-                          {trip.status}
+                          {trip.status || "active"}
                         </span>
                       </div>
 

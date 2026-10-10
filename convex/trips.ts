@@ -44,6 +44,7 @@ export const createTrip = mutation({
       boardingLocation: args.boardingLocation,
       destination: args.destination,
       description: args.description,
+      status: "active",
       createdAt: Date.now(),
     });
 

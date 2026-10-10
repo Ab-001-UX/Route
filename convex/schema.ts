@@ -23,6 +23,7 @@ export default defineSchema({
     boardingLocation: v.string(),
     destination: v.optional(v.string()),
     description: v.optional(v.string()),
+    status: v.optional(v.string()),
     createdAt: v.number(),
   })
     .index("by_userId", ["userId"])
