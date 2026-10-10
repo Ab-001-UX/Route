@@ -27,7 +27,6 @@ import {
 import { useRouter } from "next/navigation";
 import styles from "./home.module.css";
 import PwaInstallBanner from "@/components/features/PwaInstallBanner";
-import MicPermissionGuideModal from "@/components/features/MicPermissionGuideModal";
 import Skeleton from "@/components/ui/Skeleton";
 import { trackEvent } from "@/lib/analytics";
 import { safeLocalStorage } from "@/lib/storage";

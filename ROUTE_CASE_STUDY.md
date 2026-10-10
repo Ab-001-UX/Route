@@ -1,21 +1,19 @@
 # Route — UX Case Study & Engineering Dossier
 
-**Product:** Route — Passive Safety PWA  
+**Product:** Route  
 **Designer & Engineer:** Abimbola Monsurat (Product Designer & Full-Stack Engineer)  
 **Target Market:** Lagos State, Nigeria  
-**Stack:** Next.js 15 (App Router), Convex (Serverless Realtime DB), Clerk Auth, Upstash Redis, Vanilla CSS Modules (M3 Tokens)  
+**Design System:** Material Design 3 Tokens, Nunito Typography, WCAG 2.1 AA Accessibility  
 
 ---
 
 ## 1. Executive Summary & Problem Statement
 
 ### The Problem
-In Lagos, transit security is a daily life-or-death concern. Criminal syndicates operate using the city's commercial transit infrastructure — Danfo buses, Keke Napeps, and Okada bikes — posing as regular operators to execute **"One-Chance"** robberies, express kidnappings, and extortions.
-
-Commuters attempt to protect themselves using informal WhatsApp messages or tweeting plate numbers to friends before boarding. However, these messages are unstructured, lost in chat threads, and offer no active safety tracking if the commuter is unable to call for help.
+In Lagos State, where commercial transit options such as Danfo buses, Keke Napeps, Okada motorcycles, and e-hailing vehicles form the backbone of daily movement, commuters navigate constant vulnerability to organized criminal syndicates operating "One-Chance" robberies, express kidnappings, and extortions, leaving passengers without a reliable medium to log the specific vehicles they step into or share critical physical descriptions with their family members, while individual commuters who encounter dangerous operators or suspicious vehicles have no central way to warn others, resulting in isolated incidents going unreported and leaving the broader commuting public unaware of repeating safety hazards across busy transit corridors.
 
 ### The Solution
-Designed and engineered by **Abimbola Monsurat**, **Route** is a passive-safety Progressive Web App (PWA). Before boarding, commuters search a vehicle's plate number to instantly view its community safety record (Green = Safe, Yellow = Mild Concern, Orange = Elevated Concern, Red = Dangerous). When a trip is logged, Route passively encrypts and tracks GPS coordinates every 2 minutes and notifies designated emergency contacts via WhatsApp without requiring contacts to download an app.
+Route is a passive safety application that empowers commuters to keep an active personal record of every vehicle they board, automatically inform loved ones with detailed vehicle descriptions and peculiar trip details through quick-share web cards, and participate in a collective community safety network where passengers can flag dangerous vehicles to protect one another before stepping inside.
 
 ---
 
