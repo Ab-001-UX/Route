@@ -1,19 +1,19 @@
 # Route — UX Case Study & Engineering Dossier
 
-**Product:** Route  
+**Product:** Route — A community safety platform that helps Lagos commuters log vehicle details, inform loved ones, and flag dangerous transit operators in real time.  
 **Designer & Engineer:** Abimbola Monsurat (Product Designer & Full-Stack Engineer)  
 **Target Market:** Lagos State, Nigeria  
-**Design System:** Material Design 3 Tokens, Nunito Typography, WCAG 2.1 AA Accessibility  
+**Stack:** Next.js 15 (App Router), Convex (Serverless Realtime DB), Clerk Auth, Upstash Redis, Vanilla CSS Modules (M3 Tokens)  
 
 ---
 
 ## 1. Executive Summary & Problem Statement
 
 ### The Problem
-In Lagos State, where commercial transit options such as Danfo buses, Keke Napeps, Okada motorcycles, and e-hailing vehicles form the backbone of daily movement, commuters navigate constant vulnerability to organized criminal syndicates operating "One-Chance" robberies, express kidnappings, and extortions, leaving passengers without a reliable medium to log the specific vehicles they step into or share critical physical descriptions with their family members, while individual commuters who encounter dangerous operators or suspicious vehicles have no central way to warn others, resulting in isolated incidents going unreported and leaving the broader commuting public unaware of repeating safety hazards across busy transit corridors.
+In Lagos State, where commercial transit operators navigate high-density urban corridors, daily commuters face persistent exposure to organized "One-Chance" syndicates, express kidnappings, and extortions. This problem persists because transit safety information remains entirely fragmented, leaving commuters with no way to verify whether an approaching vehicle is dangerous or share structured vehicle intelligence with their loved ones. Without a centralized safety network, individual transit crimes go unreported, preventing commuters from warning one another and exposing millions of daily passengers to preventable violence and extortion.
 
 ### The Solution
-Route is a passive safety application that empowers commuters to keep an active personal record of every vehicle they board, automatically inform loved ones with detailed vehicle descriptions and peculiar trip details through quick-share web cards, and participate in a collective community safety network where passengers can flag dangerous vehicles to protect one another before stepping inside.
+Route addresses this crisis by providing Lagos commuters with a passive community safety network that verifies vehicle safety records before boarding, keeps a clear log of vehicle details for loved ones, and crowd-sources real-time danger flags to protect the broader commuting public.
 
 ---
 
