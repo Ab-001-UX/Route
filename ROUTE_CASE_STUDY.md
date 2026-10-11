@@ -1,7 +1,7 @@
 # Route — UX Case Study & Engineering Dossier
 
-**Product:** Route — A community safety platform that helps Lagos commuters log vehicle details, inform loved ones, and flag dangerous transit operators in real time.  
-**Designer & Engineer:** Abimbola Monsurat (Product Designer & Full-Stack Engineer)  
+**Product:** Route — A community safety platform empowering Lagos commuters to verify vehicle risk records, share structured trip details with loved ones, and flag transit hazards in real time.  
+**Role:** Lead Product Designer & Full-Stack Engineer (Abimbola Monsurat)  
 **Target Market:** Lagos State, Nigeria  
 **Stack:** Next.js 15 (App Router), Convex (Serverless Realtime DB), Clerk Auth, Upstash Redis, Vanilla CSS Modules (M3 Tokens)  
 
@@ -10,7 +10,7 @@
 ## 1. Executive Summary & Problem Statement
 
 ### The Problem
-In Lagos State, where commercial transit operators navigate high-density urban corridors, daily commuters face persistent exposure to organized "One-Chance" syndicates, express kidnappings, and extortions. This problem persists because transit safety information remains entirely fragmented, leaving commuters with no way to verify whether an approaching vehicle is dangerous or share structured vehicle intelligence with their loved ones. Without a centralized safety network, individual transit crimes go unreported, preventing commuters from warning one another and exposing millions of daily passengers to preventable violence and extortion.
+In Lagos State, where over 75,000 commercial Danfo buses, Keke Napeps, Okada motorcycles, and e-hailing vehicles navigate high-density transit corridors, daily commuters face persistent exposure to organized "One-Chance" syndicates, express kidnappings, and extortions. This problem persists because transit safety information remains entirely fragmented, leaving commuters with no way to verify whether an approaching vehicle is dangerous or share structured vehicle intelligence with their loved ones, causing individual transit crimes to go unreported.
 
 ### The Solution
 Route addresses this crisis by providing Lagos commuters with a passive community safety network that verifies vehicle safety records before boarding, keeps a clear log of vehicle details for loved ones, and crowd-sources real-time danger flags to protect the broader commuting public.
