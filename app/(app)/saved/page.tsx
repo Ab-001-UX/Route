@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Pin,
   Search,
@@ -205,13 +205,25 @@ function VehicleCard({
 }
 
 
-export default function SavedPage() {
+function SavedContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams?.get("tab") || searchParams?.get("filter");
   const [isOffline, setIsOffline] = useState(false);
   const [cachedList, setCachedList] = useState<SavedVehicle[] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [filterMode, setFilterMode] = useState<"all" | "pinned">("all");
+  const [filterMode, setFilterMode] = useState<"all" | "pinned">(
+    tabParam === "pinned" ? "pinned" : "all"
+  );
+
+  useEffect(() => {
+    if (tabParam === "pinned") {
+      setFilterMode("pinned");
+    } else if (tabParam === "all") {
+      setFilterMode("all");
+    }
+  }, [tabParam]);
 
   // Flag modal state (opens home-style flag modal via router or inline)
   const [flagTargetPlate, setFlagTargetPlate] = useState("");
@@ -388,14 +400,20 @@ export default function SavedPage() {
           <button
             type="button"
             className={`${styles.filterTab} ${filterMode === "all" ? styles.filterTabActive : ""}`}
-            onClick={() => setFilterMode("all")}
+            onClick={() => {
+              setFilterMode("all");
+              router.replace("/saved", { scroll: false });
+            }}
           >
             All ({filteredList.length})
           </button>
           <button
             type="button"
             className={`${styles.filterTab} ${filterMode === "pinned" ? styles.filterTabActive : ""}`}
-            onClick={() => setFilterMode("pinned")}
+            onClick={() => {
+              setFilterMode("pinned");
+              router.replace("/saved?tab=pinned", { scroll: false });
+            }}
           >
             <Pin size={13} style={{ fill: filterMode === "pinned" ? "currentColor" : "none", marginRight: 4 }} />
             Pinned ({pinnedList.length})
@@ -525,5 +543,13 @@ export default function SavedPage() {
         ))}
       </div>
     </main>
+  );
+}
+
+export default function SavedPage() {
+  return (
+    <Suspense fallback={null}>
+      <SavedContent />
+    </Suspense>
   );
 }

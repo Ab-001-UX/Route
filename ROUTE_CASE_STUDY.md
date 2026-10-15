@@ -10,7 +10,7 @@
 ## 1. Executive Summary & Problem Statement
 
 ### The Problem
-In Lagos State, where over 75,000 commercial Danfo buses, Keke Napeps, Okada motorcycles, and e-hailing vehicles navigate high-density transit corridors, daily commuters face persistent exposure to organized "One-Chance" syndicates, express kidnappings, and extortions. This problem persists because transit safety information remains entirely fragmented, leaving commuters with no way to verify whether an approaching vehicle is dangerous or share structured vehicle intelligence with their loved ones, causing individual transit crimes to go unreported.
+In Lagos State, where commercial transit operators navigate high-density urban corridors, daily commuters face persistent exposure to organized "One-Chance" syndicates, express kidnappings, and extortions. This problem persists because transit safety information remains entirely fragmented, leaving commuters with no way to verify whether an approaching vehicle is dangerous or share structured vehicle intelligence with their loved ones. Without a centralized safety network, individual transit crimes go unreported, preventing commuters from warning one another and exposing millions of daily passengers to preventable violence and extortion.
 
 ### The Solution
 Route addresses this crisis by providing Lagos commuters with a passive community safety network that verifies vehicle safety records before boarding, keeps a clear log of vehicle details for loved ones, and crowd-sources real-time danger flags to protect the broader commuting public.

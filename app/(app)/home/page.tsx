@@ -505,6 +505,13 @@ export default function HomePage() {
     router.push(`/trip/new?${params.toString()}`);
   };
 
+  const handleAlertsClick = () => {
+    const feedEl = document.getElementById("feed-section");
+    if (feedEl) {
+      feedEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   // Check if we should render the windows dropdown
   const showWindowsDropdown = 
     transportType === "Uber" || transportType === "Taxi";
@@ -568,7 +575,7 @@ export default function HomePage() {
         <>
           <PwaInstallBanner />
           {pinnedVehicles.length > 0 && (
-            <section className={styles.pinnedRow}>
+            <section id="pinned-section" className={styles.pinnedRow}>
               <div className={styles.pinnedRowHeader}>
                 <Pin size={12} className={styles.pinnedRowIcon} />
                 <span>PINNED VEHICLES</span>
@@ -664,18 +671,33 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <div className={styles.statGrid}>
-                    <div className={styles.statTile}>
+                    <button
+                      type="button"
+                      className={styles.statTile}
+                      onClick={() => router.push("/saved")}
+                      aria-label={`View ${savedCount} saved vehicles in bookmarks`}
+                    >
                       <span>{savedCount}</span>
                       <p>Saved</p>
-                    </div>
-                    <div className={styles.statTile}>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.statTile}
+                      onClick={() => router.push("/saved?tab=pinned")}
+                      aria-label={`View ${pinnedCount} pinned vehicles in bookmarks`}
+                    >
                       <span>{pinnedCount}</span>
                       <p>Pinned</p>
-                    </div>
-                    <div className={styles.statTile}>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.statTile}
+                      onClick={handleAlertsClick}
+                      aria-label={`Jump to ${feedCount} community safety alerts in live feed`}
+                    >
                       <span>{feedCount}</span>
                       <p>Alerts</p>
-                    </div>
+                    </button>
                   </div>
                 )}
               </>

@@ -409,6 +409,37 @@
   align-items: center;
   gap: 4px;
   user-select: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .statTile {
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+}
+
+.statTile:hover {
+  background: var(--color-background-surface);
+  border-color: var(--color-brand-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.statTile:active {
+  transform: translateY(0);
+}
+
+.statTile:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
 }
 
 .statTile span {
